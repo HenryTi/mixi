@@ -170,7 +170,6 @@ export abstract class UqApp<U = any> {
                 await this.loadedBeforeLogin();
             }
             else {
-                debugger;
                 await this.loadAfterLogin();
             }
         }
