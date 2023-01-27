@@ -77,8 +77,8 @@ export class MyUqApp extends UqApp<UQs> {
         this.unitBizDate = tz.unitBizDate ?? 1;
     }
 
-    protected async onLoaded(): Promise<void> {
-        this.miNet = new MiNet(this.user);
+    protected override async loadAfterLogin(): Promise<void> {
+        this.miNet = new MiNet(this.uqAppState.user);
         let { BrMi } = this.uqs;
         this.storeApp = new StoreApp(this);
         let [] = await Promise.all([

@@ -1,9 +1,7 @@
 import { useUqApp } from "app/MyUqApp";
 import { MGroup } from "app/stores/MGroup";
 import { FA, LMR, Page, SearchBox, useNav } from "tonwa-com";
-import { Group } from "uqs/BrMi";
 import { PageSearch } from "../Search";
-import { PageMirateAvg } from "./PageMirateAvg";
 import { ViewGroups } from "./ViewGroups";
 import { ViewStockList } from "./ViewStockList";
 
@@ -68,10 +66,6 @@ export function ViewFindStock() {
             </Page>;
         });
     }
-    function showMiRateAvg() {
-        nav.open(<PageMirateAvg />);
-    }
-    let linkIcon = <FA name="chevron-circle-right" className="me-1 text-info" />;
     return <div className="bg-light">
         <div className="p-3">
             <SearchBox className="mb-0" onSearch={onSearchFromKey} placeholder="股票代码，名称" />
