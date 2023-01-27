@@ -8,13 +8,13 @@ import { meT } from "./meRes";
 
 export function PageEditMe() {
     let nav = useNav();
-    let app = useUqApp();
-    let user = useSnapshot(app.user);
+    let uqApp = useUqApp();
+    let { user } = useSnapshot(uqApp.uqAppState);
     let t = useT(meT, appT);
 
     let onValuesChanged = async (values: { name: string; value: any; preValue: any; }) => {
         let { name, value } = values;
-        app.setUserProp(name, value);
+        uqApp.setUserProp(name, value);
     }
 
     let onExit = () => {

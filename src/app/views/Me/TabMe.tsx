@@ -10,7 +10,7 @@ export function TabMe() {
     const t = useT(appT);
     const nav = useNav();
     const uqApp = useUqApp();
-    const user = useSnapshot(uqApp.user);
+    const { user } = useSnapshot(uqApp.uqAppState);
 
     function MeInfo() {
         if (!user) return null;
