@@ -512,10 +512,10 @@ export class TuidBox {
 
 export class TuidDiv extends TuidInner {
     readonly typeName: string = 'div';
-    protected cacheFields: Field[];
+    // protected cacheFields: Field[];
     protected tuid: TuidInner;
-    protected idName: string;
-    protected idCache: IdDivCache;
+    //protected idName: string;
+    //protected idCache: IdDivCache;
 
     constructor(uq: UqMan, tuid: TuidInner, name: string) {
         super(uq, name, 0);
@@ -571,7 +571,7 @@ export class TuidDiv extends TuidInner {
 }
 
 export class TuidBoxDiv extends TuidBox {
-    ownerField: Field;
+    //ownerField: Field;
     private div: TuidDiv;
     constructor(tuid: Tuid, div: TuidDiv, ownerField: Field) {
         super(tuid);

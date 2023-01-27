@@ -1,7 +1,8 @@
 import { MiAccount } from "app/stores/MiAccount";
+import { useSnapshot } from "valtio";
 
 export function ViewNote({ account }: { account: MiAccount }) {
-    let { cash, portionAmount, portion, buyableCount } = account;
+    let { cash, portionAmount, portion, buyableCount } = useSnapshot(account.state);
     let lis = (cash && portionAmount) ?
         <>
             <li>

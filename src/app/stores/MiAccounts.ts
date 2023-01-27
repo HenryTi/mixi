@@ -50,7 +50,8 @@ export class MiAccounts {
         let len = this.accounts.length;
         for (let i = 0; i < len; i++) {
             let account = this.accounts[i];
-            if (ids.findIndex(v => v === account.id) >= 0) {
+            let { id } = account.state;
+            if (ids.findIndex(v => v === id) >= 0) {
                 ret.push(account);
             }
         }
@@ -59,7 +60,7 @@ export class MiAccounts {
 
     async addStockToAccount(stock: Stock & StockValue, account: MiAccount) {
         let { yumi } = this.storeApp;
-        let { holdingStocks } = account;
+        let { holdingStocks, id } = account.state;
         if (holdingStocks) {
             let index = holdingStocks.findIndex(v => v.stock === stock.id);
             if (index >= 0) return;
@@ -67,7 +68,7 @@ export class MiAccounts {
         let ret = await yumi.ActIX({
             IX: yumi.AccountHolding,
             ID: yumi.Holding,
-            values: [{ ix: account.id, xi: { account: account.id, stock: stock.id, everBought: 0 } }],
+            values: [{ ix: id, xi: { account: id, stock: stock.id, everBought: 0 } }],
         });
         let hs = new HoldingStock(account, ret[0], stock, 0, 0);
         hs.everBought = 0;
@@ -76,9 +77,10 @@ export class MiAccounts {
 
     async removeStockFromAccount(stock: Stock & StockValue, account: MiAccount) {
         let { yumi } = this.storeApp;
+        let { id } = account.state;
         await yumi.ActIX({
             IX: yumi.AccountHolding,
-            values: [{ ix: account.id, xi: -stock.id }],
+            values: [{ ix: id, xi: -stock.id }],
         });
         account.removeHoldingStock(stock.id);
     }

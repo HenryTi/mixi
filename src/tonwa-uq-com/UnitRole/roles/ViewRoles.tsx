@@ -16,14 +16,14 @@ export function ViewRoles(/*{ roleItems, users }: { roleItems: string[], users: 
     let { uqApp, state } = store;
     let { entity, unit } = uqApp.userUnit;
     let { unitRoles } = state;
-    let roleItems = uqApp.uq.Role[unit === 0 ? '$' : entity];
+    // let roleItems = uqApp.uq.Role[unit === 0 ? '$' : entity];
     let { users } = unitRoles;
 
     let listEditContext = new ListEditContext(users, (item1, item2) => item1.user === item2.user);
 
     function ItemView({ value }: { value: UserUnit }) {
         let { roles, isAdmin, isOwner, user } = value;
-        let uqAppUser = useSnapshot(uqApp.user);
+        let uqAppUser = useSnapshot(uqApp.uqAppState.user);
         if (user === uqAppUser.id) return null;
         function RoleCheck({ caption, roleItem }: { caption: string; roleItem: string; }) {
             async function onCheckChange(evt: React.ChangeEvent<HTMLInputElement>) {
@@ -53,7 +53,8 @@ export function ViewRoles(/*{ roleItems, users }: { roleItems: string[], users: 
                 isAdmin === true ?
                     <Checked>roleT('admin')</Checked>
                     :
-                    roleItems.map(v => (<RoleCheck key={v} caption={uqApp.roleName(v).caption} roleItem={v} />))
+                    <div>??? roleName ???</div>
+                //roleItems.map(v => (<RoleCheck key={v} caption={uqApp.roleName(v).caption} roleItem={v} />))
             )
         }</div>;
         return <div className="px-3 py-2">

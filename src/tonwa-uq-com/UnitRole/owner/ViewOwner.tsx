@@ -14,7 +14,7 @@ import { ViewUser } from "../ViewUser";
 export function ViewOwner() {
     let nav = useNav();
     let uqApp = useUqAppBase();
-    let user = useSnapshot(uqApp.user);
+    let user = useSnapshot(uqApp.uqAppState.user);
     let store = usePageStore<UnitRoleStore>();
     let { state, onOwnerAdded } = store;
     let { unitRoles } = state;

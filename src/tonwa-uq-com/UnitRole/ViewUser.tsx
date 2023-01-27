@@ -39,7 +39,7 @@ export function ViewUser({ userUnit: userUnitInit }: Props) {
         );
     function onEdit() {
         function PageEdit() {
-            let user = useSnapshot(uqApp.user);
+            let user = useSnapshot(uqApp.uqAppState.user);
             let { user: userId, isOwner, isAdmin, addBy } = userUnit;
             let pageHeader: string;
             if (isOwner === true) pageHeader = tOwner;

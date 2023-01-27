@@ -3,11 +3,16 @@ import { List, Page } from 'tonwa-com';
 import { usePageStore } from 'tonwa-uq-com';
 import { StockBonus } from 'app/model/StockInfoType';
 import { StoreStockInfo, GFunc, SlrForEarning } from '../../stores';
+import { useUqApp } from 'app/MyUqApp';
 
 export function PageBonusDetail() {
+    const uqApp = useUqApp();
     const storeStockInfo = usePageStore<StoreStockInfo>();
     const { baseItem, bonus, dividentOrg } = storeStockInfo;
     let { name, code, day } = baseItem;
+    let market = uqApp.storeApp.getMarket(baseItem.stock);
+    let marketName = market?.name;
+    let symbol = (marketName ?? '') + code;
 
     let headStr = name + ' ' + code;
     if (day !== undefined) {
@@ -24,7 +29,7 @@ export function PageBonusDetail() {
     }
 
     function BonusOrg() {
-        let url = `https://xueqiu.com/snowman/S/${baseItem.symbol}/detail#/FHPS`;
+        let url = `https://xueqiu.com/snowman/S/${symbol}/detail#/FHPS`;
         function ItemView({ value }: { value: { year: number, season: string, divident: number, day: number } }) {
             const { year, season, divident, day } = value;
             return <div className="px-3 py-2 d-flex flex-wrap">
