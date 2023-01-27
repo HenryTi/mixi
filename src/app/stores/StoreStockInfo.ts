@@ -1,0 +1,421 @@
+import { NStockInfo, StockBonus, StockCapitalearning, StockDividentInfo } from "app/model/StockInfoType";
+import { MyPageStore } from "app/MyPageStore";
+import { StockPrice } from "app/model/StockInfoType";
+import { Stock, StockValue } from "uqs/BrMi";
+import { GFunc } from './GFunc';
+import { ErForEarning } from './ErForEarning';
+import { SlrForEarning } from './SlrForEarning';
+
+export class StoreStockInfo extends MyPageStore {
+    readonly stock: Stock & StockValue;
+    readonly baseItem: NStockInfo;
+    constructor(stock: Stock & StockValue, trackDay?: number) {
+        super();
+        this.stock = stock;
+        let { id, name, no, rawId } = stock;
+        //let market = this.uqApp.storeApp.getMarket(stock);
+        //let date = new Date();
+        // let year = date.getFullYear();
+        // let month = date.getMonth() + 1;
+        // let dt = date.getDate();
+        this.baseItem = {
+            id: id,
+            rawId: rawId,
+            name,
+            code: no,
+            //market: market?.name,
+            //symbol: market?.name + no,
+            day: undefined, //year*10000 + month*100 + dt,
+            stock,
+            trackDay,
+        };
+    }
+
+    //private loaded: boolean = false;
+    isBlock: boolean;
+
+    price: StockPrice;
+    seasonData: { season: number, c: number, corg: number, shares: number, revenue: number, profit: number, netprofit: number }[];
+    predictSeasonData: { season: number, c: number, shares: number, revenue: number, profit: number, netprofit: number }[];
+    predictSeasonDataFull: { season: number, c: number, shares: number, revenue: number, profit: number, netprofit: number }[];
+    predictData: { e: number, b: number, r2: number, epre: number, l: number, lr2: number, lpre: number };
+    predictBonusData: { year: number, bonus: number }[];
+    ypredict: number[];
+
+    mirates: { day: number, mirate: number, price: number }[];
+    mivalues: { season: number, mivalue: number }[];
+
+    _capitalearning: StockCapitalearning[];
+    _bonus: StockBonus[];
+    _divideInfo: StockDividentInfo[];
+    _sharesArr: { day: number, shares: number }[];
+    _divident: { year: number, season: string, divident: number, day: number }[];
+    get capitalearning() {
+        //if (this.loaded === false) return undefined;
+        return this._capitalearning;
+    };
+
+    get bonus() {
+        //if (this.loaded === false) return undefined;
+        return this._bonus;
+    };
+
+    get divideInfo() {
+        //if (this.loaded === false) return undefined;
+        return this._divideInfo;
+    };
+
+    get dividentOrg() {
+        //if (this.loaded === false) return undefined;
+        return this._divident;
+    };
+
+    get dividents() {
+        //if (this.loaded === false) return undefined;
+        if (this._divident.length <= 0) return undefined;
+        let { day, trackDay } = this.baseItem;
+        let lday = trackDay;
+        let lastYear: number;
+        if (lday === undefined) {
+            lday = day;
+        }
+        let y = Math.floor(lday / 10000);
+        let m = Math.floor((lday % 10000) / 100);
+        lastYear = y - 1;
+        if (m < 4) {
+            lastYear--;
+        }
+        let lshares: number = this.getLastTotalShares();
+        let yearDataA: { [index: number]: { bonus: number } } = {};
+        let retArr: { year: number, divident: number, d3?: number }[] = [];
+        let minYear = undefined;
+        let maxYear = 0;
+        for (let item of this._divident) {
+            let { year, divident, day, season } = item;
+            if (minYear === undefined) {
+                minYear = year;
+            }
+            else if (year < minYear) {
+                minYear = year;
+            }
+            if (year > maxYear) {
+                maxYear = year;
+            }
+            var shares: number = undefined;
+            if (day === undefined) {
+                shares = lshares;
+            }
+            else {
+                shares = this.getTotalShares(day);
+            }
+            if (shares <= 0 || shares === undefined || shares === null || divident <= 0) continue;
+            let yb = yearDataA[year];
+            if (yb === undefined) {
+                yearDataA[year] = { bonus: divident * shares };
+            }
+            else {
+                yearDataA[year] = { bonus: yb.bonus + divident * shares }
+            }
+        }
+        if (maxYear > lastYear && trackDay === undefined) {
+            lastYear = maxYear;
+        }
+
+        let getLast3YearData = (checkYear: number) => {
+            let sum: number = 0;
+            for (let i = checkYear; i > checkYear - 3; --i) {
+                let item = yearDataA[i];
+                if (item !== undefined) {
+                    sum += item.bonus;
+                }
+            }
+            return sum !== 0 ? sum / 3 : undefined;
+        }
+
+        for (let yi = minYear; yi <= lastYear; yi++) {
+            let item = yearDataA[yi];
+            let bonus = item !== undefined ? item.bonus / lshares : undefined;
+            let d3 = undefined;
+            if (yi >= minYear + 2) {
+                d3 = getLast3YearData(yi);
+                if (d3 !== undefined) {
+                    d3 = d3 / lshares;
+                }
+            }
+            retArr.push({ year: yi, divident: bonus, d3 });
+        }
+
+        return retArr;
+    }
+
+    protected getTotalShares(day: number): number {
+        let ret: number = undefined;
+        for (let i = 0; i < this._sharesArr.length; ++i) {
+            let item = this._sharesArr[i];
+            ret = item.shares;
+            if (day >= item.day) {
+                break;
+            }
+        }
+
+        return ret;
+    }
+
+    protected getLastTotalShares(): number {
+        let ret: number = undefined;
+        if (this._sharesArr.length > 0) {
+            let item = this._sharesArr[0];
+            ret = item.shares;
+        }
+
+        return ret;
+    }
+
+    async init(): Promise<void> {
+        // if (!this.baseItem) return;
+        const { miNet } = this.uqApp;
+        let { rawId, day, trackDay } = this.baseItem;
+        let rets;
+        if (trackDay !== null) {
+            rets = await Promise.all([
+                miNet.q_stockallinfotrack(rawId, trackDay)
+            ]);
+        }
+        else {
+            rets = await Promise.all([
+                miNet.q_stockallinfo(rawId, day)
+            ]);
+        }
+        let ret = rets[0];
+        if (Array.isArray(ret[0])) {
+            let arr1 = ret[1];
+            if (Array.isArray(arr1)) {
+                this.price = arr1[0];
+            }
+
+            this._bonus = [];
+            this._divideInfo = [];
+            this._capitalearning = [];
+            let arr3 = ret[3];
+            if (Array.isArray(arr3)) {
+                this._divideInfo.push(...arr3);
+                let barr = arr3.filter((v: any) => {
+                    return v.派息 as number > 0;
+                }).map((v: any) => {
+                    return { day: v.day, bonus: v.派息, shares: v.shares };
+                })
+                this._bonus.push(...barr);
+            }
+            this._sharesArr = ret[5];
+
+            this.mivalues = [];
+            let mvArr = ret[7] as { season: number, mivalue: number, volume: number }[];
+            let mvr: { season: number, mivalue: number }[] = [];
+            if (mvArr.length > 0) {
+                let vlast = mvArr[0].volume;
+                if (vlast !== undefined) {
+                    mvArr.forEach(v => {
+                        let { season, mivalue, volume } = v;
+                        if (mivalue !== undefined && volume !== null) {
+                            let miv = mivalue * volume / vlast;
+                            mvr.unshift({ season: season, mivalue: miv });
+                        }
+                    })
+                    this.mivalues.push(...mvr);
+                }
+            }
+
+            let mlen = mvr.length;
+
+            let ratesArr = ret[6] as { day: number, mirate: number, price: number, exright: number }[];
+            let rates: { day: number, mirate: number, price: number }[] = [];
+            let exLast = 1;
+            if (ratesArr.length > 0) {
+                let li = ratesArr[0];
+                exLast = li.exright;
+            }
+            ratesArr.forEach(v => {
+                let { day, mirate, price, exright } = v;
+                let priceEx = price * exright / exLast;
+
+                rates.unshift({ day: day, mirate: mirate, price: priceEx });
+            });
+            if (trackDay === null && this.stock !== undefined && rates.length > 0) {
+                let nItem = { day: day, mirate: this.stock.miRate, price: this.stock.price };
+                let lItem = rates[rates.length - 1];
+                if (day > lItem.day) {
+                    rates.push(nItem);
+                }
+            }
+            this.mirates = rates;
+
+            this.loadTTMEarning(ret[2]);
+            this.LoadDivident(ret[8]);
+            this.LoadBonusData();
+        }
+
+        //        this.loaded = true;
+    }
+
+    protected loadTTMEarning(list: { seasonno: number, capital: number, revenue: number, profit: number, netprofit: number, shares: number }[]) {
+        let seasonlist: { [index: number]: { season: number, c: number, corg: number, shares: number, revenue: number, profit: number, netprofit: number } } = {};
+        let len = list.length;
+        if (len <= 0) return;
+        let minNo = list[len - 1].seasonno;
+        let lastItem = list[0];
+        let lastShares = lastItem.shares;
+        let maxNo = lastItem.seasonno;
+
+        let _ce = [];
+        for (let item of list) {
+            let no = item.seasonno;
+            let sItem = {
+                season: no, c: item.capital * item.shares / lastShares,
+                corg: item.capital, shares: item.shares, revenue: item.revenue, profit: item.profit, netprofit: item.netprofit
+            }
+            seasonlist[no] = sItem;
+
+            let yearmonth = GFunc.GetSeasonnoYearMonth(no);
+            if (yearmonth.month === 12) {
+                let ci = { year: yearmonth.year, capital: item.capital, earning: item.netprofit / item.shares };
+                _ce.push(ci);
+            }
+        }
+        this._capitalearning.push(..._ce);
+
+        let i = 0;
+        let sd = [];
+        for (let seasonno = minNo; seasonno <= maxNo; ++seasonno, ++i) {
+            let si = seasonlist[seasonno];
+            if (si === undefined) {
+                continue;
+            }
+            sd.unshift(si);
+        }
+        this.seasonData = sd;
+
+        let noBegin = maxNo - 19;
+        this.predictData = undefined;
+        this.predictSeasonData = [];
+        if (noBegin < minNo) return;
+        noBegin += 3;
+        let ypt = [];
+        for (let x = noBegin; x <= maxNo; x += 4) {
+            let item = seasonlist[x];
+            if (item === undefined) break;
+            this.predictSeasonData.splice(0, 0, item);
+            ypt.push(item.netprofit / lastShares);
+        }
+        this.ypredict = ypt;
+
+        let psdf = [];
+        for (let x = maxNo; x >= minNo; x -= 4) {
+            let item = seasonlist[x];
+            if (item === undefined) break;
+            psdf.push(item);
+        }
+        this.predictSeasonDataFull = psdf;
+
+        if (this.ypredict.length === 5) {
+            let er = new ErForEarning(this.ypredict);
+            let lr = new SlrForEarning(this.ypredict);
+            this.predictData = { e: this.ypredict[4], b: er.B, r2: er.r2, epre: er.predict(4), l: lr.slopeR, lr2: lr.r2, lpre: lr.predict(4) };
+        }
+        else {
+            this.predictSeasonData = [];
+        }
+    }
+
+    protected LoadDivident(list: { year: number, season: string, divident: number, dday: number }[]) {
+        let darr = [];
+        for (let item of list) {
+            let { year, season, divident, dday } = item;
+            darr.push({ year, season, divident, day: dday });
+        }
+        this._divident = darr;
+    }
+
+    protected LoadBonusData() {
+        if (this._sharesArr === undefined || this._sharesArr.length <= 0) return;
+        let maxNo: number;
+        let trackDay = this.baseItem.trackDay;
+        if (trackDay === null) {
+            let dt = new Date();
+            maxNo = GFunc.SeasonnoFromYearMonth(dt.getFullYear(), dt.getMonth() + 1) - 2;
+        }
+        else {
+            let y =
+                maxNo = GFunc.SeasonnoFromYearMonth(Math.floor(trackDay / 10000), Math.floor((trackDay % 10000) / 100));
+        }
+        let minNo = -1;
+        let dataOrg: { [index: number]: { bonus: number, shares: number } } = {};
+        let seasonData: { [index: number]: { bonus: number, shares: number, bs: number } } = {};
+        for (let item of this._bonus) {
+            let { day, bonus, shares } = item as { day: number, bonus: number, shares: number };
+            if (shares <= 0 || bonus <= 0) continue;
+            if (day < 19950101) continue;
+            let sno = GFunc.SeasonnoFromDayForBonus(day);
+            dataOrg[sno] = { bonus: bonus, shares: shares };
+            if (minNo < 0) {
+                minNo = sno;
+            }
+            else {
+                if (sno < minNo)
+                    minNo = sno;
+            }
+            if (sno > maxNo) {
+                maxNo = sno;
+            }
+        }
+
+        let getBonusPrev3 = (sno: number) => {
+            let r = 0;
+            for (let n = sno - 3; n < sno; ++n) {
+                let item = dataOrg[n];
+                if (item === undefined) continue;
+                r += item.bonus * item.shares;
+            }
+            return r;
+        }
+
+
+        for (let no = minNo; no <= maxNo; ++no) {
+            let item = dataOrg[no];
+            let bsum = 0;
+            if (item === undefined) {
+                let { end } = GFunc.SeasonnoToBeginEnd(no);
+                item = { bonus: 0, shares: this.getTotalShares(end) };
+            }
+            else {
+                bsum = item.bonus * item.shares;
+            }
+
+            bsum += getBonusPrev3(no);
+            bsum = bsum / item.shares;
+            seasonData[no] = { bonus: bsum, bs: item.bonus, shares: item.shares };
+        }
+
+        let lastItem = seasonData[maxNo];
+        if (lastItem === undefined) {
+            return;
+        }
+
+        let lastShares = lastItem.shares;
+        if (lastShares === undefined || lastShares <= 0) {
+            return;
+        }
+
+        let pbd: { year: number, bonus: number }[] = [];
+        for (let i = maxNo; i >= maxNo - 16; i -= 4) {
+            let ni = seasonData[i];
+            if (ni === undefined) break;
+            let b = 0;
+            if (ni.bonus > 0 && ni.shares > 0) {
+                b = ni.bonus * ni.shares / lastShares;
+            }
+            let ym = GFunc.GetSeasonnoYearMonth(i);
+            pbd.unshift({ year: ym.year, bonus: b });
+        }
+        this.predictBonusData = pbd;
+    }
+}
