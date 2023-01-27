@@ -39,7 +39,7 @@ export function Login({ withBack, loginTop, privacy, callback }: Props) {
 
         if (user === undefined) return false;
         console.log("onLoginSubmit: user=%s pwd:%s", user.name, user.token);
-        await uqApp.logined(user);
+        uqApp.logined(user);
         await callback?.(user);
         return true;
     }

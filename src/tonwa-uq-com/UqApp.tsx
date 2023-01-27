@@ -46,7 +46,7 @@ export abstract class UqApp<U = any> {
     //readonly responsive: {
     //    user: User;
     //}
-    user: User;
+    readonly uqAppState: { user: User; };
     uqsMan: UQsMan;
     store: any;
     guest: number;
@@ -65,7 +65,7 @@ export abstract class UqApp<U = any> {
             user: undefined,
         });
         */
-        this.user = proxy({} as User);
+        // this.user = proxy({} as User);
         // this.stores = [];
         let props: NetProps = {
             center: appConfig.center,
@@ -79,6 +79,10 @@ export abstract class UqApp<U = any> {
 
         this.appNav = new AppNav();
         this.userApi = this.net.userApi;
+        let user = this.localData.user.get();
+        this.uqAppState = proxy({
+            user,
+        });
     }
 
     protected get defaultUqRoleNames(): { [lang: string]: any } { return undefined }
@@ -95,10 +99,9 @@ export abstract class UqApp<U = any> {
         return this.uqUnit.hasRole(role);
     }
 
-    async logined(user: User) {
+    logined(user: User) {
         this.net.logoutApis();
-        //this.responsive.user = user;
-        Object.assign(this.user, user); // = proxy(user);
+        this.uqAppState.user = user;
         let autoLoader: Promise<any> = undefined;
         let autoRefresh = new AutoRefresh(this, autoLoader);
         if (user) {
@@ -124,22 +127,23 @@ export abstract class UqApp<U = any> {
 
     async setUserProp(propName: string, value: any) {
         await this.userApi.userSetProp(propName, value);
-        (this.user as any)[propName] = value;
-        this.localData.user.set(this.user);
+        (this.uqAppState.user as any)[propName] = value;
+        this.localData.user.set(this.uqAppState.user);
     }
 
     saveLocalData() {
         this.localData.saveToLocalStorage();
     }
 
-    private initCalled = false;
+    // private initCalled = false;
     initErrors: string[];
     init(initPage: React.ReactNode, navigateFunc: NavigateFunction): void {
         this.appNav.init(initPage, navigateFunc);
     }
+
     async load(): Promise<void> {
-        if (this.initCalled === true) return;
-        this.initCalled = true;
+        // if (this.initCalled === true) return;
+        // this.initCalled = true;
         await this.net.init();
         try {
             let uqsMan = await createUQsMan(this.net, this.appConfig.version, this.uqConfigs, this.uqsSchema);
@@ -150,31 +154,39 @@ export abstract class UqApp<U = any> {
                 // this.uq = this.defaultUq;
                 // this.buildRoleNames();
             }
-            let user = this.localData.user.get();
-            await this.logined(user);
+            // let user = this.localData.user.get();
+            let { user } = this.uqAppState;
+            this.logined(user);
             if (!user) {
                 let guest: Guest = this.localData.guest.get();
                 if (guest === undefined) {
                     guest = await this.net.userApi.guest();
                 }
                 if (!guest) {
-                    debugger;
                     throw Error('guest can not be undefined');
                 }
                 this.net.setCenterToken(0, guest.token);
                 this.localData.guest.set(guest);
+                await this.loadedBeforeLogin();
             }
-            await this.onLoaded();
+            else {
+                debugger;
+                await this.loadAfterLogin();
+            }
         }
         catch (error) {
-            debugger;
             console.error(error);
         }
     }
 
-    protected onLoaded(): Promise<void> {
+    protected loadAfterLogin(): Promise<void> {
         return;
     }
+
+    protected loadedBeforeLogin(): Promise<void> {
+        return;
+    }
+
     /*
     private buildRoleNames() {
         if (this.uq === undefined) return;
@@ -219,11 +231,11 @@ const queryClient = new QueryClient({
     },
 });
 
-export function UqAppView({ uqApp, children }: { uqApp: UqApp; children: ReactNode; }) {
+function UqAppViewBase({ uqApp, user, children }: { uqApp: UqApp; user: User; children: ReactNode; }) {
     let { appNav } = uqApp;
     let [appInited, setAppInited] = useState<boolean>(false);
     let { stack } = useSnapshot(appNav.data);
-    let user = useSnapshot(uqApp.user);
+    // let user = useSnapshot(uqApp.user);
     useEffectOnce(() => {
         (async function () {
             await uqApp.load();
@@ -253,4 +265,22 @@ export function UqAppView({ uqApp, children }: { uqApp: UqApp; children: ReactNo
             {user !== undefined}
         </QueryClientProvider>
     </UqAppContext.Provider>;
+}
+
+function UqAppViewLogined({ uqApp, user, children }: { uqApp: UqApp; user: User; children: ReactNode; }) {
+    return <UqAppViewBase uqApp={uqApp} user={user} children={children} />
+}
+
+function UqAppViewUnlogined({ uqApp, children }: { uqApp: UqApp; children: ReactNode; }) {
+    return <UqAppViewBase uqApp={uqApp} user={undefined} children={children} />
+}
+
+export function UqAppView({ uqApp, children }: { uqApp: UqApp; children: ReactNode; }) {
+    let { user } = useSnapshot(uqApp.uqAppState);
+    if (user === undefined) {
+        return <UqAppViewUnlogined uqApp={uqApp} children={children} />;
+    }
+    else {
+        return <UqAppViewLogined uqApp={uqApp} user={user as User} children={children} />;
+    }
 }

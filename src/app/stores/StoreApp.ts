@@ -36,7 +36,7 @@ export class StoreApp {
 
     constructor(uqApp: MyUqApp) {
         this.miNet = uqApp.miNet;
-        this.user = uqApp.user;
+        this.user = uqApp.uqAppState.user;
         this.yumi = uqApp.uqs.BrMi;
         this.miAccounts = new MiAccounts(this);
         this.miGroups = new MiGroups(this);
