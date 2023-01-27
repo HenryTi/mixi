@@ -23,11 +23,15 @@ export function ViewFindStock() {
     const { stocksMyAll, myAllCaption, stocksMyBlock, myBlockCaption, rootIndustries, miGroups, industries } = uqApp.storeApp;
 
     function showStocksAll() {
-        alert('showStocksAll');
+        nav.open(<Page header={myAllCaption}>
+            <ViewStockList stocks={stocksMyAll} />
+        </Page>);
     }
 
     function showStocksBlock() {
-        alert('showStocksBlock');
+        nav.open(<Page header={myBlockCaption}>
+            <ViewStockList stocks={stocksMyBlock} />
+        </Page>);
     }
 
     function renderMyAll() {

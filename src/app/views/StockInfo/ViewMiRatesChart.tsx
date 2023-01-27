@@ -50,7 +50,7 @@ export function ViewMiRatesChart() {
             borderWidth: 1,
             pointRadius: 1,
             fill: false,
-            yAxisID: 'y-axis-1',
+            yAxisID: 'y1',
         },
         {
             label: 'MA20',
@@ -61,7 +61,7 @@ export function ViewMiRatesChart() {
             borderWidth: 1,
             pointRadius: 1,
             fill: false,
-            yAxisID: 'y-axis-1',
+            yAxisID: 'y1',
         },
         {
             label: 'MA60',
@@ -72,7 +72,7 @@ export function ViewMiRatesChart() {
             borderWidth: 1,
             pointRadius: 1,
             fill: false,
-            yAxisID: 'y-axis-1',
+            yAxisID: 'y1',
         },
         {
             label: '米息率',
@@ -83,28 +83,25 @@ export function ViewMiRatesChart() {
             borderWidth: 3,
             pointRadius: 1,
             fill: false,
-            yAxisID: 'y-axis-2',
-        }
-    ];
-    const yAxes = [
-        {
-            type: 'linear',
-            display: true,
-            position: 'left',
-            id: 'y-axis-1',
-        },
-        {
-            type: 'linear',
-            display: true,
-            position: 'right',
-            id: 'y-axis-2',
-            gridLines: {
-                drawOnChartArea: false
-            }
+            yAxisID: 'y2',
         }
     ];
     const chartdataFull = { labels, datasets, };
-    const options: any = { scales: { yAxes, } }
+    const options: any = { scales: { 
+        y1: {
+            type: 'linear',
+            display: true,
+            position: 'left',
+        },
+        y2: {
+            type: 'linear',
+            display: true,
+            position: 'right',
+            grid: {
+                drawOnChartArea: false
+            }
+        }
+     } }
 
     return <Chart type='line' data={chartdataFull} options={options} />;
 }

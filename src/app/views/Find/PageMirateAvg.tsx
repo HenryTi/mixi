@@ -85,7 +85,7 @@ export function PageMirateAvg() {
                 borderWidth: 1,
                 pointRadius: 1,
                 fill: false,
-                yAxisID: 'y-axis-1',
+                yAxisID: 'y1',
             } as any,
             {
                 label: '41-80',
@@ -96,7 +96,7 @@ export function PageMirateAvg() {
                 borderWidth: 1,
                 pointRadius: 1,
                 fill: false,
-                yAxisID: 'y-axis-1',
+                yAxisID: 'y1',
             } as any,
             {
                 label: '81-120',
@@ -107,7 +107,7 @@ export function PageMirateAvg() {
                 borderWidth: 1,
                 pointRadius: 1,
                 fill: false,
-                yAxisID: 'y-axis-1',
+                yAxisID: 'y1',
             } as any,
             {
                 label: '上证指数',
@@ -118,7 +118,7 @@ export function PageMirateAvg() {
                 borderWidth: 1,
                 pointRadius: 1,
                 fill: false,
-                yAxisID: 'y-axis-2',
+                yAxisID: 'y2',
             } as any,
         ]
     };
@@ -134,7 +134,7 @@ export function PageMirateAvg() {
                 borderWidth: 1,
                 pointRadius: 1,
                 fill: false,
-                yAxisID: 'y-axis-1',
+                yAxisID: 'y1',
             } as any,
             {
                 label: '41-80',
@@ -145,7 +145,7 @@ export function PageMirateAvg() {
                 borderWidth: 1,
                 pointRadius: 1,
                 fill: false,
-                yAxisID: 'y-axis-1',
+                yAxisID: 'y1',
             } as any,
             {
                 label: '81-120',
@@ -156,7 +156,7 @@ export function PageMirateAvg() {
                 borderWidth: 1,
                 pointRadius: 1,
                 fill: false,
-                yAxisID: 'y-axis-1',
+                yAxisID: 'y1',
             } as any,
             {
                 label: '深证成指',
@@ -167,7 +167,7 @@ export function PageMirateAvg() {
                 borderWidth: 1,
                 pointRadius: 1,
                 fill: false,
-                yAxisID: 'y-axis-2',
+                yAxisID: 'y2',
             } as any,
         ]
     };
@@ -183,7 +183,7 @@ export function PageMirateAvg() {
                 borderWidth: 1,
                 pointRadius: 1,
                 fill: false,
-                yAxisID: 'y-axis-1',
+                yAxisID: 'y1',
             } as any,
             {
                 label: '41-80',
@@ -194,7 +194,7 @@ export function PageMirateAvg() {
                 borderWidth: 1,
                 pointRadius: 1,
                 fill: false,
-                yAxisID: 'y-axis-1',
+                yAxisID: 'y1',
             } as any,
             {
                 label: '81-120',
@@ -205,7 +205,7 @@ export function PageMirateAvg() {
                 borderWidth: 1,
                 pointRadius: 1,
                 fill: false,
-                yAxisID: 'y-axis-1',
+                yAxisID: 'y1',
             } as any,
             {
                 label: '沪深300',
@@ -216,7 +216,7 @@ export function PageMirateAvg() {
                 borderWidth: 1,
                 pointRadius: 1,
                 fill: false,
-                yAxisID: 'y-axis-2',
+                yAxisID: 'y2',
             } as any,
         ]
     };
@@ -232,7 +232,7 @@ export function PageMirateAvg() {
                 borderWidth: 1,
                 pointRadius: 1,
                 fill: false,
-                yAxisID: 'y-axis-1',
+                yAxisID: 'y1',
             } as any,
             {
                 label: '41-80',
@@ -243,7 +243,7 @@ export function PageMirateAvg() {
                 borderWidth: 1,
                 pointRadius: 1,
                 fill: false,
-                yAxisID: 'y-axis-1',
+                yAxisID: 'y1',
             } as any,
             {
                 label: '81-120',
@@ -254,7 +254,7 @@ export function PageMirateAvg() {
                 borderWidth: 1,
                 pointRadius: 1,
                 fill: false,
-                yAxisID: 'y-axis-1',
+                yAxisID: 'y1',
             } as any,
             {
                 label: '创业板指',
@@ -265,36 +265,34 @@ export function PageMirateAvg() {
                 borderWidth: 1,
                 pointRadius: 1,
                 fill: false,
-                yAxisID: 'y-axis-2',
+                yAxisID: 'y2',
             } as any,
         ]
     };
     let options = {
         scales: {
-            yAxes: [{
+            y1: {
                 type: 'linear',
                 display: true,
                 position: 'right',
-                id: 'y-axis-1',
             },
-            {
+            y2: {
                 type: 'linear',
                 display: true,
                 position: 'left',
-                id: 'y-axis-2',
-                gridLines: {
+                grid: {
                     drawOnChartArea: false
                 }
             },
-            ],
+            
         }
     }
 
     return <Page header={'A股历史米息率'}
         headerClassName='bg-primary'>
+        <Chart data={chartdataFull300} type='line' options={options as any} />
         <Chart data={chartdataFullSH} type='line' options={options as any} />
         <Chart data={chartdataFullSZ} type='line' options={options as any} />
-        <Chart data={chartdataFull300} type='line' options={options as any} />
         <Chart data={chartdataFullCY} type='line' options={options as any} />
     </Page>;
 }
