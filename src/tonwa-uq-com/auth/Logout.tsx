@@ -6,7 +6,7 @@ export function Logout({ onLogout, resetAll }: { onLogout: () => Promise<void>; 
     let uqApp = useUqAppBase();
     // let header = this.isWebNav === true ? false : '安全退出';
     async function onClickLogout() {
-        uqApp.logined(undefined);
+        await uqApp.logined(undefined);
         //nav.appNav.onLogined(false);
         await onLogout?.();
         nav.close(2);

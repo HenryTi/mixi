@@ -1,1 +1,1 @@
-export * from './PageBlogs';
+export * from './routeBlogs';

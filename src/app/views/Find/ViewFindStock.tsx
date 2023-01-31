@@ -1,7 +1,9 @@
 import { useUqApp } from "app/MyUqApp";
 import { MGroup } from "app/stores/MGroup";
+import { useNavigate } from "react-router-dom";
 import { FA, LMR, Page, SearchBox, useNav } from "tonwa-com";
-import { PageSearch } from "../Search";
+import { pathSearch } from "../Search";
+import { pathGroupStocks } from "./routeFind";
 import { ViewGroups } from "./ViewGroups";
 import { ViewStockList } from "./ViewStockList";
 
@@ -17,6 +19,7 @@ const searchButtons: [string, string[]][] = [
 
 export function ViewFindStock() {
     const nav = useNav();
+    const navigate = useNavigate();
     const uqApp = useUqApp();
     const { stocksMyAll, myAllCaption, stocksMyBlock, myBlockCaption, rootIndustries, miGroups, industries } = uqApp.storeApp;
 
@@ -56,15 +59,13 @@ export function ViewFindStock() {
         </div>
     }
     async function onSearchFromKey(key: string) {
-        nav.open(<PageSearch searchKey={key} markets={undefined} />);
+        navigate(pathSearch(), { state: { header: '搜索', searchKey: key } });
     }
     async function onGroupClick(group: MGroup) {
-        nav.open(async () => {
-            await group.loadItems();
-            return <Page header={group.name}>
-                <ViewStockList stocks={group.stocks} />
-            </Page>;
-        });
+        uqApp.storeApp.group = group;
+        await group.loadItems();
+        return pathGroupStocks;
+        //navigate('/test');
     }
     return <div className="bg-light">
         <div className="p-3">
@@ -74,7 +75,7 @@ export function ViewFindStock() {
             {searchButtons.map(v => {
                 let [caption, markets] = v;
                 function onSearchInMarkets() {
-                    nav.open(<PageSearch header={caption} searchKey="" markets={markets} />);
+                    navigate(pathSearch(), { state: { header: caption, markets } });
                 }
                 return <button key={caption}
                     className="btn btn-outline-info m-1"

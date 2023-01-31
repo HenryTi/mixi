@@ -1,9 +1,7 @@
 import { Chart } from 'react-chartjs-2';
-import { usePageStore } from 'tonwa-uq-com';
 import { StoreStockInfo, GFunc, SlrForEarning } from "../../stores";
 
-export function ViewProfitChart() {
-    let storeStockInfo = usePageStore<StoreStockInfo>();
+export function ViewProfitChart({ storeStockInfo }: { storeStockInfo: StoreStockInfo; }) {
     let { chartFull, chartProfit, chartRevenue } = getProfitCharts();
     let chartRoe = predictChartROE();
 

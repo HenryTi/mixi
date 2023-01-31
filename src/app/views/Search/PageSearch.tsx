@@ -1,17 +1,16 @@
 import { PageQueryMore } from "app/coms";
-import { ViewStockRow } from "app/coms/ItemViewStock";
 import { useUqApp } from "app/MyUqApp";
 import { useRef, useState } from "react";
-import { FA, LMR, useNav } from "tonwa-com";
-import { Stock, StockValue } from "uqs/BrMi";
+import { useLocation } from "react-router-dom";
+import { FA, LMR } from "tonwa-com";
 import { ItemViewStock } from "../Find";
-import { PageStockInfo } from "../StockInfo";
 
 type SearchOrder = 'miRateDesc' | 'miRateAsc' | 'dvRateDesc' | 'dvRateAsc' | 'roeDesc' | 'roeAsc';
 const cnStar = 'small border rounded py-1 px-2 me-3 ';
-export function PageSearch({ header, searchKey, markets }: { header?: string; searchKey: string; markets: string[]; }) {
+
+export function PageSearch() {
     const uqApp = useUqApp();
-    const nav = useNav();
+    const { state: { header, searchKey, markets } } = useLocation();
     // const storeSearch = useInitPageStore(() => new StoreSearch(searchKey, markets))
     // const { items } = useSnapshot(storeSearch.state);
     const tickReload = useRef(1);
@@ -53,31 +52,6 @@ export function PageSearch({ header, searchKey, markets }: { header?: string; se
             </div>
         </LMR>;
     }
-    /*
-    function onClick(stock: Stock & StockValue) {
-        nav.open(<PageStockInfo stock={stock} />);
-    }
-    function ItemViewStockRight() {
-        return <div>right</div>
-    }
-    function ItemViewStock({ value }: { value: Stock & StockValue }) {
-        return <>
-            {ViewStockRow((value as any)['$order'], value, onClick, <ItemViewStockRight />)}
-        </>;
-    }
-    */
-    /*
-    async function onScrollBottom(scroller: Scroller) {
-        console.log('onScrollBottom');
-    }
-    return <Page header="搜索" onScrollBottom={onScrollBottom}>
-        <div className="pt-1 pb-3">
-            <ViewStars />
-            <List items={items}
-                ItemView={ItemViewStock} />
-        </div>
-    </Page>
-    */
     let searchOrder: SearchOrder = 'miRateDesc';
     let searchParam = {
         key: searchKey,

@@ -2,7 +2,7 @@ import { MyPageStore } from "app/MyPageStore";
 import { BrMi } from "uqs";
 import { Blog } from "uqs/BrMi";
 
-export class BlogsStore extends MyPageStore {
+export class StoreBlogs extends MyPageStore {
     yumi: BrMi.UqExt;
     items: Blog[];
 

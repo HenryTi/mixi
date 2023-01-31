@@ -1,7 +1,10 @@
 import { ViewStockRow } from "app/coms/ItemViewStock";
+import { useUqApp } from "app/MyUqApp";
+import { useNavigate } from "react-router-dom";
 import { List, useNav } from "tonwa-com";
 import { Stock, StockValue } from "uqs/BrMi";
 import { PageStockInfo } from "../StockInfo";
+import { toStock } from "../StockInfo/routeStock";
 
 interface ViewStockListProps {
     stocks: (Stock & StockValue)[];
@@ -15,9 +18,12 @@ interface ItemViewStockProps {
 }
 
 export function ItemViewStock({ value }: ItemViewStockProps) {
-    let nav = useNav();
+    //let nav = useNav();
+    const { storeApp } = useUqApp();
+    const navigate = useNavigate();
     function onClick() {
-        nav.open(<PageStockInfo stock={value} />);
+        storeApp.stock = value;
+        navigate(toStock(value.id));
     }
     function renderRowRight(value: Stock & StockValue): JSX.Element {
         return null;

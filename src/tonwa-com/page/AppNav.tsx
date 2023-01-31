@@ -21,7 +21,7 @@ export class AppNav extends StackNav<StackItem> {
     private navigateFunc: NavigateFunction;
 
     init(initPage: React.ReactNode, navigateFunc: NavigateFunction) {
-        if (this.navigateFunc) return;
+        // if (this.navigateFunc) return;
         this.navigateFunc = navigateFunc;
         if (initPage) {
             this.data.stack.splice(0);

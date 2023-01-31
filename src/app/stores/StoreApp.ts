@@ -1,7 +1,7 @@
 import { User } from "tonwa-uq";
 import { BrMi, UQs } from "uqs";
 import { proxy, ref } from "valtio";
-import { Holding, Industry, Market, Stock, StockValue } from "uqs/BrMi";
+import { Group, Holding, Industry, Market, Stock, StockValue } from "uqs/BrMi";
 import { MGroup, MiGroup, MIndustry } from "./MGroup";
 import { MiGroups, MIndustries, MRootIndustries } from "./MGroups";
 import { MiAccount } from "./MiAccount";
@@ -25,6 +25,8 @@ export class StoreApp {
     miGroups: MiGroups;
     industries: MIndustries;
     rootIndustries: MRootIndustries;
+    group: MGroup;   // after click group，set current group，for show group stocks
+    stock: Stock & StockValue; // after click stock
 
     stocksMyAll: (Stock & StockValue)[];
     stocksMyBlock: (Stock & StockValue)[];
@@ -46,6 +48,12 @@ export class StoreApp {
 
     stockFromId(stockId: number): Stock & StockValue {
         return this.stocksMyAll.find(v => v.id === stockId);
+    }
+
+    async loadMiAccountFromId(id: number) {
+        let ret = this.miAccounts.accounts.find(v => v.state.id === id);
+        await ret.loadItems();
+        return ret;
     }
 
     async loadStock(stockId: number): Promise<Stock & StockValue> {

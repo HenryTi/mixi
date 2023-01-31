@@ -1,9 +1,10 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export interface DropdownAction {
     icon?: string;
     caption?: string;
-    action?: () => void;
+    action?: (() => void) | string;
     iconClass?: string;
     captionClass?: string;
 }
@@ -107,19 +108,26 @@ export class DropdownActions extends React.Component<DropdownActionsProps, Dropd
                             i = <i className={'me-2  fa-fw fa ' + icon + ' ' + iconClass}
                                 aria-hidden={true}></i>;
                         }
-                        if (action === undefined)
+                        if (action === undefined) {
                             return <h6 className="dropdown-header">{i} {caption}</h6>;
-                        let onMenuItemClick = (evt: React.MouseEvent<HTMLAnchorElement>) => {
-                            evt.preventDefault();
-                            action();
                         }
-                        let onTouchStart = (evt: React.TouchEvent<HTMLAnchorElement>) => {
-                            action();
+                        let content = <>{i} <span className={captionClass || itemCaptionClass}>{caption}</span></>;
+                        if (typeof action === 'function') {
+                            let onMenuItemClick = (evt: React.MouseEvent<HTMLAnchorElement>) => {
+                                evt.preventDefault();
+                                (action as () => void)();
+                            }
+                            let onTouchStart = (evt: React.TouchEvent<HTMLAnchorElement>) => {
+                                (action as () => void)();
+                            }
+                            return <a className="dropdown-item" key={index} href="#/"
+                                onClick={onMenuItemClick} onTouchStart={onTouchStart}
+                            >{content}</a>
                         }
-                        // eslint-disable-next-line
-                        return <a className="dropdown-item" key={index} href="#/"
-                            onClick={onMenuItemClick} onTouchStart={onTouchStart}
-                        >{i} <span className={captionClass || itemCaptionClass}>{caption}</span></a>
+                        else {
+                            let to = action as string;
+                            return <Link className="dropdown-item" key={index} to={to}>{content}</Link>
+                        }
                     })
                 }
             </div>

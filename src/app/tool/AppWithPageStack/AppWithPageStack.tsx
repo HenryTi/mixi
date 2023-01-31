@@ -6,6 +6,7 @@ import { MainPage } from "../../MainPage";
 export function AppWithPageStack() {
     let appNav = useAppNav();
     let { isLogined } = useSnapshot(appNav.response);
+    console.log('isLogined', isLogined);
     if (isLogined !== true) {
         return <AppLogin />;
     }

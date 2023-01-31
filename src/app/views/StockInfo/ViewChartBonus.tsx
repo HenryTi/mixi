@@ -1,9 +1,7 @@
 import { Chart } from 'react-chartjs-2';
-import { usePageStore } from 'tonwa-uq-com';
 import { StoreStockInfo, GFunc, SlrForEarning } from "../../stores";
 
-export function ViewChartBonus() {
-    const storeStockInfo = usePageStore<StoreStockInfo>();
+export function ViewChartBonus({ storeStockInfo }: { storeStockInfo: StoreStockInfo; }) {
     let { predictBonusData, dividents } = storeStockInfo;
     if (dividents !== undefined) {
         let len = dividents.length;

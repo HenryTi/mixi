@@ -5,6 +5,9 @@ import { PageProps } from "./PageProps";
 import { usePageTemplate } from "./PageTemplate";
 
 export function Error(props: PageProps) {
+    return <div>
+        Error.tsx
+    </div>
     let nav = useNav();
     let { appNav } = nav;
     let { errorPosition } = usePageTemplate(props.template);

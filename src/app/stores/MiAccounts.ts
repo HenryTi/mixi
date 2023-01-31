@@ -45,6 +45,10 @@ export class MiAccounts {
         this.accounts = accounts;
     }
 
+    accountFromId(id: number) {
+        return this.accounts.find(v => v.state.id === id);
+    }
+
     accountsFromIds(ids: number[]): MiAccount[] {
         let ret: MiAccount[] = [];
         let len = this.accounts.length;

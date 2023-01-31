@@ -1,8 +1,10 @@
 import { FormRow, FormRowsView } from "app/coms";
 import { useUqApp } from "app/MyUqApp";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { FA, Page, useNav } from "tonwa-com";
 import { LinkMiRateAvg, trackCaption } from "./Links";
+import { pathSetTrackDay } from "./routeFind";
 import { ViewFindStock } from "./ViewFindStock";
 
 function numberToDate(value: number) {
@@ -29,13 +31,13 @@ export function PageTrack() {
 }
 
 export function PageSetTrackDay() {
-    const nav = useNav();
+    // const nav = useNav();
+    const navigate = useNavigate();
     const uqApp = useUqApp();
     const { register, handleSubmit, watch, formState: { errors } } = useForm({ mode: 'onBlur' });
     async function onSubmit(data: any) {
         uqApp.storeApp.state.trackDay = data['value'];
-        nav.close();
-        nav.open(<PageTrack />);
+        navigate(pathSetTrackDay, { replace: true });
     }
     function checkDate(value: number) {
         let date = numberToDate(value);

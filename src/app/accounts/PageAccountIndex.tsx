@@ -7,8 +7,17 @@ import { ItemViewHolding } from "./ItemViewHolding";
 import { ButtonCashActs } from "./ButtonCashActs";
 import { ViewNote } from "./ViewNote";
 import { useSnapshot } from "valtio";
+import { useParams } from "react-router-dom";
+import { useUqApp } from "app/MyUqApp";
+import { useQuery } from "react-query";
 
-export function PageAccount({ miAccount }: { miAccount: MiAccount }) {
+export function PageAccountIndex() {
+    // { miAccount }: { miAccount: MiAccount };
+    const { id } = useParams();
+    const { storeApp } = useUqApp();
+    const { data: miAccount } = useQuery('miAccountLoadItems', async function () {
+        return await storeApp.loadMiAccountFromId(Number(id));
+    });
     function valueToString(value: number, suffix: string | JSX.Element = undefined): JSX.Element {
         if (isNaN(value) === true) return <>-</>;
         return <>{(value ?? 0).toLocaleString(undefined, nFormat1)}{suffix}</>;
@@ -61,7 +70,7 @@ export function PageAccount({ miAccount }: { miAccount: MiAccount }) {
             </div>
 
             <div className="mb-3 mx-3 d-flex">
-                <ButtonBuy account={miAccount} />
+                <ButtonBuy />
                 <ButtonCashActs miAccount={miAccount} />
             </div>
 

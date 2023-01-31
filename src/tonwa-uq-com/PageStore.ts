@@ -1,4 +1,6 @@
+import { useUqApp } from 'app';
 import { useContext } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { Nav, useNav } from "tonwa-com";
 import { UqApp, UqAppContext } from "./UqApp";
 
@@ -13,7 +15,7 @@ export abstract class PageStore<UQApp extends UqApp<UQS> = any, UQS = any, P = a
         this._uqApp = uqApp;
         this.uqs = uqApp.uqs;
         this.nav = nav;
-        let parent = nav.getPageStore();
+        // let parent = nav.getPageStore();
         this.parent = parent as P;
     }
     initOnce(): Promise<void> {
@@ -35,6 +37,25 @@ export abstract class PageStore<UQApp extends UqApp<UQS> = any, UQS = any, P = a
 
     async init(): Promise<void> {
     }
+}
+
+export function useRouteStore<T extends PageStore>(): T {
+    // let nav = useNav();
+    /*
+    let uqApp = useContext<UqApp>(UqAppContext);
+    let store: T = nav.getPageTopStore();
+    if (store === undefined) {
+        store = initStore();
+        store.setUqAppAndParent(uqApp, nav);
+        nav.setPageStore(store);
+    }
+    */
+    const uqApp = useUqApp();
+    const store = useOutletContext<T>();
+    store.setUqAppAndParent(uqApp, undefined);
+    //let ret = store.initOnce();
+    //if (ret !== null) throw ret;
+    return store;
 }
 
 export function usePageStoreInit<T extends PageStore>(initStore: () => T): T {
