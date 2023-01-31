@@ -1,0 +1,19 @@
+{
+    "devs": {
+        "bz": {
+            "name": "bizdev",
+            "alias": "bz"
+        },
+        "br": {
+            "name": "bruce",
+            "alias": "br"
+        }
+    },
+    "uqs": [
+        {
+            "dev": "br",
+            "name": "yumi",
+            "alias": "Mi"
+        }
+    ]
+}

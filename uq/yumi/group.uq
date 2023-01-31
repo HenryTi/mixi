@@ -1,0 +1,52 @@
+ID Group LOCAL (
+	id,
+	key no,
+	name char(50),
+);
+
+IX *UserGroup (
+	ix user,
+	xi Group,
+);
+
+IX *UserAllStock (
+	ix user,
+	xi Stock,
+);
+
+IX *UserBlockStock (
+	ix user,
+	xi Stock,
+);
+
+-- Industry stock, Market stock,
+IX *GroupStock (
+	ix,					-- group
+	xi,					-- Stock
+	seq,
+);
+
+QUERY StockUsing (
+	stock ID,
+)
+RETURNS accounts (
+	account ID,
+)
+RETURNS groups (
+	group ID,
+) {
+	INTO accounts SELECT a.xi as account
+		FROM UserAccount as a
+		WHERE a.ix=$user 
+			AND exists(
+				SELECT b.xi 
+					FROM AccountHolding as b 
+					JOIN Holding as c ON b.xi=c.id 
+					WHERE b.ix=a.xi AND c.stock=stock
+			);
+
+	INTO groups SELECT a.xi as [group]
+		FROM UserGroup as a
+		WHERE a.ix=$user 
+			AND exists(SELECT b.xi FROM GroupStock as b WHERE b.ix=a.xi AND b.xi=stock);
+};
