@@ -4,6 +4,8 @@
 import { PageTabs, Tab, FA, useT } from "tonwa-com";
 import { appT } from "./res";
 import { TabHome, TabMe, TabFind } from './views';
+import { Chart, registerables } from 'chart.js';
+/*
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -14,7 +16,9 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
-
+*/
+Chart.register(...registerables);
+/*
 ChartJS.register(
     CategoryScale,
     LinearScale,
@@ -24,7 +28,7 @@ ChartJS.register(
     Tooltip,
     Legend
 );
-
+*/
 export function MainPage() {
     let t = useT(appT);
     function TabTag({ caption, icon }: { caption?: string | JSX.Element; icon?: string; }) {
