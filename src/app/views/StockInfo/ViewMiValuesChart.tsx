@@ -1,9 +1,8 @@
 import { Chart } from 'react-chartjs-2';
-import { usePageStore } from 'tonwa-uq-com';
 import { StoreStockInfo, GFunc } from "../../stores";
 
-export function ViewMivaluesChart() {
-    const { mivalues } = usePageStore<StoreStockInfo>();
+export function ViewMivaluesChart({ storeStockInfo }: { storeStockInfo: StoreStockInfo; }) {
+    const { mivalues } = storeStockInfo;
     let len = mivalues.length;
     if (len <= 0)
         return <></>;

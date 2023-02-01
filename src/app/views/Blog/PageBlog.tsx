@@ -1,8 +1,13 @@
+import { StoreBlogs } from 'app/stores';
 import { marked } from 'marked';
+import { useParams } from 'react-router-dom';
 import { Page } from "tonwa-com";
-import { Blog } from "uqs/BrMi";
+import { useRouteStore } from 'tonwa-uq-com';
 
-export function PageBlog({ blog }: { blog: Blog }) {
+export function PageBlog() {
+    const blogsStore = useRouteStore<StoreBlogs>();
+    const { id } = useParams();
+    let blog = blogsStore.items.find(v => v.id === Number(id));
     const { caption, content } = blog;
     return <Page header={caption}>
         <div className='p-3'>

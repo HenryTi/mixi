@@ -1,12 +1,12 @@
 import { useContext } from 'react';
-import { AppConfig, UqApp, UqAppContext, UqAppView/*, useUqStore, Store */ } from "tonwa-uq-com";
-import { Uq, UqConfig, UqQuery } from 'tonwa-uq';
-import { BrMi, UQs, uqsSchema } from "uqs";
+import { AppConfig, UqApp, UqAppContext, ViewUqApp/*, useUqStore, Store */ } from "tonwa-uq-com";
+import { UqConfig, UqQuery } from 'tonwa-uq';
+import { UQs, uqsSchema } from "uqs";
 //import { Item, Post, EnumRole, EnumRoleOp, EnumAccount } from "uqs/JkMe";
 import uqconfigJson from '../uqconfig.json';
 //import { RoleNames } from './RoleNames';
 import { proxy } from 'valtio';
-import { AppRoutes } from './tool';
+import { ViewsRoutes } from './views';
 import { MiNet } from './tool';
 import { StoreApp } from './stores';
 
@@ -77,7 +77,7 @@ export class MyUqApp extends UqApp<UQs> {
         this.unitBizDate = tz.unitBizDate ?? 1;
     }
 
-    protected override async loadAfterLogin(): Promise<void> {
+    protected override async loadOnLogined(): Promise<void> {
         this.miNet = new MiNet(this.uqAppState.user);
         let { BrMi } = this.uqs;
         this.storeApp = new StoreApp(this);
@@ -90,8 +90,8 @@ export class MyUqApp extends UqApp<UQs> {
 
 const uqConfigs = uqConfigsFromJson(uqconfigJson);
 const uqApp = new MyUqApp(appConfig, uqConfigs, uqsSchema);
-export function MyUqAppView() {
-    return <UqAppView uqApp={uqApp}>
-        <AppRoutes />
-    </UqAppView>
+export function ViewUqAppMy() {
+    return <ViewUqApp uqApp={uqApp}>
+        <ViewsRoutes />
+    </ViewUqApp>
 }

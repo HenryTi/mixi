@@ -1,12 +1,11 @@
-import { usePageStore } from "tonwa-uq-com";
 import { ButtonBlockStock } from "app/coms/ButtonBlockStock";
 import { ButtonPinStock } from "app/coms/ButtonPinStock";
 import { ViewStockRow } from "app/coms/ItemViewStock";
 import { ViewStockLink } from "app/coms/ViewStockLink";
 import { StoreStockInfo } from "app/stores";
 
-export function ViewBaseInfo() {
-    const { stock, isBlock } = usePageStore<StoreStockInfo>();
+export function ViewBaseInfo({ storeStockInfo }: { storeStockInfo: StoreStockInfo; }) {
+    const { stock, isBlock } = storeStockInfo;
     let closeLevelWhenRemoved = 1;
     let pinStock = <div className="d-flex align-self-stretch align-items-center">
         <ViewStockLink stock={stock} />

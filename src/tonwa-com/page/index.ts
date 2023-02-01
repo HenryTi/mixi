@@ -8,4 +8,6 @@ export * from './AppTabsTemplate';
 export * from './PageTabs';
 export * from './StackContainer';
 export * from './PageTemplate';
+export * from './usePromiseResult';
 export * from './usePromise';
+export * from './PageTabsLayout';

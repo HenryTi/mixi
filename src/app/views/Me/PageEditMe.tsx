@@ -1,35 +1,32 @@
 import { useSnapshot } from "valtio";
 import { Page, useT, FA, Detail, BandString, Sep, BandCom, useNav } from "tonwa-com";
-import { ChangePassword, UserQuit } from "tonwa-uq-com";
 import { appT } from '../../res';
 import { useUqApp } from "app/MyUqApp";
-import { AppLogout } from "app/tool/AppWithTabs/AppImage";
 import { meT } from "./meRes";
+import { useNavigate } from "react-router-dom";
+import { pathChangePassword, pathEditMe, pathLogout, pathUserQuit } from "./routeMe";
 
-export function PageEditMe() {
-    let nav = useNav();
-    let app = useUqApp();
-    let user = useSnapshot(app.user);
+export function PageEditMeIndex() {
+    const navigate = useNavigate();
+    let uqApp = useUqApp();
+    let { user } = useSnapshot(uqApp.uqAppState);
     let t = useT(meT, appT);
 
     let onValuesChanged = async (values: { name: string; value: any; preValue: any; }) => {
         let { name, value } = values;
-        app.setUserProp(name, value);
+        uqApp.setUserProp(name, value);
     }
 
     let onExit = () => {
-        //app.auth.showLogout();
-        nav.open(<AppLogout />);
+        navigate(pathLogout);
     }
 
     let changePassword = async () => {
-        nav.open(<ChangePassword />);
-        //await app.auth.changePassword();
+        navigate(pathEditMe() + pathChangePassword);
     }
 
     let userQuit = async () => {
-        nav.open(<UserQuit />)
-        //await app.auth.userQuit();
+        navigate(pathUserQuit);
     }
 
     //<BandImage label="头像" name="icon" />

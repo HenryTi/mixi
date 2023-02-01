@@ -13,7 +13,7 @@ import { ViewUser } from "../ViewUser";
 export function ViewAdmin() {
     let store = usePageStore<UnitRoleStore>();
     let { state, onAdminAdded } = store;
-    let user = useSnapshot(store.uqApp.user);
+    let user = useSnapshot(store.uqApp.uqAppState.user);
     let { unitRoles } = state;
     let { admins } = unitRoles;
     let listEditContext = new ListEditContext<UserUnit>(admins, propertyOf<UserUnit>('unit'));

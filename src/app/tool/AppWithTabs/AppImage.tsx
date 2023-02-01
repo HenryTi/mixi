@@ -1,8 +1,10 @@
+import { useLocation } from "react-router-dom";
 import { Login, Logout, Register } from "tonwa-uq-com";
 import { LoginTop, PrivacyLink } from "../brand";
 
 export function AppLogin() {
-    return <Login loginTop={<LoginTop />} privacy={<PrivacyLink />} withBack={false} />;
+    const { state } = useLocation();
+    return <Login url={state} loginTop={<LoginTop />} privacy={<PrivacyLink />} withBack={false} />;
 }
 
 export function AppRegister() {

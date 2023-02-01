@@ -5,7 +5,7 @@ import { Stock, StockValue } from 'uqs/BrMi';
 import { StoreStockInfo, GFunc } from '../../stores';
 
 export function PageProfilDetail({ stock }: { stock: Stock & StockValue }) {
-    const storeStockInfo = usePageStoreInit(() => new StoreStockInfo(stock));
+    const storeStockInfo = usePageStoreInit(() => new StoreStockInfo(1));
     const { baseItem, seasonData } = storeStockInfo;
     const { name, code, day } = baseItem;
 

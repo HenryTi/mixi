@@ -445,19 +445,29 @@
 }
 
 .tonwa-page-header {
-    background-color: aquamarine;
+    background-color: blue;
+    color: white;
 }
 
-.tonwa-page-header-content {
-    background-color: aqua;
+.tonwa-page-header>.container {
+    background-color: darkblue;
 }
+
+.tonwa-page-content {
+    background-color: #e0e0e0;
+}
+
+.tonwa-page-content>.container {
+    background-color: white;
+}
+
 
 .tonwa-page-footer {
-    background-color: bisque;
+    background-color: #e8e8e8;
 }
 
-.tonwa-page-footer-content {
-    background-color: beige;
+.tonwa-page-footer>.container {
+    background-color: #f0f0f0;
 }
 
 .tonwa-page-tabs {
@@ -465,9 +475,10 @@
 }
 
 .tonwa-page {
-    flex-grow: 1;
     display: flex;
+    flex: 1 1 auto !important;
     flex-direction: column;
+    min-height: 100%;
 }
 
 .tonwa-page-full {
@@ -512,6 +523,14 @@ div.tonwa-list-item:hover {
 
 .tonwa-bg-gray-4 {
     background-color: #e0e0e0;
+}
+
+.tonwa-bg-gray-5 {
+    background-color: #d0d0d0;
+}
+
+.tonwa-bg-gray-6 {
+    background-color: #c0c0c0;
 }
 
 @media (min-width: 576px) {

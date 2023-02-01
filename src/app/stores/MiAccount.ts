@@ -12,11 +12,11 @@ interface MiAccountState {
 }
 
 export class MiAccount {
-    protected readonly store: StoreApp;
+    protected readonly storeApp: StoreApp;
     readonly state: Account & AccountValue & MiAccountState;
 
     constructor(store: StoreApp, account: Account & AccountValue) {
-        this.store = store;
+        this.storeApp = store;
         this.state = proxy<Account & AccountValue & MiAccountState>({
             id: null,
             no: null,
@@ -40,23 +40,23 @@ export class MiAccount {
             holdingStocks.sort(holdingMiRateSorter);
             return;
         }
-        let { yumi } = this.store;
+        let { yumi } = this.storeApp;
         let ret = await yumi.IX<Holding & Portfolio>({
             IX: yumi.AccountHolding,
             ix: id,
             IDX: [yumi.Holding, yumi.Portfolio]
         });
-        let noneStocks = ret.filter(v => !this.store.stockFromId(v.stock));
+        let noneStocks = ret.filter(v => !this.storeApp.stockFromId(v.stock));
         if (noneStocks.length > 0) {
             await yumi.ActIX({
                 IX: yumi.UserAllStock,
                 values: noneStocks.map(v => ({ ix: undefined, xi: v.stock }))
             });
-            await this.store.loadMyAll();
+            await this.storeApp.loadMyAll();
         }
         let list = ret.map(v => {
             let { id, stock: stockId, cost, everBought } = v;
-            let stock = this.store.stockFromId(stockId);
+            let stock = this.storeApp.stockFromId(stockId);
             let holdingStock = new HoldingStock(this, id, stock, v.quantity, cost);
             holdingStock.everBought = everBought;
             return holdingStock;
@@ -91,15 +91,15 @@ export class MiAccount {
     async buyNewHolding(stockId: number, price: number, quantity: number) {
         const { holdingStocks, cash } = this.state;
         let holdingId: number;
-        let stock = this.store.stockFromId(stockId);
+        let stock = this.storeApp.stockFromId(stockId);
         if (!stock) {
-            stock = await this.store.loadStock(stockId);
+            stock = await this.storeApp.loadStock(stockId);
             if (!stock) throw new Error(`stock ${stockId} not exists`);
         }
         let index = holdingStocks.findIndex(v => v.stock === stockId);
         if (index < 0) {
             holdingId = await this.saveHolding(stockId);
-            await this.store.addMyAll(stock);
+            await this.storeApp.addMyAll(stock);
             let hs = new HoldingStock(this, holdingId, stock, quantity, price * quantity);
             hs.setQuantity(quantity);
             // 新买，cost已经有了，不需要再changeCost
@@ -136,7 +136,7 @@ export class MiAccount {
 
     private async saveHolding(stock: number): Promise<number> {
         const { id } = this.state;
-        let ret = await this.store.yumi.Acts({
+        let ret = await this.storeApp.yumi.Acts({
             holding: [{ account: id, stock, everBought: 1 }]
         });
         return ret.holding[0];
@@ -145,7 +145,7 @@ export class MiAccount {
     private async bookHolding(holdingId: number, price: number, quantity: number): Promise<void> {
         this.recalc();
         const { id, miValue, market, count, cash } = this.state;
-        await this.store.yumi.Acts({
+        await this.storeApp.yumi.Acts({
             accountValue: [{
                 id: id,
                 miValue: miValue,
@@ -175,7 +175,7 @@ export class MiAccount {
     private async bookSetCost(holdingId: number, cost: number): Promise<void> {
         this.recalc();
         const { id, miValue, market, count, cash } = this.state;
-        await this.store.yumi.Acts({
+        await this.storeApp.yumi.Acts({
             accountValue: [{
                 id: id,
                 miValue: miValue,
@@ -250,7 +250,7 @@ export class MiAccount {
     }
 
     private async cashAct(cash: number): Promise<void> {
-        await this.store.yumi.Acts({
+        await this.storeApp.yumi.Acts({
             accountValue: [{ id: this.state.id, cash }]
         });
         this.state.cash = cash;

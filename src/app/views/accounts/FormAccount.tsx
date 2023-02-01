@@ -3,6 +3,7 @@ import { formatNumber } from "app/coms/ItemViewStock";
 import { HoldingStock } from "app/stores";
 import { MiAccount } from "app/stores/MiAccount";
 import { useForm } from "react-hook-form";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import { Page, useNav } from "tonwa-com";
 
 interface AccountProps {
@@ -107,6 +108,22 @@ function FormAct({ onSubmit, formRows }: FormActProps) {
     return <form onSubmit={handleSubmit(onSubmit)} className="container my-3">
         <FormRowsView rows={formRows} register={register} errors={errors} />
     </form>
+}
+
+export function PageStockBuy() {
+    const miAccount = useOutletContext<MiAccount>();
+    const navigate = useNavigate();
+    return <Page header="买入">
+
+    </Page>;
+}
+
+export function PageStockSell() {
+    const miAccount = useOutletContext<MiAccount>();
+    const navigate = useNavigate();
+    return <Page header="卖出">
+
+    </Page>;
 }
 
 /*
@@ -279,8 +296,9 @@ export class VChangeCost extends VForm {
 }
 */
 
-export function PageCashIn({ miAccount }: AccountProps) {
-    const nav = useNav();
+export function PageCashIn() {
+    const miAccount = useOutletContext<MiAccount>();
+    const navigate = useNavigate();
     const formRows: FormRow[] = [
         { name: 'value', label: '调入金额', type: 'number', options: { validate: checkCash } },
         { type: 'submit' },
@@ -292,7 +310,7 @@ export function PageCashIn({ miAccount }: AccountProps) {
     async function onSubmit(data: any) {
         let { value } = data;
         await miAccount.cashIn(value);
-        nav.close();
+        navigate(-1);
     }
     return <Page header="调入资金">
         <FormAct
@@ -302,8 +320,9 @@ export function PageCashIn({ miAccount }: AccountProps) {
     </Page>;
 }
 
-export function PageCashOut({ miAccount }: AccountProps) {
-    const nav = useNav();
+export function PageCashOut() {
+    const miAccount = useOutletContext<MiAccount>();
+    const navigate = useNavigate();
     const formRows: FormRow[] = [
         { name: 'value', label: '调出金额', type: 'number', options: { validate: checkCash } },
         { type: 'submit' },
@@ -316,7 +335,7 @@ export function PageCashOut({ miAccount }: AccountProps) {
     async function onSubmit(data: any) {
         let { value } = data;
         await miAccount.cashOut(value);
-        nav.close();
+        navigate(-1);
     }
     return <Page header="调出资金">
         <FormAct
@@ -326,8 +345,9 @@ export function PageCashOut({ miAccount }: AccountProps) {
     </Page>;
 }
 
-export function PageCashAdjust({ miAccount }: AccountProps) {
-    const nav = useNav();
+export function PageCashAdjust() {
+    const miAccount = useOutletContext<MiAccount>();
+    const navigate = useNavigate();
     const formRows: FormRow[] = [
         { name: 'value', label: '调整金额', type: 'number', options: { validate: checkCash } },
         { type: 'submit' },
@@ -340,7 +360,7 @@ export function PageCashAdjust({ miAccount }: AccountProps) {
     async function onSubmit(data: any) {
         let { value } = data;
         await miAccount.cashAdjust(value);
-        nav.close();
+        navigate(-1);
     }
     return <Page header="调整资金">
         <FormAct
@@ -350,8 +370,9 @@ export function PageCashAdjust({ miAccount }: AccountProps) {
     </Page>;
 }
 
-export function PageCashInit({ miAccount }: AccountProps) {
-    const nav = useNav();
+export function PageCashInit() {
+    const miAccount = useOutletContext<MiAccount>();
+    const navigate = useNavigate();
     const formRows: FormRow[] = [
         { name: 'value', label: '资金数量', type: 'number', options: { validate: checkCash } },
         { type: 'submit' },
@@ -362,7 +383,7 @@ export function PageCashInit({ miAccount }: AccountProps) {
     async function onSubmit(data: any) {
         let { value } = data;
         await miAccount.cashInit(value);
-        nav.close();
+        navigate(-1);
     }
     return <Page header="初期资金">
         <FormAct

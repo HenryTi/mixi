@@ -5,7 +5,7 @@ import { useUqAppBase } from "../UqApp";
 
 export function Me({ right }: { right?: JSX.Element; }) {
     let uqApp = useUqAppBase();
-    let user = useSnapshot(uqApp.user);
+    let user = useSnapshot(uqApp.uqAppState.user);
 
     return <LMR className="px-3 py-3 border-bottom align-items-center">
         <span>

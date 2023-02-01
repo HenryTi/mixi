@@ -1,12 +1,12 @@
 import { useSnapshot } from "valtio";
 import { useNav, Page, UPage } from "tonwa-com"
-import { useUqApp } from "App";
 import { AppLogout } from "./AppImage";
+import { useUqApp } from "app/MyUqApp";
 
 export function TrialPage1({ id }: { id: number }) {
     let nav = useNav();
     let uqApp = useUqApp();
-    let user = useSnapshot(uqApp.user);
+    let { user } = useSnapshot(uqApp.uqAppState);
     function onClick() {
         nav.open(<TrialPage2 />);
     }

@@ -10,6 +10,7 @@ import { FormErrors } from 'tonwa-com';
 import { useUqAppBase } from '../UqApp';
 import { Forget, Register } from './register/Register';
 import { getSender } from './tools';
+import { useNavigate } from 'react-router-dom';
 
 /*
 const schema: Schema = [
@@ -20,16 +21,18 @@ const schema: Schema = [
 */
 
 interface Props {
+    url?: string;
     withBack?: boolean;
     loginTop?: JSX.Element;
     privacy: JSX.Element;
     callback?: (user: User) => Promise<void>
 }
 
-export function Login({ withBack, loginTop, privacy, callback }: Props) {
+export function Login({ url, withBack, loginTop, privacy, callback }: Props) {
     let nav = useNav();
     let uqApp = useUqAppBase();
     let { userApi, guest } = uqApp;
+    const navigate = useNavigate();
     let onLogin = async (un: string, pwd: string): Promise<boolean> => {
         let user = await userApi.login({
             user: un,
@@ -39,8 +42,9 @@ export function Login({ withBack, loginTop, privacy, callback }: Props) {
 
         if (user === undefined) return false;
         console.log("onLoginSubmit: user=%s pwd:%s", user.name, user.token);
-        uqApp.logined(user);
+        await uqApp.logined(user);
         await callback?.(user);
+        if (url) navigate(url, { replace: true });
         return true;
     }
 

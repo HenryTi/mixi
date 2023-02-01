@@ -1,9 +1,8 @@
 import { Chart } from 'react-chartjs-2';
-import { usePageStore } from 'tonwa-uq-com';
 import { StoreStockInfo, GFunc } from "../../stores";
 
-export function ViewMiRatesChart() {
-    const { mirates } = usePageStore<StoreStockInfo>();
+export function ViewMiRatesChart({ storeStockInfo }: { storeStockInfo: StoreStockInfo; }) {
+    const { mirates } = storeStockInfo;
     let len = mirates.length;
     if (len <= 0) return <></>;
     let labels = [];
@@ -87,21 +86,23 @@ export function ViewMiRatesChart() {
         }
     ];
     const chartdataFull = { labels, datasets, };
-    const options: any = { scales: { 
-        y1: {
-            type: 'linear',
-            display: true,
-            position: 'left',
-        },
-        y2: {
-            type: 'linear',
-            display: true,
-            position: 'right',
-            grid: {
-                drawOnChartArea: false
+    const options: any = {
+        scales: {
+            y1: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+            },
+            y2: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                grid: {
+                    drawOnChartArea: false
+                }
             }
         }
-     } }
+    }
 
     return <Chart type='line' data={chartdataFull} options={options} />;
 }

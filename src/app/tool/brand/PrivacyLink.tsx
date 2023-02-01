@@ -1,20 +1,20 @@
-import { MouseEvent } from "react";
+import { Link, Route, Routes } from "react-router-dom";
 import { UPage, useNav } from "tonwa-com";
 
+export const pathPrivacy = '/privacy';
+export const routePrivacy = <>
+    <Route path={pathPrivacy} element={<PagePrivacy />} />
+</>;
+
 export function PrivacyLink() {
-    let nav = useNav();
-    function onClick(evt: MouseEvent<HTMLAnchorElement>) {
-        evt.preventDefault();
-        nav.open(<PrivacyPage />);
-    }
     return <div className="d-flex p-3 align-items-center justify-content-center bg-light border-top">
-        <a href="/#" className="small d-inline-block " onClick={onClick}>
+        <Link to={pathPrivacy} className="small d-inline-block ">
             隐私政策
-        </a>
+        </Link>
     </div>;
 }
 
-function PrivacyPage() {
+export function PagePrivacy() {
     return <UPage header="隐私政策">
         <div className="d-grid p-3">
             {privacy.split('\n').map((v, index) => <p key={index}>{v}</p>)}

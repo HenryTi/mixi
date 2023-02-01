@@ -2,18 +2,17 @@ import { nFormat1, smallPercent } from "app/coms/ItemViewStock";
 import { useUqApp } from "app/MyUqApp";
 import { MiAccount } from "app/stores/MiAccount";
 import { FA, List, LMR, useNav } from "tonwa-com";
-import { PageAccount } from "./PageAccount";
+import { pathAccount } from "./routeAccount";
 
 export function ViewAccounts() {
     const { storeApp } = useUqApp();
     const { miAccounts } = storeApp;
-    const nav = useNav();
+    // const nav = useNav();
 
     async function onClickAccount(item: MiAccount) {
-        nav.open(async () => {
-            await item.loadItems();
-            return <PageAccount miAccount={item} />;
-        });
+        return pathAccount(item.state.id)
+        // await item.loadItems();
+        // return <PageAccount miAccount={item} />;
     }
 
     function ItemViewAccount({ value }: { value: MiAccount }) {

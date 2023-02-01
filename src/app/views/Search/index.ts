@@ -1,1 +1,1 @@
-export * from './PageSearch';
+export * from './routeSearch';

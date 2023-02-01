@@ -1,4 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Sep, Spinner } from "../coms";
 
 interface ItemProps<T> {
@@ -12,7 +13,7 @@ export interface ListPropsWithoutItems<T> {
     sep?: JSX.Element;
     none?: JSX.Element;
     loading?: JSX.Element;
-    onItemClick?: (item: T) => void;
+    onItemClick?: (item: T) => Promise<string | void> | string | void;
 }
 
 export interface ListProps<T> extends ListPropsWithoutItems<T> {
@@ -22,6 +23,7 @@ export interface ListProps<T> extends ListPropsWithoutItems<T> {
 
 export function List<T>(props: ListProps<T>) {
     let [showLoading, setShowLoding] = useState(false);
+    let navigate = useNavigate();
     let { items, className, itemKey, ItemView, onItemClick, onItemSelect, sep, none, loading } = props;
     className = className ?? '';
     useEffect(() => {
@@ -46,15 +48,24 @@ export function List<T>(props: ListProps<T>) {
     function onCheckChange(item: T, evt: ChangeEvent<HTMLInputElement>): void {
         onItemSelect(item, evt.currentTarget.checked);
     }
+    let onItemNav: (item: T) => void;
+    if (onItemClick) {
+        onItemNav = async (item: T): Promise<void> => {
+            let ret = await onItemClick(item);
+            if (ret) {
+                navigate(ret);
+            }
+        }
+    }
     if (onItemSelect) {
-        if (onItemClick) {
+        if (onItemNav) {
             renderItem = v => (
                 <div className="d-flex">
                     <label className="ps-3 pe-2 align-self-stretch d-flex align-items-center">
                         <input type="checkbox" className="form-check-input"
                             onChange={evt => onCheckChange(v, evt)} />
                     </label>
-                    <div className="flex-grow-1 cursor-pointer" onClick={() => onItemClick(v)}>
+                    <div className="flex-grow-1 cursor-pointer" onClick={() => onItemNav(v)}>
                         <ItemView value={v} />
                     </div>
                 </div>
@@ -73,13 +84,13 @@ export function List<T>(props: ListProps<T>) {
         }
     }
     else {
-        if (onItemClick) {
+        if (onItemNav) {
             className += ' tonwa-list-item'
         }
         renderItem = v => {
             let funcClick: any, cn: string;
-            if (onItemClick) {
-                funcClick = () => onItemClick(v);
+            if (onItemNav) {
+                funcClick = () => onItemNav(v);
                 cn = 'tonwa-list-item cursor-pointer';
             }
             return <div onClick={funcClick} className={cn}>

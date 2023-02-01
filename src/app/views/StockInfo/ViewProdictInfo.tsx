@@ -1,9 +1,8 @@
 import { Chart } from 'react-chartjs-2';
-import { usePageStore } from 'tonwa-uq-com';
 import { StoreStockInfo, GFunc, ErForEarning, SlrForEarning } from "../../stores";
 
-export function ViewPredictInfo() {
-    let { predictData, ypredict } = usePageStore<StoreStockInfo>();
+export function ViewPredictInfo({ storeStockInfo }: { storeStockInfo: StoreStockInfo; }) {
+    let { predictData, ypredict } = storeStockInfo;
     if (predictData === undefined)
         return <></>;
     let { e, b, r2, epre, l, lr2, lpre } = predictData;
