@@ -124,17 +124,17 @@ export function UPage(props: PageProps) {
     return <div ref={div} className="tonwa-page">
         <Suspense fallback={<PageSpinner />}>
             <div className='tonwa-page-header position-sticky top-0'>
-                <div className='container d-flex py-2'>
+                <div className='container px-0 d-flex py-2'>
                     {header}
                 </div>
             </div>
             <div className='tonwa-page-content flex-fill d-flex'>
-                <div className='container'>
+                <div className='container px-0'>
                     {children}
                 </div>
             </div>
             <div className='tonwa-page-footer position-sticky bottom-0'>
-                <div className='container'>
+                <div className='container px-0'>
                     {footer}
                 </div>
             </div>
