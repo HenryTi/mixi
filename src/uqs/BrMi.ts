@@ -1,6 +1,6 @@
-//=== UqApp builder created on Sat Jan 21 2023 11:24:18 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Wed Feb 01 2023 16:42:25 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, Uq, UqQuery, UqAction, UqID, UqIX, UqIDX } from "tonwa-uq";
+import { IDXValue, Uq, UqQuery, UqAction, UqID, UqIX, UqIDX, UqMap } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 
@@ -24,84 +24,84 @@ export interface IX {
 export interface Param$role_My {
 }
 export interface Return$role_MyAdmins {
-    id: number;
-    unit: number;
-    admin: number;
-    entity: string;
-    assigned: string;
+	id: number;
+	unit: number;
+	admin: number;
+	entity: string;
+	assigned: string;
 }
 export interface Return$role_MyRoles {
-    unit: number;
-    role: string;
+	unit: number;
+	role: string;
 }
 export interface Return$role_MyUnitProps {
-    unit: number;
-    props: string;
+	unit: number;
+	props: string;
 }
 export interface Result$role_My {
-    admins: Return$role_MyAdmins[];
-    roles: Return$role_MyRoles[];
-    unitProps: Return$role_MyUnitProps[];
+	admins: Return$role_MyAdmins[];
+	roles: Return$role_MyRoles[];
+	unitProps: Return$role_MyUnitProps[];
 }
 
 export interface Param$role_Unit_Users {
-    unit: number;
+	unit: number;
 }
 export interface Return$role_Unit_UsersUsers {
-    id: number;
-    user: number;
-    admin: number;
-    assigned: string;
-    name: string;
-    nick: string;
-    icon: string;
-    addBy: number;
+	id: number;
+	user: number;
+	admin: number;
+	assigned: string;
+	name: string;
+	nick: string;
+	icon: string;
+	addBy: number;
 }
 export interface Return$role_Unit_UsersRoles {
-    user: number;
-    role: string;
+	user: number;
+	role: string;
 }
 export interface Result$role_Unit_Users {
-    users: Return$role_Unit_UsersUsers[];
-    roles: Return$role_Unit_UsersRoles[];
+	users: Return$role_Unit_UsersUsers[];
+	roles: Return$role_Unit_UsersRoles[];
 }
 
 export interface Param$role_Unit_Add_Admin {
-    unit: number;
-    user: number;
-    admin: number;
-    assigned: string;
+	unit: number;
+	user: number;
+	admin: number;
+	assigned: string;
 }
 export interface Result$role_Unit_Add_Admin {
 }
 
 export interface Param$role_Unit_Del_Admin {
-    unit: number;
-    user: number;
-    admin: number;
+	unit: number;
+	user: number;
+	admin: number;
 }
 export interface Result$role_Unit_Del_Admin {
 }
 
 export interface Param$role_Unit_Add_User {
-    unit: number;
-    user: number;
-    assigned: string;
+	unit: number;
+	user: number;
+	assigned: string;
 }
 export interface Result$role_Unit_Add_User {
 }
 
 export interface Param$role_Unit_User_Role {
-    unit: number;
-    user: number;
-    action: string;
-    role: string;
+	unit: number;
+	user: number;
+	action: string;
+	role: string;
 }
 export interface Result$role_Unit_User_Role {
 }
 
 export interface Param$role_Unit_Quit_Owner {
-    unit: number;
+	unit: number;
 }
 export interface Result$role_Unit_Quit_Owner {
 }
@@ -109,14 +109,14 @@ export interface Result$role_Unit_Quit_Owner {
 export interface Param$poked {
 }
 export interface Return$pokedRet {
-    poke: number;
+	poke: number;
 }
 export interface Result$poked {
-    ret: Return$pokedRet[];
+	ret: Return$pokedRet[];
 }
 
 export interface Param$setMyTimezone {
-    _timezone: number;
+	_timezone: number;
 }
 export interface Result$setMyTimezone {
 }
@@ -124,115 +124,126 @@ export interface Result$setMyTimezone {
 export interface Param$getUnitTime {
 }
 export interface Return$getUnitTimeRet {
-    timezone: number;
-    unitTimeZone: number;
-    unitBizMonth: number;
-    unitBizDate: number;
+	timezone: number;
+	unitTimeZone: number;
+	unitBizMonth: number;
+	unitBizDate: number;
 }
 export interface Result$getUnitTime {
-    ret: Return$getUnitTimeRet[];
+	ret: Return$getUnitTimeRet[];
 }
 
 export interface Account extends ID {
-    no?: string;
-    name: string;
-    portion: number;
+	no?: string;
+	name: string;
+	portion: number;
 }
 
 export interface AccountInActs extends ID {
-    ID?: UqID<any>;
-    no?: string;
-    name: string;
-    portion: number;
+	ID?: UqID<any>;
+	no?: string;
+	name: string;
+	portion: number;
 }
 
 export interface UserAccount extends IX {
-    seq: number;
+	seq: number;
 }
 
 export interface Holding extends ID {
-    account: number;
-    stock: number;
-    everBought: number;
+	account: number;
+	stock: number;
+	everBought: number;
 }
 
 export interface HoldingInActs extends ID {
-    ID?: UqID<any>;
-    account: number | ID;
-    stock: number | ID;
-    everBought: number;
+	ID?: UqID<any>;
+	account: number | ID;
+	stock: number | ID;
+	everBought: number;
 }
 
 export interface AccountValue extends IDX {
-    id: number;
-    miValue?: number;
-    market?: number;
-    count?: number;
-    cash?: number;
-    $act?: number;
+	id: number;
+	miValue?: number;
+	market?: number;
+	count?: number;
+	cash?: number;
+	$act?: number;
 }export interface ActParamAccountValue {
-    id: number | IDXValue;
-    miValue?: number | IDXValue;
-    market?: number | IDXValue;
-    count?: number | IDXValue;
-    cash?: number | IDXValue;
-    $act?: number;
+	id: number|IDXValue;
+	miValue?: number|IDXValue;
+	market?: number|IDXValue;
+	count?: number|IDXValue;
+	cash?: number|IDXValue;
+	$act?: number;
 }
 
 export interface AccountHolding extends IX {
 }
 
 export interface Portfolio extends IDX {
-    id: number;
-    quantity?: number;
-    cost?: number;
-    $act?: number;
+	id: number;
+	quantity?: number;
+	cost?: number;
+	$act?: number;
 }export interface ActParamPortfolio {
-    id: number | IDXValue;
-    quantity?: number | IDXValue;
-    cost?: number | IDXValue;
-    $act?: number;
+	id: number|IDXValue;
+	quantity?: number|IDXValue;
+	cost?: number|IDXValue;
+	$act?: number;
 }
 
 export interface Transaction extends ID {
-    holding: number;
-    tick: any;
-    price: number;
-    quantity: number;
-    amount: number;
+	holding: number;
+	tick: any;
+	price: number;
+	quantity: number;
+	amount: number;
 }
 
 export interface TransactionInActs extends ID {
-    ID?: UqID<any>;
-    holding: number | ID;
-    tick: any;
-    price: number;
-    quantity: number;
-    amount: number;
+	ID?: UqID<any>;
+	holding: number | ID;
+	tick: any;
+	price: number;
+	quantity: number;
+	amount: number;
 }
 
 export interface Blog extends ID {
-    no?: string;
-    caption: string;
-    content: string;
+	no?: string;
+	caption: string;
+	content: string;
 }
 
 export interface BlogInActs extends ID {
-    ID?: UqID<any>;
-    no?: string;
-    caption: string;
-    content: string;
+	ID?: UqID<any>;
+	no?: string;
+	caption: string;
+	content: string;
+}
+
+
+
+export interface IDBlogTest extends ID {
+	d: any;
+}
+
+export interface IDBlogTestInActs extends ID {
+	ID?: UqID<any>;
+	d: any;
 }
 
 export interface Group extends ID {
-    no?: string;
-    name: string;
+	no?: string;
+	name: string;
 }
 
 export interface GroupInActs extends ID {
-    ID?: UqID<any>;
-    no?: string;
-    name: string;
+	ID?: UqID<any>;
+	no?: string;
+	name: string;
 }
 
 export interface UserGroup extends IX {
@@ -245,193 +256,193 @@ export interface UserBlockStock extends IX {
 }
 
 export interface GroupStock extends IX {
-    seq: number;
+	seq: number;
 }
 
 export interface ParamStockUsing {
-    stock: number;
+	stock: number;
 }
 export interface ReturnStockUsingAccounts {
-    account: number;
+	account: number;
 }
 export interface ReturnStockUsingGroups {
-    group: number;
+	group: number;
 }
 export interface ResultStockUsing {
-    accounts: ReturnStockUsingAccounts[];
-    groups: ReturnStockUsingGroups[];
+	accounts: ReturnStockUsingAccounts[];
+	groups: ReturnStockUsingGroups[];
 }
 
 export interface Market extends ID {
-    name: string;
-    currency: string;
+	name: string;
+	currency: string;
 }
 
 export interface MarketInActs extends ID {
-    ID?: UqID<any>;
-    name: string;
-    currency: string;
+	ID?: UqID<any>;
+	name: string;
+	currency: string;
 }
 
 export interface Industry extends ID {
-    name: string;
+	name: string;
 }
 
 export interface IndustryInActs extends ID {
-    ID?: UqID<any>;
-    name: string;
+	ID?: UqID<any>;
+	name: string;
 }
 
 export interface Stock extends ID {
-    market: number;
-    no?: string;
-    name: string;
-    rawId: number;
-    uno: string;
+	market: number;
+	no?: string;
+	name: string;
+	rawId: number;
+	uno: string;
 }
 
 export interface StockInActs extends ID {
-    ID?: UqID<any>;
-    market: number | ID;
-    no?: string;
-    name: string;
-    rawId: number | ID;
-    uno: string;
+	ID?: UqID<any>;
+	market: number | ID;
+	no?: string;
+	name: string;
+	rawId: number | ID;
+	uno: string;
 }
 
 export interface StockValue extends IDX {
-    id: number;
-    earning?: number;
-    divident?: number;
-    price?: number;
-    pvolumn?: number;
-    roe?: number;
-    volumn?: number;
-    date?: any;
-    dvRate?: number;
-    ttm?: number;
-    miRate?: number;
-    miValue?: number;
-    incValue?: number;
-    inc1?: number;
-    inc2?: number;
-    inc3?: number;
-    inc4?: number;
-    preInc?: number;
-    smoothness?: number;
-    gMiRate?: number;
-    gMiValue?: number;
-    gIncValue?: number;
-    gInc1?: number;
-    gInc2?: number;
-    gInc3?: number;
-    gInc4?: number;
-    gPreInc?: number;
-    gSmoothness?: number;
-    rMiRate?: number;
-    rMiValue?: number;
-    rIncValue?: number;
-    rInc1?: number;
-    rInc2?: number;
-    rInc3?: number;
-    rInc4?: number;
-    rPreInc?: number;
-    rSmoothness?: number;
-    $act?: number;
+	id: number;
+	earning?: number;
+	divident?: number;
+	price?: number;
+	pvolumn?: number;
+	roe?: number;
+	volumn?: number;
+	date?: any;
+	dvRate?: number;
+	ttm?: number;
+	miRate?: number;
+	miValue?: number;
+	incValue?: number;
+	inc1?: number;
+	inc2?: number;
+	inc3?: number;
+	inc4?: number;
+	preInc?: number;
+	smoothness?: number;
+	gMiRate?: number;
+	gMiValue?: number;
+	gIncValue?: number;
+	gInc1?: number;
+	gInc2?: number;
+	gInc3?: number;
+	gInc4?: number;
+	gPreInc?: number;
+	gSmoothness?: number;
+	rMiRate?: number;
+	rMiValue?: number;
+	rIncValue?: number;
+	rInc1?: number;
+	rInc2?: number;
+	rInc3?: number;
+	rInc4?: number;
+	rPreInc?: number;
+	rSmoothness?: number;
+	$act?: number;
 }export interface ActParamStockValue {
-    id: number | IDXValue;
-    earning?: number | IDXValue;
-    divident?: number | IDXValue;
-    price?: number | IDXValue;
-    pvolumn?: number | IDXValue;
-    roe?: number | IDXValue;
-    volumn?: number | IDXValue;
-    date?: any | IDXValue;
-    dvRate?: number | IDXValue;
-    ttm?: number | IDXValue;
-    miRate?: number | IDXValue;
-    miValue?: number | IDXValue;
-    incValue?: number | IDXValue;
-    inc1?: number | IDXValue;
-    inc2?: number | IDXValue;
-    inc3?: number | IDXValue;
-    inc4?: number | IDXValue;
-    preInc?: number | IDXValue;
-    smoothness?: number | IDXValue;
-    gMiRate?: number | IDXValue;
-    gMiValue?: number | IDXValue;
-    gIncValue?: number | IDXValue;
-    gInc1?: number | IDXValue;
-    gInc2?: number | IDXValue;
-    gInc3?: number | IDXValue;
-    gInc4?: number | IDXValue;
-    gPreInc?: number | IDXValue;
-    gSmoothness?: number | IDXValue;
-    rMiRate?: number | IDXValue;
-    rMiValue?: number | IDXValue;
-    rIncValue?: number | IDXValue;
-    rInc1?: number | IDXValue;
-    rInc2?: number | IDXValue;
-    rInc3?: number | IDXValue;
-    rInc4?: number | IDXValue;
-    rPreInc?: number | IDXValue;
-    rSmoothness?: number | IDXValue;
-    $act?: number;
+	id: number|IDXValue;
+	earning?: number|IDXValue;
+	divident?: number|IDXValue;
+	price?: number|IDXValue;
+	pvolumn?: number|IDXValue;
+	roe?: number|IDXValue;
+	volumn?: number|IDXValue;
+	date?: any|IDXValue;
+	dvRate?: number|IDXValue;
+	ttm?: number|IDXValue;
+	miRate?: number|IDXValue;
+	miValue?: number|IDXValue;
+	incValue?: number|IDXValue;
+	inc1?: number|IDXValue;
+	inc2?: number|IDXValue;
+	inc3?: number|IDXValue;
+	inc4?: number|IDXValue;
+	preInc?: number|IDXValue;
+	smoothness?: number|IDXValue;
+	gMiRate?: number|IDXValue;
+	gMiValue?: number|IDXValue;
+	gIncValue?: number|IDXValue;
+	gInc1?: number|IDXValue;
+	gInc2?: number|IDXValue;
+	gInc3?: number|IDXValue;
+	gInc4?: number|IDXValue;
+	gPreInc?: number|IDXValue;
+	gSmoothness?: number|IDXValue;
+	rMiRate?: number|IDXValue;
+	rMiValue?: number|IDXValue;
+	rIncValue?: number|IDXValue;
+	rInc1?: number|IDXValue;
+	rInc2?: number|IDXValue;
+	rInc3?: number|IDXValue;
+	rInc4?: number|IDXValue;
+	rPreInc?: number|IDXValue;
+	rSmoothness?: number|IDXValue;
+	$act?: number;
 }
 
 export interface IXIndustry extends IX {
 }
 
 export interface ParamSearchStock {
-    $orderSwitch: string;
-    key: string;
-    market: string;
-    smooth: number;
+	$orderSwitch: string;
+	key: string;
+	market: string;
+	smooth: number;
 }
 export interface ReturnSearchStock$page {
-    $order: number;
-    id: number;
-    market: number;
-    no: string;
-    name: string;
-    rawId: number;
-    earning: number;
-    divident: number;
-    price: number;
-    roe: number;
-    volumn: number;
-    dvRate: number;
-    ttm: number;
-    miRate: number;
-    miValue: number;
-    incValue: number;
-    inc1: number;
-    inc2: number;
-    inc3: number;
-    inc4: number;
-    preInc: number;
-    smoothness: number;
-    gMiRate: number;
-    gMiValue: number;
-    gIncValue: number;
-    gInc1: number;
-    gInc2: number;
-    gInc3: number;
-    gInc4: number;
-    gPreInc: number;
-    gSmoothness: number;
-    rMiRate: number;
-    rMiValue: number;
-    rIncValue: number;
-    rInc1: number;
-    rInc2: number;
-    rInc3: number;
-    rInc4: number;
-    rPreInc: number;
-    rSmoothness: number;
+	$order: number;
+	id: number;
+	market: number;
+	no: string;
+	name: string;
+	rawId: number;
+	earning: number;
+	divident: number;
+	price: number;
+	roe: number;
+	volumn: number;
+	dvRate: number;
+	ttm: number;
+	miRate: number;
+	miValue: number;
+	incValue: number;
+	inc1: number;
+	inc2: number;
+	inc3: number;
+	inc4: number;
+	preInc: number;
+	smoothness: number;
+	gMiRate: number;
+	gMiValue: number;
+	gIncValue: number;
+	gInc1: number;
+	gInc2: number;
+	gInc3: number;
+	gInc4: number;
+	gPreInc: number;
+	gSmoothness: number;
+	rMiRate: number;
+	rMiValue: number;
+	rIncValue: number;
+	rInc1: number;
+	rInc2: number;
+	rInc3: number;
+	rInc4: number;
+	rPreInc: number;
+	rSmoothness: number;
 }
 export interface ResultSearchStock {
-    $page: ReturnSearchStock$page[];
+	$page: ReturnSearchStock$page[];
 }
 
 export interface ParamWriteStock {
@@ -450,83 +461,86 @@ export interface ResultWritePrice {
 }
 
 export interface ParamWriteIndustryStock {
-    industry: string;
+	industry: string;
 }
 export interface ResultWriteIndustryStock {
 }
 
 export interface ParamWriteStockIndustry {
-    rawId: number;
+	rawId: number;
 }
 export interface ResultWriteStockIndustry {
 }
 
 export interface ParamActs {
-    account?: AccountInActs[];
-    userAccount?: UserAccount[];
-    holding?: HoldingInActs[];
-    accountValue?: ActParamAccountValue[];
-    accountHolding?: AccountHolding[];
-    portfolio?: ActParamPortfolio[];
-    transaction?: TransactionInActs[];
-    blog?: BlogInActs[];
-    group?: GroupInActs[];
-    userGroup?: UserGroup[];
-    userAllStock?: UserAllStock[];
-    userBlockStock?: UserBlockStock[];
-    groupStock?: GroupStock[];
-    market?: MarketInActs[];
-    industry?: IndustryInActs[];
-    stock?: StockInActs[];
-    stockValue?: ActParamStockValue[];
-    iXIndustry?: IXIndustry[];
+	account?: AccountInActs[];
+	userAccount?: UserAccount[];
+	holding?: HoldingInActs[];
+	accountValue?: ActParamAccountValue[];
+	accountHolding?: AccountHolding[];
+	portfolio?: ActParamPortfolio[];
+	transaction?: TransactionInActs[];
+	blog?: BlogInActs[];
+	iDBlogTest?: IDBlogTestInActs[];
+	group?: GroupInActs[];
+	userGroup?: UserGroup[];
+	userAllStock?: UserAllStock[];
+	userBlockStock?: UserBlockStock[];
+	groupStock?: GroupStock[];
+	market?: MarketInActs[];
+	industry?: IndustryInActs[];
+	stock?: StockInActs[];
+	stockValue?: ActParamStockValue[];
+	iXIndustry?: IXIndustry[];
 }
 
 
 export interface UqExt extends Uq {
-    Acts(param: ParamActs): Promise<any>;
-    SQL: Uq;
+	Acts(param:ParamActs): Promise<any>;
+	SQL: Uq;
     Role: { [key: string]: string[] };
 
-    $role_My: UqQuery<Param$role_My, Result$role_My>;
-    $role_Unit_Users: UqQuery<Param$role_Unit_Users, Result$role_Unit_Users>;
-    $role_Unit_Add_Admin: UqAction<Param$role_Unit_Add_Admin, Result$role_Unit_Add_Admin>;
-    $role_Unit_Del_Admin: UqAction<Param$role_Unit_Del_Admin, Result$role_Unit_Del_Admin>;
-    $role_Unit_Add_User: UqAction<Param$role_Unit_Add_User, Result$role_Unit_Add_User>;
-    $role_Unit_User_Role: UqAction<Param$role_Unit_User_Role, Result$role_Unit_User_Role>;
-    $role_Unit_Quit_Owner: UqAction<Param$role_Unit_Quit_Owner, Result$role_Unit_Quit_Owner>;
-    $poked: UqQuery<Param$poked, Result$poked>;
-    $setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
-    $getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
-    Account: UqID<any>;
-    UserAccount: UqIX<any>;
-    Holding: UqID<any>;
-    AccountValue: UqIDX<any>;
-    AccountHolding: UqIX<any>;
-    Portfolio: UqIDX<any>;
-    Transaction: UqID<any>;
-    Blog: UqID<any>;
-    Group: UqID<any>;
-    UserGroup: UqIX<any>;
-    UserAllStock: UqIX<any>;
-    UserBlockStock: UqIX<any>;
-    GroupStock: UqIX<any>;
-    StockUsing: UqQuery<ParamStockUsing, ResultStockUsing>;
-    Market: UqID<any>;
-    Industry: UqID<any>;
-    Stock: UqID<any>;
-    StockValue: UqIDX<any>;
-    IXIndustry: UqIX<any>;
-    SearchStock: UqQuery<ParamSearchStock, ResultSearchStock>;
-    WriteStock: UqAction<ParamWriteStock, ResultWriteStock>;
-    WriteGrossAndRevenue: UqAction<ParamWriteGrossAndRevenue, ResultWriteGrossAndRevenue>;
-    WritePrice: UqAction<ParamWritePrice, ResultWritePrice>;
-    WriteIndustryStock: UqAction<ParamWriteIndustryStock, ResultWriteIndustryStock>;
-    WriteStockIndustry: UqAction<ParamWriteStockIndustry, ResultWriteStockIndustry>;
+	$role_My: UqQuery<Param$role_My, Result$role_My>;
+	$role_Unit_Users: UqQuery<Param$role_Unit_Users, Result$role_Unit_Users>;
+	$role_Unit_Add_Admin: UqAction<Param$role_Unit_Add_Admin, Result$role_Unit_Add_Admin>;
+	$role_Unit_Del_Admin: UqAction<Param$role_Unit_Del_Admin, Result$role_Unit_Del_Admin>;
+	$role_Unit_Add_User: UqAction<Param$role_Unit_Add_User, Result$role_Unit_Add_User>;
+	$role_Unit_User_Role: UqAction<Param$role_Unit_User_Role, Result$role_Unit_User_Role>;
+	$role_Unit_Quit_Owner: UqAction<Param$role_Unit_Quit_Owner, Result$role_Unit_Quit_Owner>;
+	$poked: UqQuery<Param$poked, Result$poked>;
+	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
+	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
+	Account: UqID<any>;
+	UserAccount: UqIX<any>;
+	Holding: UqID<any>;
+	AccountValue: UqIDX<any>;
+	AccountHolding: UqIX<any>;
+	Portfolio: UqIDX<any>;
+	Transaction: UqID<any>;
+	Blog: UqID<any>;
+	CustomerCredits: UqMap;
+	IDBlogTest: UqID<any>;
+	Group: UqID<any>;
+	UserGroup: UqIX<any>;
+	UserAllStock: UqIX<any>;
+	UserBlockStock: UqIX<any>;
+	GroupStock: UqIX<any>;
+	StockUsing: UqQuery<ParamStockUsing, ResultStockUsing>;
+	Market: UqID<any>;
+	Industry: UqID<any>;
+	Stock: UqID<any>;
+	StockValue: UqIDX<any>;
+	IXIndustry: UqIX<any>;
+	SearchStock: UqQuery<ParamSearchStock, ResultSearchStock>;
+	WriteStock: UqAction<ParamWriteStock, ResultWriteStock>;
+	WriteGrossAndRevenue: UqAction<ParamWriteGrossAndRevenue, ResultWriteGrossAndRevenue>;
+	WritePrice: UqAction<ParamWritePrice, ResultWritePrice>;
+	WriteIndustryStock: UqAction<ParamWriteIndustryStock, ResultWriteIndustryStock>;
+	WriteStockIndustry: UqAction<ParamWriteStockIndustry, ResultWriteStockIndustry>;
 }
 
 
-export const uqSchema = {
+export const uqSchema={
     "$role_my": {
         "name": "$role_my",
         "type": "query",
@@ -1094,6 +1108,69 @@ export const uqSchema = {
         "update": true,
         "global": false,
         "idType": 12,
+        "isMinute": false
+    },
+    "customercredits": {
+        "name": "CustomerCredits",
+        "type": "map",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "creditsCode",
+                "type": "int",
+                "null": false
+            },
+            {
+                "name": "createDate",
+                "type": "datetime"
+            },
+            {
+                "name": "expiredDate",
+                "type": "date"
+            }
+        ],
+        "keys": [
+            {
+                "name": "customer",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "credits",
+                "type": "int",
+                "null": false
+            }
+        ],
+        "actions": {
+            "add": "$add$",
+            "del": "$del$"
+        },
+        "queries": {
+            "all": "$all$",
+            "page": "$page$",
+            "query": "$query$"
+        }
+    },
+    "idblogtest": {
+        "name": "IDBlogTest",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "d",
+                "type": "date"
+            }
+        ],
+        "keys": [] as any,
+        "global": false,
+        "idType": 3,
         "isMinute": false
     },
     "group": {

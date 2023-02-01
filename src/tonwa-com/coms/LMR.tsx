@@ -13,7 +13,7 @@ export function LMR(props: Props) {
     let arr = React.Children.toArray(children);
     let len = arr.length;
     if (len > 1) {
-        arr.splice(len - 1, 0, <div className="me-auto" />);
+        arr.splice(len - 1, 0, <div className="flex-fill" />);
     }
     return <div className={'d-flex ' + cn} onClick={onClick}>
         {arr.map((v, index) => <React.Fragment key={index}>{v}</React.Fragment>)}
