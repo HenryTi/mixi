@@ -49,13 +49,13 @@ export function PageStockInfo2() {
 export function PageStockInfo() {
     //{ stock }: { stock: Stock & StockValue };
     const uqApp = useUqApp();
-    const { storeApp } = uqApp;
-    const { state } = storeApp;
-    const { trackDay } = state;
+    // const { storeApp } = uqApp;
+    // const { state } = storeApp;
+    // const { trackDay } = state;
     const { id } = useParams();
-    const { stock } = storeApp;
+    // const { stock } = storeApp;
     const { data: storeStockInfo } = useQuery('stockinfo', async function () {
-        let ret = new StoreStockInfo(stock, trackDay);
+        let ret = new StoreStockInfo(Number(id));
         ret.setUqAppAndParent(uqApp, undefined);
         await ret.initOnce();
         return ret;

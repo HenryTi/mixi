@@ -1,10 +1,16 @@
 import { NFormat, nFormat0, nFormat1, nFormat2, smallPercent } from "app/coms/ItemViewStock";
+import { useUqApp } from "app/MyUqApp";
 import { HoldingStock } from "app/stores";
+import { pathStockInfo } from "../StockInfo";
 import { useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FA } from "tonwa-com";
 import { useSnapshot } from "valtio";
+import { pathStockBuy, pathStockSell } from "./routeAccount";
 
 export function ItemViewHolding({ value }: { value: HoldingStock }) {
+    const { storeApp } = useUqApp();
+    const navigate = useNavigate();
     let [visible, setVisible] = useState(false);
     let refDivAct = useRef<HTMLDivElement>();
     let { miAccount, stockObj, quantity, market, cost } = value;
@@ -26,14 +32,8 @@ export function ItemViewHolding({ value }: { value: HoldingStock }) {
         profit = 0;
         profitRate = 0;
     }
-    function showHolding() {
-
-    }
-    function showBuy() {
-
-    }
-    function showSell() {
-
+    function showStockInfo() {
+        navigate(pathStockInfo(stockObj.id));
     }
     function showChangeCost() {
 
@@ -124,15 +124,15 @@ export function ItemViewHolding({ value }: { value: HoldingStock }) {
         <div className={visible === true ? '' : 'd-none'}>
             <div className="row mt-2 mx-0 pt-2 pb-1 align-items-center">
                 <div className="col-sm-3 col-auto px-0">
-                    <button className="btn btn-sm btn-outline-info me-1 me-sm-3 "
-                        onClick={showBuy}>买入</button>
-                    <button className="btn btn-sm btn-outline-info me-1 me-sm-3 "
-                        onClick={showSell}>卖出</button>
+                    <Link className="btn btn-sm btn-outline-info me-1 me-sm-3 "
+                        to={pathStockBuy}>买入</Link>
+                    <Link className="btn btn-sm btn-outline-info me-1 me-sm-3 "
+                        to={pathStockSell}>卖出</Link>
                 </div>
                 <div className="col-sm col-auto px-0 text-end ms-auto ">{vBuyable}</div>
                 <div className="col-sm col-auto px-0 text-end ms-sm-0 ms-3">
-                    <button className="btn btn-sm btn-link"
-                        onClick={showHolding}>分析</button>
+                    <Link className="btn btn-sm btn-link"
+                        to={pathStockInfo(stockObj.id)}>分析</Link>
                 </div>
                 <div className="col-sm col-auto px-0 text-end">
                     <button className="btn btn-sm btn-link"

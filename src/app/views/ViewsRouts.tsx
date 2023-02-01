@@ -11,7 +11,7 @@ import { routeStock } from './StockInfo';
 import { PageSpinner } from 'tonwa-com/page/PageSpinner';
 import { routeSearch } from './Search';
 import { pathPrivacy, PagePrivacy, routePrivacy } from 'app/tool/brand';
-import { routeAccount } from 'app/accounts/routeAccount';
+import { routeAccount } from 'app/views/accounts/routeAccount';
 
 export function ViewsRoutes() {
     const homeLayout = <PageTabsLayout tabs={[

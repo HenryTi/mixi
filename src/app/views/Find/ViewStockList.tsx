@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { List, useNav } from "tonwa-com";
 import { Stock, StockValue } from "uqs/BrMi";
 import { PageStockInfo } from "../StockInfo";
-import { toStock } from "../StockInfo/routeStock";
+import { pathStockInfo } from "../StockInfo/routeStock";
 
 interface ViewStockListProps {
     stocks: (Stock & StockValue)[];
@@ -18,12 +18,9 @@ interface ItemViewStockProps {
 }
 
 export function ItemViewStock({ value }: ItemViewStockProps) {
-    //let nav = useNav();
-    const { storeApp } = useUqApp();
     const navigate = useNavigate();
     function onClick() {
-        storeApp.stock = value;
-        navigate(toStock(value.id));
+        navigate(pathStockInfo(value.id));
     }
     function renderRowRight(value: Stock & StockValue): JSX.Element {
         return null;

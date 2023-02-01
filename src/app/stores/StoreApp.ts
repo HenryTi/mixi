@@ -26,7 +26,6 @@ export class StoreApp {
     industries: MIndustries;
     rootIndustries: MRootIndustries;
     group: MGroup;   // after click group，set current group，for show group stocks
-    stock: Stock & StockValue; // after click stock
 
     stocksMyAll: (Stock & StockValue)[];
     stocksMyBlock: (Stock & StockValue)[];

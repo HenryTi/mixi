@@ -1,11 +1,11 @@
 import { useUqApp } from "app/MyUqApp";
 import { Outlet, Route, useParams } from "react-router-dom";
-import { PageAccountBuy } from "./ButtonBuy";
-import { PageAccountIndex } from "./PageAccountIndex";
-import { PageCashAdjust, PageCashIn, PageCashInit, PageCashOut } from "./FormAccount";
+import { PageAccount } from "./PageAccount";
+import { PageCashAdjust, PageCashIn, PageCashInit, PageCashOut, PageStockBuy, PageStockSell } from "./FormAccount";
 
 export function pathAccount(id: string | number) { return `/account/${id}` };
-export const pathAccountBuy = 'buy';
+export const pathStockBuy = 'buy';
+export const pathStockSell = 'sell';
 export const pathCashInit = 'cashInit';
 export const pathCashIn = 'cashIn';
 export const pathCashOut = 'cashOut';
@@ -13,8 +13,9 @@ export const pathCashAdjust = 'cashAdjust';
 
 export const routeAccount = <>
     <Route path={pathAccount(':id')} element={<LayoutAccount />}>
-        <Route index element={<PageAccountIndex />} />
-        <Route path={pathAccountBuy} element={<PageAccountBuy />} />
+        <Route index element={<PageAccount />} />
+        <Route path={pathStockBuy} element={<PageStockBuy />} />
+        <Route path={pathStockSell} element={<PageStockSell />} />
         <Route path={pathCashInit} element={<PageCashInit />} />
         <Route path={pathCashIn} element={<PageCashIn />} />
         <Route path={pathCashOut} element={<PageCashOut />} />

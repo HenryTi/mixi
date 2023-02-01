@@ -1,4 +1,4 @@
-import { ViewAccounts } from "app/accounts";
+import { ViewAccounts } from "app/views/accounts";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { FA, Page, SearchBox, useNav, useT } from "tonwa-com";

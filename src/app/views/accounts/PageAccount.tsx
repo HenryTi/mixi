@@ -1,18 +1,16 @@
 import { NFormat, nFormat0, nFormat1, nFormat2, smallPercent } from "app/coms/ItemViewStock";
 import { HoldingStock } from "app/stores/HoldingStock";
-import { MiAccount } from "app/stores/MiAccount";
-import { FA, List, LMR, Page, useNav } from "tonwa-com";
-import { ButtonBuy } from "./ButtonBuy";
+import { List, LMR, Page } from "tonwa-com";
 import { ItemViewHolding } from "./ItemViewHolding";
 import { ButtonCashActs } from "./ButtonCashActs";
 import { ViewNote } from "./ViewNote";
 import { useSnapshot } from "valtio";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useUqApp } from "app/MyUqApp";
 import { useQuery } from "react-query";
+import { pathStockBuy } from "./routeAccount";
 
-export function PageAccountIndex() {
-    // { miAccount }: { miAccount: MiAccount };
+export function PageAccount() {
     const { id } = useParams();
     const { storeApp } = useUqApp();
     const { data: miAccount } = useQuery('miAccountLoadItems', async function () {
@@ -70,7 +68,8 @@ export function PageAccountIndex() {
             </div>
 
             <div className="mb-3 mx-3 d-flex">
-                <ButtonBuy />
+                <Link className="btn btn-outline-primary me-3"
+                    to={pathStockBuy}>新买入</Link>
                 <ButtonCashActs miAccount={miAccount} />
             </div>
 

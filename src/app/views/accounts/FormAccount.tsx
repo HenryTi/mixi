@@ -110,6 +110,22 @@ function FormAct({ onSubmit, formRows }: FormActProps) {
     </form>
 }
 
+export function PageStockBuy() {
+    const miAccount = useOutletContext<MiAccount>();
+    const navigate = useNavigate();
+    return <Page header="买入">
+
+    </Page>;
+}
+
+export function PageStockSell() {
+    const miAccount = useOutletContext<MiAccount>();
+    const navigate = useNavigate();
+    return <Page header="卖出">
+
+    </Page>;
+}
+
 /*
 abstract class VStock extends VForm {
     protected beforeRender() {

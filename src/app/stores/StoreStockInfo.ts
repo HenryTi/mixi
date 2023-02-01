@@ -7,17 +7,22 @@ import { ErForEarning } from './ErForEarning';
 import { SlrForEarning } from './SlrForEarning';
 
 export class StoreStockInfo extends MyPageStore {
-    readonly stock: Stock & StockValue;
-    readonly baseItem: NStockInfo;
-    constructor(stock: Stock & StockValue, trackDay?: number) {
+    readonly id: number;
+    stock: Stock & StockValue;
+    baseItem: NStockInfo;
+    constructor(id: number
+        // stock: Stock & StockValue, trackDay?: number
+    ) {
         super();
+        this.id = id;
+        /*
         this.stock = stock;
-        let { id, name, no, rawId } = stock;
         //let market = this.uqApp.storeApp.getMarket(stock);
         //let date = new Date();
         // let year = date.getFullYear();
         // let month = date.getMonth() + 1;
         // let dt = date.getDate();
+        let { id, name, no, rawId } = stock;
         this.baseItem = {
             id: id,
             rawId: rawId,
@@ -29,6 +34,7 @@ export class StoreStockInfo extends MyPageStore {
             stock,
             trackDay,
         };
+        */
     }
 
     //private loaded: boolean = false;
@@ -173,8 +179,26 @@ export class StoreStockInfo extends MyPageStore {
 
     async init(): Promise<void> {
         // if (!this.baseItem) return;
-        const { miNet } = this.uqApp;
-        let { rawId, day, trackDay } = this.baseItem;
+        const { storeApp, miNet } = this.uqApp;
+        let stock = storeApp.stockFromId(this.id);
+        if (stock === undefined) {
+            stock = await storeApp.loadStock(this.id);
+        }
+        this.stock = stock;
+        let { id, name, no, rawId } = stock;
+        this.baseItem = {
+            id: id,
+            rawId: rawId,
+            name,
+            code: no,
+            //market: market?.name,
+            //symbol: market?.name + no,
+            day: undefined, //year*10000 + month*100 + dt,
+            stock,
+            trackDay: storeApp.state.trackDay,
+        };
+
+        let { day, trackDay } = this.baseItem;
         let rets;
         if (trackDay !== null) {
             rets = await Promise.all([
