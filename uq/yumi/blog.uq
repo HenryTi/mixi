@@ -5,3 +5,16 @@ ID Blog ver 3 LOCAL (
 	content text,
 	sys (create, update),
 );
+
+MAP CustomerCredits ver 0.1 (
+    key customer ID, -- Customer,     -- Customer编号，不是WebUser
+    key credits int not null,
+    creditsCode int not null,
+    createDate datetime,
+    expiredDate date,
+);
+
+ID IDBlogTest ULOCAL (
+    id,
+    d DATE,
+);

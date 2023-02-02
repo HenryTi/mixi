@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { FA } from "../coms";
-import { useNav } from "./nav";
 import { PageBackProps } from "./PageProps";
 
 export function Back(props: PageBackProps) {
@@ -28,7 +27,7 @@ export function Back(props: PageBackProps) {
     switch (back) {
         default:
         case 'back': break;
-        case 'none': return null; //renderNone();
+        case 'none': return <div className="ms-3" />; //renderNone();
         case 'close': return renderBack('close');
     }
     //if (nav.data.stack.length > 1

@@ -19,7 +19,7 @@ export function PageTabsLayout({ tabs }: PageTabsLayoutProps) {
         })}
     </div>;
 
-    return <div className='d-flex flex-column flex-fill'>
+    return <div className='d-flex flex-column flex-fill h-100'>
         <div className='flex-fill d-flex'>
             <Outlet />
         </div>
