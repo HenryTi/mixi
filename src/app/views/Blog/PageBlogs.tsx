@@ -1,11 +1,10 @@
 import { StoreBlogs } from "app/stores";
-import { Link } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 import { EasyTime, FA, List, LMR, Page, useNav } from "tonwa-com";
-import { useRouteStore } from "tonwa-uq-com";
 import { Blog } from "uqs/BrMi";
 
 export function PageBlogs() {
-    const blogsStore = useRouteStore<StoreBlogs>();
+    const blogsStore = useOutletContext<StoreBlogs>();
     let blogs: Blog[] = blogsStore.items;
     function BlogItemView({ value }: { value: Blog }) {
         let { caption } = value;

@@ -5,15 +5,14 @@ import { Stock, StockValue } from "uqs/BrMi";
 import { GFunc } from './GFunc';
 import { ErForEarning } from './ErForEarning';
 import { SlrForEarning } from './SlrForEarning';
+import { MyUqApp } from "app/MyUqApp";
 
 export class StoreStockInfo extends MyPageStore {
     readonly id: number;
     stock: Stock & StockValue;
     baseItem: NStockInfo;
-    constructor(id: number
-        // stock: Stock & StockValue, trackDay?: number
-    ) {
-        super();
+    constructor(uqApp: MyUqApp, id: number) {
+        super(uqApp);
         this.id = id;
         /*
         this.stock = stock;

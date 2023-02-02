@@ -1,7 +1,9 @@
 import { Chart } from 'react-chartjs-2';
+import { useOutletContext } from 'react-router-dom';
 import { StoreStockInfo, GFunc } from "../../stores";
 
-export function ViewMivaluesChart({ storeStockInfo }: { storeStockInfo: StoreStockInfo; }) {
+export function ViewMivaluesChart() {
+    const storeStockInfo = useOutletContext<StoreStockInfo>();
     const { mivalues } = storeStockInfo;
     let len = mivalues.length;
     if (len <= 0)

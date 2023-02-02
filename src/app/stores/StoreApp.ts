@@ -15,6 +15,7 @@ export interface IXBase {
     xi: number;
 }
 
+const find_smooth = 'find_smooth';
 export class StoreApp {
     private readonly user: User;
     private miNet: MiNet;
@@ -34,6 +35,7 @@ export class StoreApp {
     state = proxy({
         trackDay: null as number,
     });
+    smooth: number;
 
     constructor(uqApp: MyUqApp) {
         this.miNet = uqApp.miNet;
@@ -43,10 +45,17 @@ export class StoreApp {
         this.miGroups = new MiGroups(this);
         this.industries = new MIndustries(this);
         this.rootIndustries = new MRootIndustries(this);
+        let smooth = localStorage.getItem(find_smooth);
+        this.smooth = smooth ? Number(smooth) : 0;
     }
 
     stockFromId(stockId: number): Stock & StockValue {
         return this.stocksMyAll.find(v => v.id === stockId);
+    }
+
+    setSmooth(smooth: number) {
+        this.smooth = smooth;
+        localStorage.setItem(find_smooth, String(this.smooth));
     }
 
     async loadMiAccountFromId(id: number) {
@@ -141,6 +150,7 @@ export class StoreApp {
             this.myAllColl[v.id] = true;
         });
         this.stocksMyAll = ret.map(v => ref(v));
+        this.stocksMyAll.sort(stockMiRateSorter);
     }
 
     async loadMyBlock() {

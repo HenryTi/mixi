@@ -66,7 +66,6 @@ export function ViewFindStock() {
     }
     async function onGroupClick(group: MGroup) {
         uqApp.storeApp.group = group;
-        await group.loadItems();
         return pathGroupStocks;
         //navigate('/test');
     }

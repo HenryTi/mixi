@@ -27,7 +27,5 @@ function LayoutAccount() {
     const { storeApp } = useUqApp();
     const { id } = useParams();
     let miAccount = storeApp.miAccounts.accountFromId(Number(id));
-    return <div>
-        <Outlet context={miAccount} />
-    </div>;
+    return <Outlet context={miAccount} />;
 }

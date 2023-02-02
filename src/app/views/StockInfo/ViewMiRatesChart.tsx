@@ -1,7 +1,9 @@
 import { Chart } from 'react-chartjs-2';
+import { useOutletContext } from 'react-router-dom';
 import { StoreStockInfo, GFunc } from "../../stores";
 
-export function ViewMiRatesChart({ storeStockInfo }: { storeStockInfo: StoreStockInfo; }) {
+export function ViewMiRatesChart() {
+    const storeStockInfo = useOutletContext<StoreStockInfo>();
     const { mirates } = storeStockInfo;
     let len = mirates.length;
     if (len <= 0) return <></>;

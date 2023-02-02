@@ -8,9 +8,13 @@ export abstract class PageStore<UQApp extends UqApp<UQS> = any, UQS = any, P = a
     private _uqApp: UQApp;
     get uqApp(): UQApp { return this._uqApp; }
     protected uqs: UQS;
-    protected nav: Nav;
+    // protected nav: Nav;
     parent: P;
     private initOncePromise: Promise<void> | any;
+    constructor(uqApp: UQApp) {
+        this._uqApp = uqApp;
+    }
+    /*
     setUqAppAndParent(uqApp: UQApp, nav: Nav) {
         this._uqApp = uqApp;
         this.uqs = uqApp.uqs;
@@ -18,6 +22,7 @@ export abstract class PageStore<UQApp extends UqApp<UQS> = any, UQS = any, P = a
         // let parent = nav.getPageStore();
         this.parent = parent as P;
     }
+    */
     initOnce(): Promise<void> {
         if (this.initOncePromise === undefined) {
             this.initOncePromise = new Promise<void>((resolve, reject) => {
@@ -39,32 +44,13 @@ export abstract class PageStore<UQApp extends UqApp<UQS> = any, UQS = any, P = a
     }
 }
 
-export function useRouteStore<T extends PageStore>(): T {
-    // let nav = useNav();
-    /*
-    let uqApp = useContext<UqApp>(UqAppContext);
-    let store: T = nav.getPageTopStore();
-    if (store === undefined) {
-        store = initStore();
-        store.setUqAppAndParent(uqApp, nav);
-        nav.setPageStore(store);
-    }
-    */
-    const uqApp = useUqApp();
-    const store = useOutletContext<T>();
-    store.setUqAppAndParent(uqApp, undefined);
-    //let ret = store.initOnce();
-    //if (ret !== null) throw ret;
-    return store;
-}
-
 export function usePageStoreInit<T extends PageStore>(initStore: () => T): T {
     let nav = useNav();
     let uqApp = useContext<UqApp>(UqAppContext);
     let store: T = nav.getPageTopStore();
     if (store === undefined) {
         store = initStore();
-        store.setUqAppAndParent(uqApp, nav);
+        // store.setUqAppAndParent(uqApp, nav);
         nav.setPageStore(store);
     }
     let ret = store.initOnce();

@@ -1,7 +1,9 @@
 import { Chart } from 'react-chartjs-2';
+import { useOutletContext } from 'react-router-dom';
 import { StoreStockInfo, GFunc, SlrForEarning } from "../../stores";
 
-export function ViewChartBonus({ storeStockInfo }: { storeStockInfo: StoreStockInfo; }) {
+export function ViewChartBonus() {
+    const storeStockInfo = useOutletContext<StoreStockInfo>();
     let { predictBonusData, dividents } = storeStockInfo;
     if (dividents !== undefined) {
         let len = dividents.length;

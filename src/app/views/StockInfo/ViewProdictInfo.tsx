@@ -1,7 +1,9 @@
 import { Chart } from 'react-chartjs-2';
+import { useOutletContext } from 'react-router-dom';
 import { StoreStockInfo, GFunc, ErForEarning, SlrForEarning } from "../../stores";
 
-export function ViewPredictInfo({ storeStockInfo }: { storeStockInfo: StoreStockInfo; }) {
+export function ViewPredictInfo() {
+    const storeStockInfo = useOutletContext<StoreStockInfo>();
     let { predictData, ypredict } = storeStockInfo;
     if (predictData === undefined)
         return <></>;

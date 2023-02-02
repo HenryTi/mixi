@@ -14,12 +14,11 @@ export function PageSearch() {
     // const storeSearch = useInitPageStore(() => new StoreSearch(searchKey, markets))
     // const { items } = useSnapshot(storeSearch.state);
     const tickReload = useRef(1);
-    const smoothRef = useRef(0);
-    let [smooth, setSmooth] = useState(smoothRef.current)
+    let [smooth, setSmooth] = useState(uqApp.storeApp.smooth ?? 0)
     function changeSmooth(v: number) {
         ++tickReload.current;
-        smoothRef.current = v;
         setSmooth(v);
+        uqApp.storeApp.setSmooth(v);
     }
     function ViewStars() {
         let stars: number[] = [];
@@ -57,7 +56,7 @@ export function PageSearch() {
         key: searchKey,
         market: markets?.join('\n'),
         $orderSwitch: searchOrder,
-        smooth: (searchKey ? 0 : smoothRef.current) + 1,
+        smooth: (searchKey ? 0 : smooth) + 1,
     };
     return <PageQueryMore header={header ?? '搜索'} query={uqApp.uqs.BrMi.SearchStock}
         param={searchParam}

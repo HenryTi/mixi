@@ -1,11 +1,10 @@
 import { Chart } from 'react-chartjs-2'
+import { useOutletContext } from 'react-router-dom';
 import { List, Page } from 'tonwa-com';
-import { usePageStoreInit } from 'tonwa-uq-com';
-import { Stock, StockValue } from 'uqs/BrMi';
 import { StoreStockInfo, GFunc } from '../../stores';
 
-export function PageProfilDetail({ stock }: { stock: Stock & StockValue }) {
-    const storeStockInfo = usePageStoreInit(() => new StoreStockInfo(1));
+export function PageProfitDetail() {
+    const storeStockInfo = useOutletContext<StoreStockInfo>();
     const { baseItem, seasonData } = storeStockInfo;
     const { name, code, day } = baseItem;
 

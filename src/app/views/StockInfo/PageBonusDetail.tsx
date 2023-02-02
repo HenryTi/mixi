@@ -1,13 +1,13 @@
 import { Chart } from 'react-chartjs-2'
 import { List, Page } from 'tonwa-com';
-import { usePageStore } from 'tonwa-uq-com';
 import { StockBonus } from 'app/model/StockInfoType';
 import { StoreStockInfo, GFunc, SlrForEarning } from '../../stores';
 import { useUqApp } from 'app/MyUqApp';
+import { useOutletContext } from 'react-router-dom';
 
 export function PageBonusDetail() {
     const uqApp = useUqApp();
-    const storeStockInfo = usePageStore<StoreStockInfo>();
+    const storeStockInfo = useOutletContext<StoreStockInfo>();
     const { baseItem, bonus, dividentOrg } = storeStockInfo;
     let { name, code, day } = baseItem;
     let market = uqApp.storeApp.getMarket(baseItem.stock);

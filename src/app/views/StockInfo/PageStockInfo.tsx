@@ -1,6 +1,4 @@
 import { Page, usePromise, usePromiseResult } from "tonwa-com";
-import { useInitPageStore } from "tonwa-uq-com";
-import { Stock, StockValue } from "uqs/BrMi";
 import { StoreStockInfo } from "app/stores";
 import { ViewBaseInfo } from "./ViewBaseInfo";
 import { ViewChartBonus } from "./ViewChartBonus";
@@ -8,10 +6,8 @@ import { ViewMiRatesChart } from "./ViewMiRatesChart";
 import { ViewMivaluesChart } from "./ViewMiValuesChart";
 import { ViewPredictInfo } from "./ViewProdictInfo";
 import { ViewProfitChart } from "./ViewProfitChart";
-import { useUqApp } from "app/MyUqApp";
-import { useAsyncValue, useParams } from "react-router-dom";
-import { useCallback, useMemo } from "react";
-import { useQuery } from "react-query";
+import { Link, useOutletContext } from "react-router-dom";
+import { pathBonusDetail } from "./routeStock";
 
 let cache = new Map();
 let id = 1;
@@ -48,18 +44,12 @@ export function PageStockInfo2() {
 
 export function PageStockInfo() {
     //{ stock }: { stock: Stock & StockValue };
-    const uqApp = useUqApp();
+    // const uqApp = useUqApp();
     // const { storeApp } = uqApp;
     // const { state } = storeApp;
     // const { trackDay } = state;
-    const { id } = useParams();
-    // const { stock } = storeApp;
-    const { data: storeStockInfo } = useQuery('stockinfo', async function () {
-        let ret = new StoreStockInfo(Number(id));
-        ret.setUqAppAndParent(uqApp, undefined);
-        await ret.initOnce();
-        return ret;
-    });
+    // const { id } = useParams();
+    const storeStockInfo = useOutletContext<StoreStockInfo>();
     const { baseItem } = storeStockInfo;
     const { name, code, day } = baseItem;
 
@@ -67,16 +57,14 @@ export function PageStockInfo() {
     if (day !== undefined) {
         headStr += ' - ' + day;
     }
-    function showBonus() {
-        alert('this.controller.showBonus()');
-    }
     return <Page header={headStr} headerClassName='bg-primary'>
-        <ViewBaseInfo storeStockInfo={storeStockInfo} />
-        <ViewMiRatesChart storeStockInfo={storeStockInfo} />
-        <ViewMivaluesChart storeStockInfo={storeStockInfo} />
-        <div className="px-3 py-1 bg-white cursor-pointer text-primary" onClick={showBonus} >分红信息&gt;&gt;</div>
-        <ViewChartBonus storeStockInfo={storeStockInfo} />
-        <ViewPredictInfo storeStockInfo={storeStockInfo} />
-        <ViewProfitChart storeStockInfo={storeStockInfo} />
+        <ViewBaseInfo />
+        <ViewMiRatesChart />
+        <ViewMivaluesChart />
+        <Link className="px-3 py-1 bg-white cursor-pointer text-primary"
+            to={pathBonusDetail}>分红信息&gt;&gt;</Link>
+        <ViewChartBonus />
+        <ViewPredictInfo />
+        <ViewProfitChart />
     </Page>;
 }

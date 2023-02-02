@@ -1,7 +1,10 @@
 import { Chart } from 'react-chartjs-2';
+import { Link, useOutletContext } from 'react-router-dom';
 import { StoreStockInfo, GFunc, SlrForEarning } from "../../stores";
+import { pathProfitDetail } from './routeStock';
 
-export function ViewProfitChart({ storeStockInfo }: { storeStockInfo: StoreStockInfo; }) {
+export function ViewProfitChart() {
+    const storeStockInfo = useOutletContext<StoreStockInfo>();
     let { chartFull, chartProfit, chartRevenue } = getProfitCharts();
     let chartRoe = predictChartROE();
 
@@ -187,11 +190,9 @@ export function ViewProfitChart({ storeStockInfo }: { storeStockInfo: StoreStock
         return <Chart data={chartdataFull} type='line' />;
     };
 
-    function showProfit() {
-        alert('showProfit');
-    }
     return <>
-        <div className="px-3 py-1 bg-white cursor-pointer text-primary" onClick={showProfit} >营收利润&gt;&gt;</div>
+        <Link className="px-3 py-1 bg-white cursor-pointer text-primary"
+            to={pathProfitDetail}>营收利润&gt;&gt;</Link>
         <div className="row">
             <div className="col">{chartRevenue}</div>
             <div className="col">{chartFull}</div>

@@ -3,8 +3,10 @@ import { ButtonPinStock } from "app/coms/ButtonPinStock";
 import { ViewStockRow } from "app/coms/ItemViewStock";
 import { ViewStockLink } from "app/coms/ViewStockLink";
 import { StoreStockInfo } from "app/stores";
+import { useOutletContext } from "react-router-dom";
 
-export function ViewBaseInfo({ storeStockInfo }: { storeStockInfo: StoreStockInfo; }) {
+export function ViewBaseInfo() {
+    const storeStockInfo = useOutletContext<StoreStockInfo>();
     const { stock, isBlock } = storeStockInfo;
     let closeLevelWhenRemoved = 1;
     let pinStock = <div className="d-flex align-self-stretch align-items-center">
