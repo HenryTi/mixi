@@ -1,9 +1,8 @@
 import { MyPageStore } from "app/MyPageStore";
-import { Stock, StockValue } from "uqs/BrMi";
+import { MyUqApp } from "app/MyUqApp";
 import { proxy } from "valtio";
 
 type SearchOrder = 'miRateDesc' | 'miRateAsc' | 'dvRateDesc' | 'dvRateAsc' | 'roeDesc' | 'roeAsc';
-const defaultSmooth = 0;
 export interface SearchParam {
     key: string;
     market: string;
@@ -21,8 +20,8 @@ export class StoreSearch extends MyPageStore {
         items: [],
     });
 
-    constructor(key: string, markets: string[]) {
-        super();
+    constructor(uqApp: MyUqApp, key: string, markets: string[]) {
+        super(uqApp);
         this.key = key;
         this.markets = markets;
         this.smooth = 0;

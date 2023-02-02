@@ -198,7 +198,7 @@ export function ViewProfitChart() {
     };
 
     return <>
-        <Link className="px-3 py-1 bg-white cursor-pointer text-primary"
+        <Link className="px-3 mt-3 py-2 tonwa-bg-gray-2 border-bottom"
             to={pathProfitDetail}>营收利润&gt;&gt;</Link>
         <div className="row">
             <div className="col">{chartRevenue}</div>

@@ -52,8 +52,7 @@ export function ViewFindStock() {
 
     function renderSpec(count: number, text: string | JSX.Element, icon: string, color: string, to: string) {
         let cn = "align-self-center ms-3 " + color;
-        return <Link className="mt-2 mx-3 bg-white cursor-pointer"
-            to={to}>
+        return <Link className="mt-2 bg-white" to={to}>
             <LMR>
                 <FA name={icon} className={cn} size="lg" fixWidth={true} />
                 <div className="px-3 py-2">{text}</div>
@@ -87,7 +86,7 @@ export function ViewFindStock() {
             })}
         </div>
 
-        <div className="mb-3">
+        <div className="mb-3 d-flex flex-column">
             {renderMyAll()}
         </div>
 

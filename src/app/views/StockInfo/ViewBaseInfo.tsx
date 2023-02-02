@@ -17,6 +17,6 @@ export function ViewBaseInfo() {
         <ButtonBlockStock stock={stock} isBlock={isBlock} />
     </div>;
     return <div className="bg-white">
-        <ViewStockRow order={undefined} stock={stock} onClickName={undefined} right={pinStock} />;
+        <ViewStockRow order={undefined} stock={stock} onClickName={undefined} right={pinStock} />
     </div>;
 }

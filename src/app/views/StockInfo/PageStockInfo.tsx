@@ -61,7 +61,7 @@ export function PageStockInfo() {
         <ViewBaseInfo />
         <ViewMiRatesChart />
         <ViewMivaluesChart />
-        <Link className="px-3 py-1 bg-white cursor-pointer text-primary"
+        <Link className="px-3 mt-3 py-2 tonwa-bg-gray-2 border-bottom"
             to={pathBonusDetail}>分红信息&gt;&gt;</Link>
         <ViewChartBonus />
         <ViewPredictInfo />

@@ -9,9 +9,8 @@ import { PagePrinciple } from "./PagePrinciple";
 function LayoutBlogs() {
     let uqApp = useUqApp();
     let { data: blogsStore } = useQuery('LayoutBlogs', async function () {
-        let ret = new StoreBlogs();
-        ret.setUqAppAndParent(uqApp, undefined);
-        await ret.initOnce();
+        let ret = new StoreBlogs(uqApp);
+        await ret.init();
         return ret;
     });
     return <div>

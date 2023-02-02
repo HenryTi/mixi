@@ -1,3 +1,4 @@
+import { useUqApp } from "app";
 import { Page, Waiting } from "tonwa-com";
 import { EnumSysRole } from "tonwa-uq";
 import { usePageStoreInit } from "../PageStore";
@@ -16,8 +17,9 @@ interface Props {
 }
 
 export function PageUnitRoleAdmin({ admin, onAdminChanged, viewTop }: Props) {
-    let store = usePageStoreInit(() => new UnitRoleStore());
-    let { uqApp, state } = store;
+    let uqApp = useUqApp();
+    let store = usePageStoreInit(() => new UnitRoleStore(uqApp));
+    let { state } = store;
     let { unitRoles } = state;
     if (unitRoles === undefined) return <Waiting />;
     store.onAdminChanged = onAdminChanged;

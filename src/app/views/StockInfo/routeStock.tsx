@@ -24,7 +24,7 @@ function LayoutStockInfo() {
     const { id } = useParams();
     const { data: storeStockInfo } = useQuery('stockinfo', async function () {
         let ret = new StoreStockInfo(uqApp, Number(id));
-        await ret.initOnce();
+        await ret.init();
         return ret;
     });
     return <Outlet context={storeStockInfo} />;

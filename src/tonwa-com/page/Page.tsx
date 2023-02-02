@@ -128,8 +128,8 @@ export function UPage(props: PageProps) {
                     {header}
                 </div>
             </div>
-            <div className='tonwa-page-content flex-fill d-flex'>
-                <div className='container px-0'>
+            <div className='tonwa-page-content flex-fill'>
+                <div className='container px-0 d-flex flex-column'>
                     {children}
                 </div>
             </div>
