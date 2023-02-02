@@ -81,7 +81,7 @@ export class StoreStockInfo extends MyPageStore {
         let { day, trackDay } = this.baseItem;
         let lday = trackDay;
         let lastYear: number;
-        if (lday === undefined) {
+        if (lday === undefined || lday === null) {
             lday = day;
         }
         let y = Math.floor(lday / 10000);
@@ -185,6 +185,10 @@ export class StoreStockInfo extends MyPageStore {
         }
         this.stock = stock;
         let { id, name, no, rawId } = stock;
+        let date = new Date();
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let dt = date.getDate();
         this.baseItem = {
             id: id,
             rawId: rawId,
@@ -192,7 +196,7 @@ export class StoreStockInfo extends MyPageStore {
             code: no,
             //market: market?.name,
             //symbol: market?.name + no,
-            day: undefined, //year*10000 + month*100 + dt,
+            day: year*10000 + month*100 + dt,
             stock,
             trackDay: storeApp.state.trackDay,
         };

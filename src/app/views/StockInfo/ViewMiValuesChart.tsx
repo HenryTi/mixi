@@ -29,6 +29,7 @@ export function ViewMivaluesChart() {
                 pointStyle: "crossRot",
                 borderWidth: 1,
                 pointRadius: 5,
+                lineTension: 0.4,
                 fill: false,
             } as any
         ]

@@ -22,6 +22,7 @@ export function ViewPredictInfo() {
                     pointStyle: "crossRot",
                     borderWidth: 1,
                     pointRadius: 5,
+                    lineTension: 0.3,
                     fill: false,
                 } as any
             ]
@@ -38,6 +39,7 @@ export function ViewPredictInfo() {
                     borderColor: 'red',
                     backgroundColor: 'pink',
                     borderWidth: 1,
+                    lineTension: 0.3,
                     fill: false,
                 });
         }

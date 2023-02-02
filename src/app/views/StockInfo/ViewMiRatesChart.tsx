@@ -62,6 +62,7 @@ export function ViewMiRatesChart() {
             borderWidth: 1,
             pointRadius: 1,
             fill: false,
+            lineTension: 0.3,
             yAxisID: 'y1',
         },
         {
@@ -73,6 +74,7 @@ export function ViewMiRatesChart() {
             borderWidth: 1,
             pointRadius: 1,
             fill: false,
+            lineTension: 0.3,
             yAxisID: 'y1',
         },
         {
@@ -84,6 +86,7 @@ export function ViewMiRatesChart() {
             borderWidth: 3,
             pointRadius: 1,
             fill: false,
+            lineTension: 0.3,
             yAxisID: 'y2',
         }
     ];

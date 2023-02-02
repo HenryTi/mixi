@@ -30,6 +30,7 @@ export function ViewChartBonus() {
                     pointStyle: "crossRot",
                     borderWidth: 1,
                     pointRadius: 5,
+                    lineTension: 0.3,
                     fill: false,
                 } as any,
                 {
@@ -40,6 +41,7 @@ export function ViewChartBonus() {
                     pointStyle: "crossRot",
                     borderWidth: 3,
                     pointRadius: 5,
+                    lineTension: 0.3,
                     fill: false,
                 } as any
             ]
@@ -89,6 +91,7 @@ export function ViewChartBonus() {
                     pointStyle: "crossRot",
                     borderWidth: 1,
                     pointRadius: 5,
+                    lineTension: 0.3,
                     fill: false,
                 } as any
             ]
