@@ -27,6 +27,7 @@ export function ViewMivaluesChart({ storeStockInfo }: { storeStockInfo: StoreSto
                 pointStyle: "crossRot",
                 borderWidth: 1,
                 pointRadius: 5,
+                lineTension: 0.4,
                 fill: false,
             } as any
         ]

@@ -20,6 +20,7 @@ export function ViewPredictInfo({ storeStockInfo }: { storeStockInfo: StoreStock
                     pointStyle: "crossRot",
                     borderWidth: 1,
                     pointRadius: 5,
+                    lineTension: 0.3,
                     fill: false,
                 } as any
             ]
@@ -36,6 +37,7 @@ export function ViewPredictInfo({ storeStockInfo }: { storeStockInfo: StoreStock
                     borderColor: 'red',
                     backgroundColor: 'pink',
                     borderWidth: 1,
+                    lineTension: 0.3,
                     fill: false,
                 });
         }

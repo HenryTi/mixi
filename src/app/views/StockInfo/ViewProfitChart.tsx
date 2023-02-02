@@ -65,6 +65,7 @@ export function ViewProfitChart({ storeStockInfo }: { storeStockInfo: StoreStock
                     pointStyle: "crossRot",
                     borderWidth: 1,
                     pointRadius: 5,
+                    lineTension: 0.3,
                     fill: false,
                 } as any
             ]
@@ -76,6 +77,7 @@ export function ViewProfitChart({ storeStockInfo }: { storeStockInfo: StoreStock
                 borderColor: 'red',
                 backgroundColor: 'pink',
                 borderWidth: 1,
+                lineTension: 0.3,
                 fill: false,
             });
         chartdataFull.datasets.push(
@@ -85,6 +87,7 @@ export function ViewProfitChart({ storeStockInfo }: { storeStockInfo: StoreStock
                 borderColor: 'blue',
                 backgroundColor: 'skyBlue',
                 borderWidth: 1,
+                lineTension: 0.3,
                 fill: false,
             });
 
@@ -100,6 +103,7 @@ export function ViewProfitChart({ storeStockInfo }: { storeStockInfo: StoreStock
                     pointStyle: "crossRot",
                     borderWidth: 1,
                     pointRadius: 5,
+                    lineTension: 0.3,
                     fill: false,
                 } as any
             ]
@@ -112,6 +116,7 @@ export function ViewProfitChart({ storeStockInfo }: { storeStockInfo: StoreStock
                 borderColor: 'red',
                 backgroundColor: 'pink',
                 borderWidth: 1,
+                lineTension: 0.3,
                 fill: false,
             });
 
@@ -126,6 +131,7 @@ export function ViewProfitChart({ storeStockInfo }: { storeStockInfo: StoreStock
                     pointStyle: "crossRot",
                     borderWidth: 1,
                     pointRadius: 5,
+                    lineTension: 0.3,
                     fill: false,
                 } as any
             ]
@@ -164,6 +170,7 @@ export function ViewProfitChart({ storeStockInfo }: { storeStockInfo: StoreStock
                     pointStyle: "crossRot",
                     borderWidth: 1,
                     pointRadius: 5,
+                    lineTension: 0.3,
                     fill: false,
                 } as any
             ]
