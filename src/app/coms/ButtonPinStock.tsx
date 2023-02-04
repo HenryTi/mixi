@@ -1,4 +1,4 @@
-import { useUqApp } from "app/MyUqApp";
+import { useUqApp } from "app/UqApp";
 import { FA } from "tonwa-com";
 import { Stock, StockValue } from "uqs/BrMi";
 

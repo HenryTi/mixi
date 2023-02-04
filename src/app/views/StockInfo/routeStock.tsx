@@ -1,4 +1,4 @@
-import { useUqApp } from "app/MyUqApp";
+import { useUqApp } from "app/UqApp";
 import { StoreStockInfo } from "app/stores";
 import { useQuery } from "react-query";
 import { Outlet, Route, useParams } from "react-router-dom";
@@ -20,10 +20,9 @@ export const routeStock = <Route path={pathStockInfo(':id')} element={<LayoutSto
 </Route>;
 
 function LayoutStockInfo() {
-    const uqApp = useUqApp();
     const { id } = useParams();
     const { data: storeStockInfo } = useQuery('stockinfo', async function () {
-        let ret = new StoreStockInfo(uqApp, Number(id));
+        let ret = new StoreStockInfo(Number(id));
         await ret.init();
         return ret;
     });

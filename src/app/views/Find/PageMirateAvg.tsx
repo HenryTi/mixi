@@ -1,14 +1,15 @@
 /*eslint @typescript-eslint/no-unused-vars: ["off", { "vars": "all" }]*/
-import { useUqApp } from 'app/MyUqApp';
+import { useUqApp } from 'app/UqApp';
 import { GFunc } from 'app/stores';
 import { Chart } from 'react-chartjs-2'
 import { useQuery } from 'react-query';
 import { Page } from 'tonwa-com';
+import { useAtomValue } from 'jotai';
 
 export function PageMirateAvg() {
     const uqApp = useUqApp();
     const { storeApp } = uqApp;
-    const { trackDay } = storeApp.state;
+    const trackDay = useAtomValue(storeApp.trackDay);
     async function load() {
         let rets = await uqApp.miNet.t_mirateavgquery(trackDay);
         if (!Array.isArray(rets)) {
@@ -284,7 +285,7 @@ export function PageMirateAvg() {
                     drawOnChartArea: false
                 }
             },
-            
+
         }
     }
 

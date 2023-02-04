@@ -1,4 +1,3 @@
-import { useUqApp } from "app/MyUqApp";
 import { StoreBlogs } from "app/stores";
 import { useQuery } from "react-query";
 import { Outlet, Route } from "react-router-dom";
@@ -7,9 +6,8 @@ import { PageBlogs } from "./PageBlogs";
 import { PagePrinciple } from "./PagePrinciple";
 
 function OutletBlogs() {
-    let uqApp = useUqApp();
     let { data: blogsStore } = useQuery('LayoutBlogs', async function () {
-        let ret = new StoreBlogs(uqApp);
+        let ret = new StoreBlogs();
         await ret.init();
         return ret;
     });

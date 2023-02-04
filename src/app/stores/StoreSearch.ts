@@ -1,5 +1,5 @@
-import { MyPageStore } from "app/MyPageStore";
-import { MyUqApp } from "app/MyUqApp";
+import { UqApp } from "app";
+import { StorePage } from "app/StorePage";
 import { proxy } from "valtio";
 
 type SearchOrder = 'miRateDesc' | 'miRateAsc' | 'dvRateDesc' | 'dvRateAsc' | 'roeDesc' | 'roeAsc';
@@ -10,7 +10,7 @@ export interface SearchParam {
     smooth: number;
 }
 
-export class StoreSearch extends MyPageStore {
+export class StoreSearch extends StorePage {
     searchOrder: SearchOrder = 'miRateDesc';
     searchParam: SearchParam;
     smooth: number;
@@ -20,8 +20,8 @@ export class StoreSearch extends MyPageStore {
         items: [],
     });
 
-    constructor(uqApp: MyUqApp, key: string, markets: string[]) {
-        super(uqApp);
+    constructor(key: string, markets: string[]) {
+        super();
         this.key = key;
         this.markets = markets;
         this.smooth = 0;

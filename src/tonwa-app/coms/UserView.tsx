@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { User } from "tonwa-uq";
-import { useUqAppBase } from "../UqApp";
+import { useUqAppBase } from "../UqAppBase";
 
 interface Props {
     id: number;

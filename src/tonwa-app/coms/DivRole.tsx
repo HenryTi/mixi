@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { useUqAppBase } from "../UqApp";
+import { useUqAppBase } from "../UqAppBase";
 
 interface Props {
     children: ReactNode;

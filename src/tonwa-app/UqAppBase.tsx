@@ -1,7 +1,6 @@
 import React, { ReactNode, useContext, useState } from 'react';
-import { proxy, ref, useSnapshot } from "valtio";
 import jwtDecode from 'jwt-decode';
-import { PageProps, PagePublic, useEffectOnce } from 'tonwa-com';
+import { getAtomValue, PagePublic, setAtomValue, useEffectOnce } from 'tonwa-com';
 import { Guest, LocalDb, NetProps, UqConfig, User, UserApi } from 'tonwa-uq';
 import { createUQsMan, Net, UqUnit, Uq, UserUnit, UQsMan } from "tonwa-uq";
 import { env, LocalData } from 'tonwa-com';
@@ -9,6 +8,7 @@ import { Spinner } from 'tonwa-com';
 import { uqsProxy } from './uq';
 import { AutoRefresh } from './AutoRefresh';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { atom, useAtom } from 'jotai';
 
 export interface AppConfig { //extends UqsConfig {
     center: string;
@@ -29,7 +29,7 @@ export interface RoleName {
 }
 
 let uqAppId = 1;
-export abstract class UqApp<U = any> {
+export abstract class UqAppBase<U = any> {
     private readonly appConfig: AppConfig;
     private readonly uqConfigs: UqConfig[];
     private readonly uqsSchema: { [uq: string]: any; };
@@ -44,7 +44,9 @@ export abstract class UqApp<U = any> {
     //readonly responsive: {
     //    user: User;
     //}
-    readonly state: { user: User; refreshTime: number; modalStack: any[]; };
+    readonly refreshTime = atom(Date.now() / 1000);
+    readonly user = atom(undefined as User);
+    readonly modalStack = atom([] as [JSX.Element, (value: any | PromiseLike<any>) => void][]);
     uqsMan: UQsMan;
     store: any;
     guest: number;
@@ -79,11 +81,7 @@ export abstract class UqApp<U = any> {
 
         this.userApi = this.net.userApi;
         let user = this.localData.user.get();
-        this.state = proxy({
-            user,
-            refreshTime: Date.now() / 1000,
-            modalStack: [],
-        });
+        setAtomValue(this.user, user);
     }
 
     protected get defaultUqRoleNames(): { [lang: string]: any } { return undefined }
@@ -102,7 +100,7 @@ export abstract class UqApp<U = any> {
 
     async logined(user: User) {
         this.net.logoutApis();
-        this.state.user = user;
+        setAtomValue(this.user, user);
         let autoLoader: Promise<any> = undefined;
         let autoRefresh = new AutoRefresh(this, autoLoader);
         if (user) {
@@ -122,8 +120,12 @@ export abstract class UqApp<U = any> {
 
     async setUserProp(propName: string, value: any) {
         await this.userApi.userSetProp(propName, value);
-        (this.state.user as any)[propName] = value;
-        this.localData.user.set(this.state.user);
+        let user = getAtomValue(this.user);
+        let newUser = { ...user };
+        (newUser as any)[propName] = value;
+        setAtomValue(this.user, newUser);
+        //(this.state.user as any)[propName] = value;
+        this.localData.user.set(newUser);
     }
 
     saveLocalData() {
@@ -155,7 +157,7 @@ export abstract class UqApp<U = any> {
                 // this.buildRoleNames();
             }
             // let user = this.localData.user.get();
-            let { user } = this.state;
+            let user = getAtomValue(this.user);
             // console.log('logined');
             if (!user) {
                 let guest: Guest = this.localData.guest.get();
@@ -220,7 +222,8 @@ class LocalStorageDb extends LocalDb {
 }
 
 export function useModal() {
-    let { state } = useUqAppBase();
+    let { modalStack: modalStackAtom } = useUqAppBase();
+    const [modalStack, setModalStack] = useAtom(modalStackAtom);
     async function openModal<T = any>(element: JSX.Element, caption?: string | JSX.Element): Promise<T> {
         return new Promise<T>((resolve, reject) => {
             if (React.isValidElement(element) !== true) {
@@ -233,11 +236,13 @@ export function useModal() {
                     onBack={() => closeModal(undefined)}
                     back={'close'}>{element}</PagePublic>;
             }
-            state.modalStack.push(ref([<Modal />, resolve]));
+            //state.modalStack.push(ref([<Modal />, resolve]));
+            setModalStack([...modalStack, [<Modal />, resolve]])
         })
     }
     function closeModal(result: any) {
-        let [el, resolve] = state.modalStack.pop();
+        let [, resolve] = modalStack.pop();
+        setModalStack([...modalStack]);
         resolve(result);
     }
     return { openModal, closeModal, }
@@ -245,7 +250,7 @@ export function useModal() {
 
 export const UqAppContext = React.createContext(undefined);
 export function useUqAppBase() {
-    return useContext<UqApp>(UqAppContext);
+    return useContext<UqAppBase>(UqAppContext);
 }
 
 const queryClient = new QueryClient({
@@ -256,8 +261,8 @@ const queryClient = new QueryClient({
     },
 });
 
-export function ViewUqApp({ uqApp, children }: { uqApp: UqApp; children: ReactNode; }) {
-    const { modalStack } = useSnapshot(uqApp.state);
+export function ViewUqAppBase({ uqApp, children }: { uqApp: UqAppBase; children: ReactNode; }) {
+    const [modalStack] = useAtom(uqApp.modalStack);
     let [appInited, setAppInited] = useState<boolean>(false);
     useEffectOnce(() => {
         (async function () {
@@ -281,19 +286,27 @@ export function ViewUqApp({ uqApp, children }: { uqApp: UqApp; children: ReactNo
         </div>;
     }
     let len = modalStack.length;
-    let cnMain = len === 0 ? '' : 'd-none';
+    let cnMain: string;
+    let viewModalStack: any;
+    if (len === 0) {
+        cnMain = '';
+        viewModalStack = null;
+    }
+    else {
+        cnMain = 'd-none';
+        viewModalStack = modalStack.map((v, index) => {
+            let cn = index < len - 1 ? 'd-none' : '';
+            let [el] = v;
+            return <React.Fragment key={index}>
+                <div className={cn + ' h-100'}>{el}</div>
+            </React.Fragment>;
+        })
+    }
+
     return <UqAppContext.Provider value={uqApp}>
         <QueryClientProvider client={queryClient}>
-            {<div className={cnMain + ' h-100'}>{children}</div>}
-            {
-                modalStack.map((v, index) => {
-                    let cn = index < len - 1 ? 'd-none' : '';
-                    let [el] = v;
-                    return <React.Fragment key={index}>
-                        <div className={cn + ' h-100'}>{el}</div>
-                    </React.Fragment>;
-                })
-            }
+            <div className={cnMain + ' h-100'}>{children}</div>
+            {viewModalStack}
         </QueryClientProvider>
     </UqAppContext.Provider>;
 }

@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { Login, Logout, Register } from "tonwa-uq-com";
+import { Login, Logout, Register } from "tonwa-app";
 import { LoginTop } from "./LoginTop";
 import { PrivacyLink } from './PrivacyLink';
 

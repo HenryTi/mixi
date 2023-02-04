@@ -7,7 +7,7 @@ import { BandPassword } from 'tonwa-com';
 import { FormBandTemplate1 } from 'tonwa-com';
 import { Band } from 'tonwa-com';
 import { FormErrors } from 'tonwa-com';
-import { useUqAppBase } from '../UqApp';
+import { useUqAppBase } from '../UqAppBase';
 import { PageForget, PageRegister } from './register/PageRegister';
 import { getSender } from './tools';
 import { Link, Outlet, Route, useNavigate } from 'react-router-dom';

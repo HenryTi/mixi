@@ -1,5 +1,6 @@
 import { useContext } from 'react';
-import { AppConfig, UqApp, UqAppContext, ViewUqApp } from "tonwa-uq-com";
+import { getAtomValue, setAtomValue } from 'tonwa-com';
+import { AppConfig, UqAppBase, UqAppContext, ViewUqAppBase } from "tonwa-app";
 import { UqConfig, UqQuery } from 'tonwa-uq';
 import { UQs, uqsSchema } from "uqs";
 import uqconfigJson from '../uqconfig.json';
@@ -30,7 +31,7 @@ function uqConfigsFromJson(json: { devs: { [dev: string]: any }; uqs: any[]; }):
 }
 
 export function useUqApp() {
-    return useContext<MyUqApp>(UqAppContext);
+    return useContext<UqApp>(UqAppContext);
 }
 
 export interface Title {
@@ -41,7 +42,7 @@ export interface Title {
 }
 
 let myUqAppId = 1;
-export class MyUqApp extends UqApp<UQs> {
+export class UqApp extends UqAppBase<UQs> {
     id = myUqAppId++;
     timezone: number;
     unitTimezone: number;
@@ -54,12 +55,13 @@ export class MyUqApp extends UqApp<UQs> {
     // 数据服务器提醒客户端刷新，下面代码重新调入的数据
     refresh = async () => {
         let d = Date.now() / 1000;
-        if (d - this.state.refreshTime < 30) return;
+        let refreshTime = getAtomValue(this.refreshTime);
+        if (d - refreshTime < 30) return;
         await Promise.all([
             // this.cHome.load(),
             // this.cUnitPortal?.load(),
         ]);
-        this.state.refreshTime = d;
+        setAtomValue(this.refreshTime, d);
     }
 
     private async loadUnitTime($getTimezone: UqQuery<any, any>) {
@@ -72,7 +74,8 @@ export class MyUqApp extends UqApp<UQs> {
     }
 
     protected override async loadOnLogined(): Promise<void> {
-        this.miNet = new MiNet(this.state.user);
+        let user = getAtomValue(this.user);
+        this.miNet = new MiNet(user);
         let { BrMi } = this.uqs;
         this.storeApp = new StoreApp(this);
         let [] = await Promise.all([
@@ -83,9 +86,9 @@ export class MyUqApp extends UqApp<UQs> {
 }
 
 const uqConfigs = uqConfigsFromJson(uqconfigJson);
-const uqApp = new MyUqApp(appConfig, uqConfigs, uqsSchema);
-export function ViewUqAppMy() {
-    return <ViewUqApp uqApp={uqApp}>
+export const uqApp = new UqApp(appConfig, uqConfigs, uqsSchema);
+export function ViewUqApp() {
+    return <ViewUqAppBase uqApp={uqApp}>
         <ViewsRoutes />
-    </ViewUqApp>
+    </ViewUqAppBase>
 }

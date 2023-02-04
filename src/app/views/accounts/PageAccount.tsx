@@ -6,7 +6,7 @@ import { ButtonCashActs } from "./ButtonCashActs";
 import { ViewNote } from "./ViewNote";
 import { useSnapshot } from "valtio";
 import { Link, useParams } from "react-router-dom";
-import { useUqApp } from "app/MyUqApp";
+import { useUqApp } from "app/UqApp";
 import { useQuery } from "react-query";
 import { pathStockBuy } from "./routeAccount";
 

@@ -1,6 +1,6 @@
-import { UqApp } from "./UqApp";
+import { UqAppBase } from "./UqAppBase";
 
-export abstract class PageStore<UQApp extends UqApp<UQS> = any, UQS = any, P = any> {
+export abstract class StorePageBase<UQApp extends UqAppBase<UQS> = any, UQS = any> {
     readonly uqApp: UQApp;
     protected readonly uqs: UQS;
     constructor(uqApp: UQApp) {

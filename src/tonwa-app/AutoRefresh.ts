@@ -1,13 +1,13 @@
-import { UqApp } from "./UqApp";
+import { UqAppBase } from "./UqAppBase";
 
 const gaps = [10, 3, 3, 3, 3, 3, 5, 5, 5, 5, 5, 5, 5, 5, 10, 10, 10, 10, 15, 15, 15, 30, 30, 60];
 
 export class AutoRefresh {
-    private readonly uqApp: UqApp;
+    private readonly uqApp: UqAppBase;
     private readonly refreshAction: Promise<void>;
     private timer: any;
 
-    constructor(uqApp: UqApp, refreshAction: Promise<void>) {
+    constructor(uqApp: UqAppBase, refreshAction: Promise<void>) {
         this.uqApp = uqApp;
         this.refreshAction = refreshAction;
     }

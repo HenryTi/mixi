@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useUqAppBase } from '../UqApp';
+import { useUqAppBase } from '../UqAppBase';
 //import { tonwa } from "tonwa-core";
 //import { nav } from '../nav';
 

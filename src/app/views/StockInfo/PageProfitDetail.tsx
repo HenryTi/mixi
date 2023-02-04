@@ -49,7 +49,7 @@ export function PageProfitDetail() {
 
     function PredictChartFullInfo() {
         let { predictSeasonDataFull } = storeStockInfo;
-        let len = predictSeasonDataFull.length;
+        let len = predictSeasonDataFull === undefined ? 0 : predictSeasonDataFull.length;
         if (len <= 0)
             return <></>;
         let label = [];

@@ -8,3 +8,5 @@ export * from './date';
 export * from './renderDate';
 export * from './useEffectOnce';
 export * from './stringFormat';
+export * from './atom';
+

@@ -1,1 +1,1 @@
-export * from './MyUqApp';
+export * from './UqApp';

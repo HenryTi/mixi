@@ -1,4 +1,4 @@
-import { useUqApp } from "app/MyUqApp";
+import { useUqApp } from "app/UqApp";
 import { useQuery } from "react-query";
 import { Page } from "tonwa-com";
 import { ViewStockList } from "./ViewStockList";

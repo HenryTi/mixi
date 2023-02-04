@@ -20,16 +20,17 @@ export class MiAccount {
         this.state = proxy<Account & AccountValue & MiAccountState>({
             id: null,
             no: null,
-            holdingStocks: null as HoldingStock[],
             name: null,
-            portion: 20,
-            count: 0,
-            portionAmount: null,
-            buyableCount: 0,
             miValue: 0,
             market: 0,
-            divident: 0,
+
             cash: null,
+            portion: 20,
+            count: 0,
+            holdingStocks: null as HoldingStock[],
+            portionAmount: null,
+            buyableCount: 0,
+            divident: 0,
         });
         Object.assign(this.state, account);
     }

@@ -2,7 +2,7 @@ import { Chart } from 'react-chartjs-2'
 import { List, Page } from 'tonwa-com';
 import { StockBonus } from 'app/model/StockInfoType';
 import { StoreStockInfo, GFunc, SlrForEarning } from '../../stores';
-import { useUqApp } from 'app/MyUqApp';
+import { useUqApp } from 'app/UqApp';
 import { useOutletContext } from 'react-router-dom';
 
 export function PageBonusDetail() {
@@ -132,7 +132,7 @@ export function PageBonusDetail() {
             return <Chart data={chartdataFull} type='line' />;
         }
         else {
-            let len = predictBonusData.length;
+            let len = predictBonusData === undefined ? 0 : predictBonusData.length;
             if (len <= 0)
                 return <></>;
             let label = [];

@@ -1,5 +1,6 @@
 import { PageQueryMore } from "app/coms";
-import { useUqApp } from "app/MyUqApp";
+import { useUqApp } from "app/UqApp";
+import { useAtom } from "jotai";
 import { useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { FA, LMR } from "tonwa-com";
@@ -14,7 +15,7 @@ export function PageSearch() {
     // const storeSearch = useInitPageStore(() => new StoreSearch(searchKey, markets))
     // const { items } = useSnapshot(storeSearch.state);
     const tickReload = useRef(1);
-    let [smooth, setSmooth] = useState(uqApp.storeApp.smooth ?? 0)
+    let [smooth, setSmooth] = useAtom(uqApp.storeApp.smooth)
     function changeSmooth(v: number) {
         ++tickReload.current;
         setSmooth(v);

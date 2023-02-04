@@ -67,9 +67,10 @@ export function ViewChartBonus() {
         return <Chart data={chartdataFull} type='line' />;
     }
     else {
+        if (predictBonusData === undefined) return;
         let len = predictBonusData.length;
-        if (len <= 0)
-            return <></>;
+        if (len <= 0) return <></>;
+
         let label = [];
         let y: number[] = [];
         for (let i = 0; i < len; ++i) {

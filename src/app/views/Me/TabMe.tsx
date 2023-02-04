@@ -1,19 +1,17 @@
-import { useUqApp } from "app/MyUqApp";
-import { AppLogout } from "app/tool";
+import { useUqApp } from "app/UqApp";
+import { useAtom } from "jotai/react";
 import { Link, Outlet, Route, Routes } from "react-router-dom";
 import { FA, LMR, Page, Sep, useT } from "tonwa-com";
-import { Image, UserQuit } from "tonwa-uq-com";
-import { useSnapshot } from "valtio";
+import { Image, UserQuit } from "tonwa-app";
 import { appT } from "../../res";
-import { PageAbout } from "./PageAbout";
-import { OutletEditMe, pathEditMe } from "./routeMe";
+import { pathEditMe } from "./routeMe";
 
 const pathAbout = 'about';
 
 export function TabMe() {
     const t = useT(appT);
     const uqApp = useUqApp();
-    const { user } = useSnapshot(uqApp.state);
+    const [user] = useAtom(uqApp.user);
 
     function MeInfo() {
         if (!user) return null;

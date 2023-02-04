@@ -1,42 +1,21 @@
 import { NStockInfo, StockBonus, StockCapitalearning, StockDividentInfo } from "app/model/StockInfoType";
-import { MyPageStore } from "app/MyPageStore";
+import { StorePage } from "app/StorePage";
 import { StockPrice } from "app/model/StockInfoType";
 import { Stock, StockValue } from "uqs/BrMi";
 import { GFunc } from './GFunc';
 import { ErForEarning } from './ErForEarning';
 import { SlrForEarning } from './SlrForEarning';
-import { MyUqApp } from "app/MyUqApp";
+import { getAtomValue } from "tonwa-com";
 
-export class StoreStockInfo extends MyPageStore {
+export class StoreStockInfo extends StorePage {
     readonly id: number;
     stock: Stock & StockValue;
     baseItem: NStockInfo;
-    constructor(uqApp: MyUqApp, id: number) {
-        super(uqApp);
+    constructor(id: number) {
+        super();
         this.id = id;
-        /*
-        this.stock = stock;
-        //let market = this.uqApp.storeApp.getMarket(stock);
-        //let date = new Date();
-        // let year = date.getFullYear();
-        // let month = date.getMonth() + 1;
-        // let dt = date.getDate();
-        let { id, name, no, rawId } = stock;
-        this.baseItem = {
-            id: id,
-            rawId: rawId,
-            name,
-            code: no,
-            //market: market?.name,
-            //symbol: market?.name + no,
-            day: undefined, //year*10000 + month*100 + dt,
-            stock,
-            trackDay,
-        };
-        */
     }
 
-    //private loaded: boolean = false;
     isBlock: boolean;
 
     price: StockPrice;
@@ -196,14 +175,14 @@ export class StoreStockInfo extends MyPageStore {
             code: no,
             //market: market?.name,
             //symbol: market?.name + no,
-            day: year*10000 + month*100 + dt,
+            day: year * 10000 + month * 100 + dt,
             stock,
-            trackDay: storeApp.state.trackDay,
+            trackDay: getAtomValue(storeApp.trackDay),
         };
 
         let { day, trackDay } = this.baseItem;
         let rets;
-        if (trackDay !== null) {
+        if (trackDay !== undefined) {
             rets = await Promise.all([
                 miNet.q_stockallinfotrack(rawId, trackDay)
             ]);
@@ -395,7 +374,7 @@ export class StoreStockInfo extends MyPageStore {
             }
         }
 
-        let getBonusPrev3 = (sno: number) => {
+        function getBonusPrev3(sno: number) {
             let r = 0;
             for (let n = sno - 3; n < sno; ++n) {
                 let item = dataOrg[n];
@@ -404,7 +383,6 @@ export class StoreStockInfo extends MyPageStore {
             }
             return r;
         }
-
 
         for (let no = minNo; no <= maxNo; ++no) {
             let item = dataOrg[no];

@@ -1,4 +1,4 @@
-import { useUqApp } from "app/MyUqApp";
+import { useUqApp } from "app/UqApp";
 import { Outlet, Route, useParams } from "react-router-dom";
 import { PageAccount } from "./PageAccount";
 import { PageCashAdjust, PageCashIn, PageCashInit, PageCashOut, PageStockBuy, PageStockSell } from "./FormAccount";

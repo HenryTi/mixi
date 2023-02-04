@@ -1,14 +1,14 @@
-import { useSnapshot } from "valtio";
 import { Page, useT, FA, PropEdit, BandString, Sep, BandCom, LabelRow, ContainerProps, LabelRowProps, LabelRowEdit } from "tonwa-com";
 import { appT } from '../../res';
-import { useUqApp } from "app/MyUqApp";
+import { useUqApp } from "app/UqApp";
 import { meT } from "./meRes";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { pathChangePassword, pathEditMe, pathLogout, pathUserQuit } from "./routeMe";
+import { useAtom } from "jotai/react";
 
 export function PageEditMe() {
     let uqApp = useUqApp();
-    let { user } = useSnapshot(uqApp.state);
+    let [user] = useAtom(uqApp.user);
     let t = useT(meT, appT);
 
     let onValuesChanged = async (values: { name: string; value: any; preValue: any; }) => {
@@ -22,20 +22,26 @@ export function PageEditMe() {
     let temp: Partial<LabelRowProps> = {
         // LabelContainer,
         labelAlign: 'end',
+        MidContainer: function ({ children }: ContainerProps) { return <div className="ms-2">{children}</div> }
     }
     //<BandImage label="头像" name="icon" />
+    function Right({ text, onClick }: { text: string, onClick?: () => void }) {
+        let cn = 'px-3 py-3';
+        if (onClick) cn += ' cursor-pointer';
+        return <div className={cn} onClick={onClick}>{text}</div>;
+    }
     return <Page header="个人信息">
         <div>
             <LabelRow {...temp}>
                 ok
                 <div>content</div>
-                <div>right</div>
+                <Right text="right"></Right>
             </LabelRow>
             <Sep />
             <LabelRow {...temp}>
                 ok1
                 <div>content</div>
-                <div>right</div>
+                <Right text="right"></Right>
             </LabelRow>
             <Sep />
             <LabelRowEdit {...temp} label={"a"} value={1} />

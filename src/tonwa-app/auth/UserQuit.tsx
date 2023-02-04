@@ -1,6 +1,6 @@
 import { Link, Outlet, Route, useNavigate } from "react-router-dom";
 import { Page } from "tonwa-com";
-import { useUqAppBase } from "../UqApp";
+import { useUqAppBase } from "../UqAppBase";
 
 const waitingTime = '一小时';
 const pathQuitDone = 'done';

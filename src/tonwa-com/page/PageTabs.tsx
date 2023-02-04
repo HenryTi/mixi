@@ -1,13 +1,14 @@
 import React, { ReactElement, Suspense, useRef } from "react";
-import { proxy, useSnapshot } from "valtio";
+import { atom, useAtomValue, WritableAtom } from 'jotai';
 import { PageSpinner } from "./PageSpinner";
+import { setAtomValue } from "tonwa-com/tools";
 
 interface TabObject {
     id: number;
     name: string;
     tag: string | JSX.Element;
     content: JSX.Element;
-    state: { mountable: boolean; };         // 只有在点击tab之后，才初始化
+    mountable: WritableAtom<boolean, any, any>;           // 只有在点击tab之后，才初始化
     store?: any;
     element?: HTMLElement;
 }
@@ -39,13 +40,11 @@ function createTabsFromChildren(children: React.ReactNode) {
             name: props.name,
             tag: props.tag,
             content: <>{props.children}</>,
-            state: proxy({
-                mountable: false,
-            }),
+            mountable: atom(false),
         };
         tabs.push(tab);
     });
-    tabs[0].state.mountable = true;
+    setAtomValue(tabs[0].mountable, true);
     return tabs;
 }
 
@@ -57,7 +56,7 @@ export function PageTabs({ children }: { children: React.ReactNode; }) {
             let cn: string;
             if (tabCur === tab) {
                 cn = 'tonwa-pane active';
-                tab.state.mountable = true;
+                setAtomValue(tab.mountable, true);
                 setTimeout(() => {
                     let { element } = tabCur;
                     if (element !== undefined) element.className = cn;
@@ -86,8 +85,8 @@ export function PageTabs({ children }: { children: React.ReactNode; }) {
 
     function TabPane({ tab, active, index }: { tab: TabObject; active: number; index: number; }) {
         //let divRef = useScroll(false);
-        let { state, content } = tab;
-        let { mountable } = useSnapshot(state);
+        let { mountable: atomMoutable, content } = tab;
+        let mountable = useAtomValue(atomMoutable);
         if (mountable === false) return null;
         return <Suspense fallback={<PageSpinner />}>
             <div ref={div => tabs[index].element = div} className={'tonwa-pane ' + (active === index ? 'active' : '')}>

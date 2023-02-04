@@ -1,14 +1,14 @@
-import { User } from "tonwa-uq";
-import { BrMi, UQs } from "uqs";
-import { proxy, ref } from "valtio";
-import { Group, Holding, Industry, Market, Stock, StockValue } from "uqs/BrMi";
+import { BrMi } from "uqs";
+import { getAtomValue, setAtomValue } from "tonwa-com";
+import { Holding, Industry, Market, Stock, StockValue } from "uqs/BrMi";
 import { MGroup, MiGroup, MIndustry } from "./MGroup";
 import { MiGroups, MIndustries, MRootIndustries } from "./MGroups";
 import { MiAccount } from "./MiAccount";
 import { MiAccounts } from "./MiAccounts";
 import { stockMiRateSorter } from "./sorter";
-import { MyUqApp } from "app/MyUqApp";
+import { UqApp } from "app/UqApp";
 import { MiNet } from "app/tool";
+import { atom, WritableAtom } from "jotai";
 
 export interface IXBase {
     ix: number;
@@ -17,11 +17,14 @@ export interface IXBase {
 
 const find_smooth = 'find_smooth';
 export class StoreApp {
-    private readonly user: User;
+    // private readonly user: User;
+    private readonly uqApp: UqApp;
     private miNet: MiNet;
     readonly myAllColl: { [id: number]: boolean } = {};
     readonly yumi: BrMi.UqExt;
     readonly markets: { [id: number]: { id?: number; name: string; currency: string; } } = {};
+    readonly trackDay = atom(undefined as number);
+    readonly smooth: WritableAtom<number, any, any>;
     miAccounts: MiAccounts;
     miGroups: MiGroups;
     industries: MIndustries;
@@ -32,21 +35,17 @@ export class StoreApp {
     stocksMyBlock: (Stock & StockValue)[];
     groupIXs: IXBase[];
 
-    state = proxy({
-        trackDay: null as number,
-    });
-    smooth: number;
-
-    constructor(uqApp: MyUqApp) {
+    constructor(uqApp: UqApp) {
+        this.uqApp = uqApp;
         this.miNet = uqApp.miNet;
-        this.user = uqApp.state.user;
+        // this.user = uqApp.state.user;
         this.yumi = uqApp.uqs.BrMi;
         this.miAccounts = new MiAccounts(this);
         this.miGroups = new MiGroups(this);
         this.industries = new MIndustries(this);
         this.rootIndustries = new MRootIndustries(this);
         let smooth = localStorage.getItem(find_smooth);
-        this.smooth = smooth ? Number(smooth) : 0;
+        this.smooth = atom(smooth ?? 0) as any;
     }
 
     stockFromId(stockId: number): Stock & StockValue {
@@ -54,7 +53,7 @@ export class StoreApp {
     }
 
     setSmooth(smooth: number) {
-        this.smooth = smooth;
+        setAtomValue(this.smooth, smooth);
         localStorage.setItem(find_smooth, String(this.smooth));
     }
 
@@ -149,7 +148,7 @@ export class StoreApp {
             //this.buildStockValues(v);
             this.myAllColl[v.id] = true;
         });
-        this.stocksMyAll = ret.map(v => ref(v));
+        this.stocksMyAll = ret;
         this.stocksMyAll.sort(stockMiRateSorter);
     }
 
@@ -162,7 +161,7 @@ export class StoreApp {
             ix: undefined,
         });
         //ret.forEach(v => this.buildStockValues(v));
-        this.stocksMyBlock = ret.map(v => ref(v));
+        this.stocksMyBlock = ret;
     }
 
     async loadGroupStocks(groupId: number): Promise<(Stock & StockValue)[]> {
@@ -367,8 +366,10 @@ export class StoreApp {
     }
 
     async searchTrackStock(param: any, pageStart: any, pageSize: number): Promise<{ [name: string]: any[] }> {
+        let user = getAtomValue(this.uqApp.user);
+
         let { day, key, market, $orderSwitch, smooth } = param as { day: number, key: string, market: string, $orderSwitch?: any, smooth?: number, }
-        let ret = await this.miNet.q_searchstock(day, this.user.id, pageStart, pageSize, $orderSwitch, key, market, smooth);
+        let ret = await this.miNet.q_searchstock(day, user.id, pageStart, pageSize, $orderSwitch, key, market, smooth);
         //let { $page } = ret;
         //$page.forEach(v => this.buildStockValues(v as unknown as (Stock & StockValue)));
         return ret as any;

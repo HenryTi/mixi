@@ -8,7 +8,7 @@ type ContainerType = (props: ContainerProps) => JSX.Element;
 
 const defualtLeftSize = 3;
 const defaultLabelClassName = ' py-1 tonwa-bg-gray-1 border-end fw-bold col-form-label';
-const defaultMidClassName = ' py-3 ';
+const defaultMidClassName = ' ';
 function DefaultLabelContainer({ children }: ContainerProps) {
     return <>
         {children}
@@ -76,7 +76,7 @@ export function LabelRow({ className, labelSize, labelAlign, labelClassName, Lab
         <div className={`col-sm-${labelSize} d-flex ${vAlignClassName} ${cnLabelAlign} ${labelClassName}`}>
             <LabelContainer>{arr[0]}</LabelContainer>
         </div>
-        <div className={`col-sm-${12 - labelSize} d-flex ${vAlignClassName} ${midClassName}`}>
+        <div className={`col-sm-${12 - labelSize} gx-0 d-flex ${vAlignClassName} ${midClassName}`}>
             <MidContainer>{midArr.map((v, index) => <React.Fragment key={index}>{v}</React.Fragment>)}</MidContainer>
             {right}
         </div>

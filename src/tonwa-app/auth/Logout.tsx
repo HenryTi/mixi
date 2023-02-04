@@ -1,5 +1,5 @@
 import { Page } from "tonwa-com";
-import { useUqAppBase } from "../UqApp";
+import { useUqAppBase } from "../UqAppBase";
 
 export function Logout({ onLogout, resetAll }: { onLogout: () => Promise<void>; resetAll: () => void; }) {
     let uqApp = useUqAppBase();

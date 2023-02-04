@@ -2,7 +2,7 @@ import { PagePublic } from 'tonwa-com';
 import { Band } from 'tonwa-com';
 import { BandPassword } from 'tonwa-com';
 import { Form, Submit } from 'tonwa-com';
-import { useUqAppBase } from '../../UqApp';
+import { useUqAppBase } from '../../UqAppBase';
 import { Pass } from './Pass';
 import { ForgetSuccess, RegisterSuccess } from './PageSuccess';
 import { Outlet, Route, useNavigate } from 'react-router-dom';

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ButtonAsync, MutedSmall, Page, SearchBox, wait } from "tonwa-com";
 import { FA } from "tonwa-com";
 import { User } from "tonwa-uq";
-import { useUqAppBase } from "../UqApp";
+import { useUqAppBase } from "../UqAppBase";
 import { Image } from "./Image";
 
 interface Props {

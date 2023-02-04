@@ -3,7 +3,7 @@ import { PagePublic } from "tonwa-com";
 import { Band } from "tonwa-com";
 import { BandPassword } from "tonwa-com";
 import { Form, FormBandTemplate1, Submit, FormErrors } from "tonwa-com";
-import { useUqAppBase } from "../UqApp";
+import { useUqAppBase } from "../UqAppBase";
 
 const pathChangeSucceed = '/changeSucceed';
 

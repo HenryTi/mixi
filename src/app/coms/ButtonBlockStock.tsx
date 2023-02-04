@@ -1,4 +1,4 @@
-import { useUqApp } from "app/MyUqApp";
+import { useUqApp } from "app";
 import { Stock, StockValue } from "uqs/BrMi";
 
 export interface ButtonBlockStockProps {

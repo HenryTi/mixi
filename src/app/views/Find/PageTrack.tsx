@@ -1,5 +1,6 @@
 import { FormRow, FormRowsView } from "app/coms";
-import { useUqApp } from "app/MyUqApp";
+import { useUqApp } from "app/UqApp";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Page } from "tonwa-com";
@@ -17,7 +18,8 @@ function numberToDate(value: number) {
 
 export function PageTrack() {
     let { storeApp } = useUqApp();
-    let date = numberToDate(storeApp.state.trackDay);
+    const trackDay = useAtomValue(storeApp.trackDay);
+    let date = numberToDate(trackDay);
     return <Page header={trackCaption}>
         <div className="p-3">
             历史数据起始日: {date.toDateString()}
@@ -31,12 +33,13 @@ export function PageTrack() {
 }
 
 export function PageSetTrackDay() {
-    // const nav = useNav();
     const navigate = useNavigate();
-    const uqApp = useUqApp();
+    const { storeApp } = useUqApp();
+    const { trackDay: atomTrackDay } = storeApp;
     const { register, handleSubmit, watch, formState: { errors } } = useForm({ mode: 'onBlur' });
+    const setTrackDay = useSetAtom(atomTrackDay);
     async function onSubmit(data: any) {
-        uqApp.storeApp.state.trackDay = data['value'];
+        setTrackDay(data['value']);
         navigate(pathSetTrackDay, { replace: true });
     }
     function checkDate(value: number) {

@@ -1,4 +1,4 @@
-import { useUqApp } from "app/MyUqApp";
+import { useUqApp } from "app/UqApp";
 import { MGroup } from "app/stores/MGroup";
 import { Link, useNavigate } from "react-router-dom";
 import { FA, LMR, Page, SearchBox } from "tonwa-com";

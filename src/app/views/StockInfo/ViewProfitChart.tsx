@@ -10,7 +10,7 @@ export function ViewProfitChart() {
 
     function getProfitCharts() {
         let { predictSeasonDataFull } = storeStockInfo;
-        let len = predictSeasonDataFull.length;
+        let len = predictSeasonDataFull === undefined ? 0 : predictSeasonDataFull.length;
         if (len <= 0)
             return { chartFull: <></>, chartProfit: <></>, chartRevenue: <></> };
 
@@ -149,7 +149,7 @@ export function ViewProfitChart() {
 
     function predictChartROE() {
         let { predictSeasonDataFull } = storeStockInfo;
-        let len = predictSeasonDataFull.length;
+        let len = predictSeasonDataFull === undefined ? 0 : predictSeasonDataFull.length;
         if (len <= 0)
             return <></>;
         let label = [];

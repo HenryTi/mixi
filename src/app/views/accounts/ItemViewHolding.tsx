@@ -1,5 +1,5 @@
 import { NFormat, nFormat0, nFormat1, nFormat2, smallPercent } from "app/coms/ItemViewStock";
-import { useUqApp } from "app/MyUqApp";
+import { useUqApp } from "app/UqApp";
 import { HoldingStock } from "app/stores";
 import { pathStockInfo } from "../StockInfo";
 import { useRef, useState } from "react";

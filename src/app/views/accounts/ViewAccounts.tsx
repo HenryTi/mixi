@@ -1,5 +1,5 @@
 import { nFormat1, smallPercent } from "app/coms/ItemViewStock";
-import { useUqApp } from "app/MyUqApp";
+import { useUqApp } from "app/UqApp";
 import { MiAccount } from "app/stores/MiAccount";
 import { FA, List, LMR } from "tonwa-com";
 import { pathAccount } from "./routeAccount";

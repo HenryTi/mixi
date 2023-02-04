@@ -1,7 +1,7 @@
 /*eslint @typescript-eslint/no-unused-vars: ["off", { "vars": "all" }]*/
 
 import { NStockInfo } from "app/model/StockInfoType";
-import { useUqApp } from "app/MyUqApp";
+import { useUqApp } from "app/UqApp";
 import { FA } from "tonwa-com";
 import { Market, Stock, StockValue } from "uqs/BrMi";
 

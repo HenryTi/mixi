@@ -1,4 +1,4 @@
-import { useUqApp } from "app/MyUqApp";
+import { useUqApp } from "app/UqApp";
 import { Page } from "tonwa-com";
 
 export function PageAbout() {

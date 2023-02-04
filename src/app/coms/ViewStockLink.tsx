@@ -1,4 +1,4 @@
-import { useUqApp } from "app/MyUqApp";
+import { useUqApp } from "app/UqApp";
 import { Stock, StockValue } from "uqs/BrMi";
 
 export function ViewStockLink({ stock }: { stock: Stock & StockValue; }) {
