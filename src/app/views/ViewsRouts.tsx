@@ -10,14 +10,14 @@ import { TabFind } from './Find';
 import { routeStock } from './StockInfo';
 import { PageSpinner } from 'tonwa-com/page/PageSpinner';
 import { routeSearch } from './Search';
-import { pathPrivacy, PagePrivacy, routePrivacy } from 'app/tool';
+import { routePrivacy } from 'app/tool';
 import { routeAccount } from 'app/views/accounts/routeAccount';
 
 export function ViewsRoutes() {
     const homeLayout = <PageTabsLayout tabs={[
-        { to: '/', caption: '首页' },
-        { to: '/find', caption: '发现' },
-        { to: '/' + pathMe, caption: '我的' },
+        { to: '/', caption: '首页', icon: 'home' },
+        { to: '/find', caption: '发现', icon: 'search' },
+        { to: '/' + pathMe, caption: '我的', icon: 'user' },
     ]} />;
 
     return <Suspense fallback={<PageSpinner />}>

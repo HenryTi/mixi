@@ -1,7 +1,8 @@
 import { NavLink, Outlet } from "react-router-dom";
+import { FA } from "tonwa-com";
 
 interface PageTabsLayoutProps {
-    tabs: { to: string; caption: string; }[];
+    tabs: { to: string; caption: string; icon: string }[];
 }
 
 export function PageTabsLayout({ tabs }: PageTabsLayoutProps) {
@@ -9,13 +10,16 @@ export function PageTabsLayout({ tabs }: PageTabsLayoutProps) {
         isActive: boolean;
         isPending: boolean;
     }) {
-        return 'btn flex-fill mx-1 ' +
-            (isActive === true ? 'btn-primary' : 'btn-info');
+        return 'flex-fill mx-1 text-center py-1 ' +
+            (isActive === true ? 'text-primary' : 'text-secondary');
     }
     let vTabs = <div className="d-flex container">
         {tabs.map(v => {
-            const { to, caption } = v;
-            return <NavLink key={caption} to={to} className={tabClassName} replace={true}>{caption}</NavLink>;
+            const { to, caption, icon } = v;
+            return <NavLink key={caption} to={to} className={tabClassName} replace={true}>
+                <FA name={icon} /> <br />
+                {caption}
+            </NavLink>;
         })}
     </div>;
 
@@ -26,7 +30,7 @@ export function PageTabsLayout({ tabs }: PageTabsLayoutProps) {
         <div className='invisible'>
             {vTabs}
         </div>
-        <div className='bg-warning position-fixed bottom-0 w-100'>
+        <div className='tonwa-bg-gray-3 position-fixed bottom-0 w-100 bottom-top'>
             {vTabs}
         </div>
     </div>;
