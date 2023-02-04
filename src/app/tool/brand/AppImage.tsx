@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { Login, Logout, Register } from "tonwa-uq-com";
-import { LoginTop, PrivacyLink } from "../brand";
+import { LoginTop } from "./LoginTop";
+import { PrivacyLink } from './PrivacyLink';
 
 export function AppLogin() {
     const { state } = useLocation();

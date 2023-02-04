@@ -1,30 +1,39 @@
-import { AppLogout } from "app/tool/AppWithTabs/AppImage";
+import { AppLogout } from "app/tool/brand/AppImage";
 import { Outlet, Route, Routes } from "react-router-dom";
-import { ChangePassword, UserQuit } from "tonwa-uq-com";
+import { PageChangePassword, UserQuit } from "tonwa-uq-com";
 import { PageAbout } from "./PageAbout";
-import { PageEditMeIndex } from "./PageEditMe";
+import { PageEditMe } from "./PageEditMe";
 
-export function pathEditMe() { return '/editMe'; }
+export const pathMe = 'me';
+export const pathEditMe = 'edit';
 
-const pathIndex = '/';
-export const pathChangePassword = '/changePassword';
-export const pathLogout = '/logout';
-export const pathUserQuit = '/quit';
-export const pathAbout = '/about';
+const pathIndex = '';
+export const pathChangePassword = 'changePassword';
+export const pathLogout = 'logout';
+export const pathUserQuit = 'quit';
+const pathAbout = 'about';
 
+/*
 export const routeMe = <>
-    <Route path={pathEditMe() + '/*'} element={<PageEditMeLayout />} />
+    <Route path={pathEditMe} element={<OutletEditMe />} />
     <Route path={pathAbout} element={<PageAbout />} />
     <Route path={pathLogout} element={<AppLogout />} />
     <Route path={pathUserQuit} element={<UserQuit />} />
 </>;
+*/
 
-export function PageEditMeLayout() {
+export const routeMe = <Route path={pathMe + '/*'}>
+    <Route path={pathEditMe + '/*'} element={<OutletEditMe />} />
+    <Route path={pathAbout} element={<PageAbout />} />
+</Route>;
+
+export function OutletEditMe() {
     return <>
-        <Outlet />
         <Routes>
-            <Route path={pathIndex} element={<PageEditMeIndex />} />
-            <Route path={pathChangePassword} element={<ChangePassword />} />
+            <Route path="*" element={<PageEditMe />} />
+            <Route path={pathChangePassword} element={<PageChangePassword />} />
+            <Route path={pathLogout} element={<AppLogout />} />
+            <Route path={pathUserQuit} element={<UserQuit />} />
         </Routes>
     </>;
 }

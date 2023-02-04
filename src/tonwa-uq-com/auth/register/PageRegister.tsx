@@ -1,14 +1,15 @@
 import { FunctionComponent, useRef } from 'react';
-import { UPage, useNav } from 'tonwa-com';
+import { PagePublic } from 'tonwa-com';
 import { getSender } from '../tools';
-import { Verify } from './Verify';
+import { PageVerify } from './PageVerify';
 import { Pass } from './Pass';
-import { ForgetPassword, RegisterPassword } from './Password';
+import { ForgetPassword, RegisterPassword } from './PagePassword';
 import { Login } from '../Login';
 import { useUqAppBase } from '../../UqApp';
 import { BandString } from 'tonwa-com';
 import { Band, BandContainerContext } from 'tonwa-com';
 import { Form, FormBandTemplate1, Submit } from 'tonwa-com';
+import { Link, Outlet, Route, useNavigate } from 'react-router-dom';
 
 interface StartProps {
     privacy: JSX.Element;
@@ -23,8 +24,10 @@ interface Props extends StartProps {
     sendVerifyOem: string;          // 发送短信或者邮件的时候的厂家标志
 }
 
-function RegisterPageBase({ header, accountLable, privacy, loginTop, Password, accountError, sendVerifyOem }: Props) {
-    let nav = useNav();
+function PageRegisterBase({ header, accountLable, privacy, loginTop, Password, accountError, sendVerifyOem }: Props) {
+    const pathPassword = 'password';
+    const pathVerify = 'verify';
+    const navigate = useNavigate();
     let { userApi } = useUqAppBase();
     let { current: pass } = useRef({} as Pass);
     async function onValuesChanged({ name, value }: { name: string; value: any; }, context: BandContainerContext<any>) {
@@ -62,9 +65,9 @@ function RegisterPageBase({ header, accountLable, privacy, loginTop, Password, a
             pass.verify = verify;
             let ret = await userApi.checkVerify(account, verify);
             if (ret === 0) return ret;
-            nav.open(<Password pass={pass} />);
+            navigate(pathPassword);
         }
-        nav.open(<Verify onVerify={onVerify} pass={pass} />);
+        navigate(pathVerify);
     }
     /*
         let onEnter = async (name: string, context: Context): Promise<string> => {
@@ -73,12 +76,8 @@ function RegisterPageBase({ header, accountLable, privacy, loginTop, Password, a
             }
         }
     */
-    function onToLogin(evt: React.MouseEvent<HTMLAnchorElement>) {
-        evt.preventDefault();
-        nav.open(<Login loginTop={loginTop} privacy={privacy} />);
-    }
 
-    return <UPage header={header} footer={privacy}>
+    let pageIndex = <PagePublic header={header} footer={privacy}>
         <div className="d-grid">
             <div className="d-grid w-20c my-5 py-5"
                 style={{ marginLeft: 'auto', marginRight: 'auto' }}>
@@ -91,31 +90,34 @@ function RegisterPageBase({ header, accountLable, privacy, loginTop, Password, a
                     </Band>
                 </Form>
                 <div className="text-center py-3">
-                    <a href="/#" className="text-primary"
-                        onClick={onToLogin}
-                    >已有账号，直接登录</a>
+                    <Link className="btn btn-link text-primary" to={'/login'}>已有账号，直接登录</Link>
                 </div>
             </div>
         </div>
-    </UPage>;
+    </PagePublic>;
+    return <Route element={<Outlet />}>
+        <Route index element={pageIndex} />
+        <Route path={pathPassword} element={<Password pass={pass} />} />
+        <Route path={pathVerify} element={<PageVerify onVerify={undefined/*onVerify*/} pass={pass} />} />
+    </Route>;
 }
 
-export function Register(props: StartProps) {
+export function PageRegister(props: StartProps) {
     let { loginTop, privacy } = props;
     let accountError = (isExists: number) => {
         if (isExists > 0) return '已经被注册使用了';
     }
-    return <RegisterPageBase header="注册账号" accountLable="账号" Password={RegisterPassword}
+    return <PageRegisterBase header="注册账号" accountLable="账号" Password={RegisterPassword}
         accountError={accountError} sendVerifyOem={undefined}
         loginTop={loginTop} privacy={privacy} />;
 }
 
-export function Forget(props: StartProps) {
+export function PageForget(props: StartProps) {
     let { loginTop, privacy } = props;
     let accountError = (isExists: number) => {
         if (isExists === 0) return '请输入正确的账号';
     }
-    return <RegisterPageBase header="密码找回" accountLable="账号" Password={ForgetPassword}
+    return <PageRegisterBase header="密码找回" accountLable="账号" Password={ForgetPassword}
         accountError={accountError} sendVerifyOem={undefined}
         loginTop={loginTop} privacy={privacy} />;
 }

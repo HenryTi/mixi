@@ -1,5 +1,5 @@
-import { Link, Route, Routes } from "react-router-dom";
-import { UPage, useNav } from "tonwa-com";
+import { Link, Route } from "react-router-dom";
+import { PagePublic } from "tonwa-com";
 
 export const pathPrivacy = '/privacy';
 export const routePrivacy = <>
@@ -15,11 +15,11 @@ export function PrivacyLink() {
 }
 
 export function PagePrivacy() {
-    return <UPage header="隐私政策">
+    return <PagePublic header="隐私政策">
         <div className="d-grid p-3">
             {privacy.split('\n').map((v, index) => <p key={index}>{v}</p>)}
         </div>
-    </UPage>
+    </PagePublic>
 }
 
 const privacy = `

@@ -1,13 +1,11 @@
 import React, { ReactNode, useContext, useState } from 'react';
-import { proxy, useSnapshot } from "valtio";
+import { proxy, ref, useSnapshot } from "valtio";
 import jwtDecode from 'jwt-decode';
-import { AppNav, useEffectOnce } from 'tonwa-com';
+import { PageProps, PagePublic, useEffectOnce } from 'tonwa-com';
 import { Guest, LocalDb, NetProps, UqConfig, User, UserApi } from 'tonwa-uq';
 import { createUQsMan, Net, UqUnit, Uq, UserUnit, UQsMan } from "tonwa-uq";
 import { env, LocalData } from 'tonwa-com';
 import { Spinner } from 'tonwa-com';
-// import { AppNavContext } from 'tonwa-com';
-import { StackContainer } from 'tonwa-com';
 import { uqsProxy } from './uq';
 import { AutoRefresh } from './AutoRefresh';
 import { QueryClient, QueryClientProvider } from 'react-query';
@@ -40,14 +38,13 @@ export abstract class UqApp<U = any> {
     private roleNames: { [key: string]: RoleName };
     readonly uqAppBaseId: number;
     readonly net: Net;
-    readonly appNav: AppNav;
     readonly userApi: UserApi;
     readonly version: string;    // version in appConfig;
     readonly mustLogin: boolean;
     //readonly responsive: {
     //    user: User;
     //}
-    readonly uqAppState: { user: User; };
+    readonly state: { user: User; refreshTime: number; modalStack: any[]; };
     uqsMan: UQsMan;
     store: any;
     guest: number;
@@ -80,11 +77,12 @@ export abstract class UqApp<U = any> {
         this.net = new Net(props);
         this.localData = new LocalData();
 
-        this.appNav = new AppNav();
         this.userApi = this.net.userApi;
         let user = this.localData.user.get();
-        this.uqAppState = proxy({
+        this.state = proxy({
             user,
+            refreshTime: Date.now() / 1000,
+            modalStack: [],
         });
     }
 
@@ -104,26 +102,17 @@ export abstract class UqApp<U = any> {
 
     async logined(user: User) {
         this.net.logoutApis();
-        this.uqAppState.user = user;
+        this.state.user = user;
         let autoLoader: Promise<any> = undefined;
         let autoRefresh = new AutoRefresh(this, autoLoader);
         if (user) {
             jwtDecode(user.token);
             this.net.setCenterToken(user.id, user.token);
-            /*
-            if (this.uq !== undefined) {
-                this.uqUnit = new UqUnit(this.uq as any);
-                await this.uqUnit.loadMyRoles();
-                autoRefresh.start();
-            }
-            */
-            this.appNav.onLogined(true);
         }
         else {
             this.net.clearCenterToken();
             this.uqUnit = undefined;
             autoRefresh.stop();
-            this.appNav.onLogined(false);
         }
         this.localData.user.set(user);
         if (user) {
@@ -133,8 +122,8 @@ export abstract class UqApp<U = any> {
 
     async setUserProp(propName: string, value: any) {
         await this.userApi.userSetProp(propName, value);
-        (this.uqAppState.user as any)[propName] = value;
-        this.localData.user.set(this.uqAppState.user);
+        (this.state.user as any)[propName] = value;
+        this.localData.user.set(this.state.user);
     }
 
     saveLocalData() {
@@ -166,7 +155,7 @@ export abstract class UqApp<U = any> {
                 // this.buildRoleNames();
             }
             // let user = this.localData.user.get();
-            let { user } = this.uqAppState;
+            let { user } = this.state;
             // console.log('logined');
             if (!user) {
                 let guest: Guest = this.localData.guest.get();
@@ -230,6 +219,30 @@ class LocalStorageDb extends LocalDb {
     }
 }
 
+export function useModal() {
+    let { state } = useUqAppBase();
+    async function openModal<T = any>(element: JSX.Element, caption?: string | JSX.Element): Promise<T> {
+        return new Promise<T>((resolve, reject) => {
+            if (React.isValidElement(element) !== true) {
+                alert('is not valid element');
+                return;
+            }
+            function Modal() {
+                const { closeModal } = useModal();
+                return <PagePublic
+                    onBack={() => closeModal(undefined)}
+                    back={'close'}>{element}</PagePublic>;
+            }
+            state.modalStack.push(ref([<Modal />, resolve]));
+        })
+    }
+    function closeModal(result: any) {
+        let [el, resolve] = state.modalStack.pop();
+        resolve(result);
+    }
+    return { openModal, closeModal, }
+}
+
 export const UqAppContext = React.createContext(undefined);
 export function useUqAppBase() {
     return useContext<UqApp>(UqAppContext);
@@ -243,93 +256,15 @@ const queryClient = new QueryClient({
     },
 });
 
-function UqAppViewBase({ uqApp, user, children }: { uqApp: UqApp; user: User; children: ReactNode; }) {
-    console.log('UqAppViewBase');
-    let { appNav } = uqApp;
-    let [appInited, setAppInited] = useState<boolean>(false);
-    let { stack } = useSnapshot(appNav.data);
-    // let user = useSnapshot(uqApp.user);
-    console.log('UqAppViewBase: useSnapshot(appNav.data)');
-    useEffectOnce(() => {
-        (async function () {
-            await uqApp.init();
-            console.log('await uqApp.load()', appInited);
-            setAppInited(true);
-            console.log('setAppInited(true);', appInited);
-        })();
-    }/*, [uqApp, children, navigateFunc]*/);
-    /*
-    try {
-        let navigateFunc = useNavigate();
-        console.log('UqAppViewBase: navigateFunc = useNavigate()');
-        appNav.init(children, navigateFunc);
-    }
-    catch (err) {
-        console.error(err);
-    }
-    */
-    appNav.init(children, undefined);
-    console.log("appInited", appInited);
-    if (appInited === false) {
-        return <div className="p-5 text-center">
-            <Spinner className="text-info" />
-        </div>;
-    }
-    if (uqApp.initErrors) {
-        return <div>
-            <div>uq app start failed. init errors: </div>
-            <ul className="text-danger">
-                {
-                    uqApp.initErrors.map((v: string, index: number) => <li key={index}>{v}</li>)
-                }
-            </ul>
-        </div>;
-    }
-    return <UqAppContext.Provider value={uqApp}>
-        <QueryClientProvider client={queryClient}>
-            <div>appInited</div>
-            <StackContainer stackItems={stack} />
-            {user !== undefined}
-        </QueryClientProvider>
-    </UqAppContext.Provider>;
-}
-
-function UqAppViewLogined({ uqApp, user, children }: { uqApp: UqApp; user: User; children: ReactNode; }) {
-    return <UqAppViewBase uqApp={uqApp} user={user} children={children} />
-}
-
-function UqAppViewUnlogined({ uqApp, children }: { uqApp: UqApp; children: ReactNode; }) {
-    console.log('UqAppViewUnlogined');
-    return <UqAppViewBase uqApp={uqApp} user={undefined} children={children} />
-}
-
 export function ViewUqApp({ uqApp, children }: { uqApp: UqApp; children: ReactNode; }) {
-    //console.log('UqAppViewBase');
-    //let { appNav } = uqApp;
+    const { modalStack } = useSnapshot(uqApp.state);
     let [appInited, setAppInited] = useState<boolean>(false);
-    //let { stack } = useSnapshot(appNav.data);
-    // let user = useSnapshot(uqApp.user);
-    //console.log('UqAppViewBase: useSnapshot(appNav.data)');
     useEffectOnce(() => {
         (async function () {
             await uqApp.init();
-            //console.log('await uqApp.load()', appInited);
             setAppInited(true);
-            //console.log('setAppInited(true);', appInited);
         })();
-    }/*, [uqApp, children, navigateFunc]*/);
-    /*
-    try {
-        let navigateFunc = useNavigate();
-        console.log('UqAppViewBase: navigateFunc = useNavigate()');
-        appNav.init(children, navigateFunc);
-    }
-    catch (err) {
-        console.error(err);
-    }
-    */
-    //appNav.init(children, undefined);
-    //console.log("appInited", appInited);
+    });
     if (appInited === false) {
         return <div className="p-5 text-center">
             <Spinner className="text-info" />
@@ -345,9 +280,20 @@ export function ViewUqApp({ uqApp, children }: { uqApp: UqApp; children: ReactNo
             </ul>
         </div>;
     }
+    let len = modalStack.length;
+    let cnMain = len === 0 ? '' : 'd-none';
     return <UqAppContext.Provider value={uqApp}>
         <QueryClientProvider client={queryClient}>
-            {children}
+            {<div className={cnMain + ' h-100'}>{children}</div>}
+            {
+                modalStack.map((v, index) => {
+                    let cn = index < len - 1 ? 'd-none' : '';
+                    let [el] = v;
+                    return <React.Fragment key={index}>
+                        <div className={cn + ' h-100'}>{el}</div>
+                    </React.Fragment>;
+                })
+            }
         </QueryClientProvider>
     </UqAppContext.Provider>;
 }

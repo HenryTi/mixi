@@ -2,7 +2,7 @@ import { FormRow, FormRowsView } from "app/coms";
 import { useUqApp } from "app/MyUqApp";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { FA, Page, useNav } from "tonwa-com";
+import { Page } from "tonwa-com";
 import { LinkMiRateAvg, trackCaption } from "./Links";
 import { pathSetTrackDay } from "./routeFind";
 import { ViewFindStock } from "./ViewFindStock";

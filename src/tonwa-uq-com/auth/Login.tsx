@@ -1,4 +1,4 @@
-import { UPage, useNav } from 'tonwa-com';
+import { PagePublic } from 'tonwa-com';
 import { Form } from 'tonwa-com';
 import { User } from 'tonwa-uq';
 import { BandString, ruleIsRequired } from 'tonwa-com';
@@ -8,9 +8,10 @@ import { FormBandTemplate1 } from 'tonwa-com';
 import { Band } from 'tonwa-com';
 import { FormErrors } from 'tonwa-com';
 import { useUqAppBase } from '../UqApp';
-import { Forget, Register } from './register/Register';
+import { PageForget, PageRegister } from './register/PageRegister';
 import { getSender } from './tools';
-import { useNavigate } from 'react-router-dom';
+import { Link, Outlet, Route, useNavigate } from 'react-router-dom';
+import { pathForget, pathRegister } from './register/PagePassword';
 
 /*
 const schema: Schema = [
@@ -29,7 +30,6 @@ interface Props {
 }
 
 export function Login({ url, withBack, loginTop, privacy, callback }: Props) {
-    let nav = useNav();
     let uqApp = useUqAppBase();
     let { userApi, guest } = uqApp;
     const navigate = useNavigate();
@@ -69,38 +69,43 @@ export function Login({ url, withBack, loginTop, privacy, callback }: Props) {
     }
     */
     let header = withBack === true ? '登录' : false
-
-    return <UPage header={header} footer={privacy}>
-        <div className="d-flex p-5 flex-column justify-content-center align-items-center">
-            <div className="flex-fill" />
-            <div className="w-20c">
-                {loginTop ?? <div className="text-center p-3 fs-5 text-primary">登录</div>}
-                <div className="h-2c" />
-                <Form BandTemplate={FormBandTemplate1}>
-                    <BandString label="登录账号" name="username"
-                        placeholder="手机/邮箱/用户名" rule={ruleIsRequired}
-                        maxLength={100} />
-                    <BandPassword label="密码" name="password"
-                        placeholder="密码" rule={ruleIsRequired}
-                        maxLength={100} />
-                    <Band>
-                        <FormErrors />
-                    </Band>
-                    <Band contentContainerClassName="text-center my-3">
-                        <Submit onSubmit={onSubmit}><div className='mx-5'>登录</div></Submit>
-                    </Band>
-                </Form>
-                <div className="text-center">
-                    <button className="btn btn-link" onClick={() => nav.open(<Forget loginTop={loginTop} privacy={privacy} />)}>
-                        忘记密码
-                    </button>
-                    <button className="btn btn-link" onClick={() => nav.open(<Register loginTop={loginTop} privacy={privacy} />)}>
-                        注册账号
-                    </button>
+    function PageIndex() {
+        return <PagePublic header={header} footer={privacy}>
+            <div className="d-flex p-5 flex-column justify-content-center align-items-center">
+                <div className="flex-fill" />
+                <div className="w-20c">
+                    {loginTop ?? <div className="text-center p-3 fs-5 text-primary">登录</div>}
+                    <div className="h-2c" />
+                    <Form BandTemplate={FormBandTemplate1}>
+                        <BandString label="登录账号" name="username"
+                            placeholder="手机/邮箱/用户名" rule={ruleIsRequired}
+                            maxLength={100} />
+                        <BandPassword label="密码" name="password"
+                            placeholder="密码" rule={ruleIsRequired}
+                            maxLength={100} />
+                        <Band>
+                            <FormErrors />
+                        </Band>
+                        <Band contentContainerClassName="text-center my-3">
+                            <Submit onSubmit={onSubmit}><div className='mx-5'>登录</div></Submit>
+                        </Band>
+                    </Form>
+                    <div className="text-center">
+                        <Link className="btn btn-link" to={pathForget}>忘记密码</Link>
+                        <Link className="btn btn-link" to={pathRegister}>注册账号</Link>
+                    </div>
                 </div>
+                <div className="flex-fill" />
+                <div className="flex-fill" />
             </div>
-            <div className="flex-fill" />
-            <div className="flex-fill" />
-        </div>
-    </UPage>;
+        </PagePublic>;
+    }
+    function OutletLogin() {
+        return <Outlet />;
+    }
+    return <Route element={<OutletLogin />} >
+        <Route index element={<PageIndex />} />
+        <Route path={pathForget} element={<PageForget loginTop={loginTop} privacy={privacy} />} />
+        <Route path={pathRegister} element={<PageRegister loginTop={loginTop} privacy={privacy} />} />
+    </Route>;
 }

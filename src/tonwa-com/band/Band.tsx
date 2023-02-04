@@ -12,7 +12,7 @@ export enum BandContentType {
 
 interface BandBaseProps {
     label?: string | JSX.Element;
-    onEdit?: () => Promise<void>;
+    toEdit?: string;
     sep?: number | JSX.Element;
     contentType?: BandContentType;
     rightIcon?: JSX.Element;
@@ -137,7 +137,7 @@ function Value({ name, options }: { name: string; options?: OptionItem[]; }) {
 }
 
 export function Band(props: BandProps & { children: React.ReactNode; }) {
-    let { label, children, BandTemplate, sep, contentType, onEdit, rightIcon, contentContainerClassName } = props;
+    let { label, children, BandTemplate, sep, contentType, toEdit, rightIcon, contentContainerClassName } = props;
     let content = children;
     let bandContainer = useBandContainer();
     let memos: string[] | undefined = buildMemosFromChildren(children);
@@ -172,7 +172,7 @@ export function Band(props: BandProps & { children: React.ReactNode; }) {
     return <VBandContext.Provider value={band}>
         <BandTemplate label={label} errors={errors} memos={band.memos}
             content={content} sep={sep} contentType={contentType}
-            onEdit={onEdit} rightIcon={rightIcon}
+            toEdit={toEdit} rightIcon={rightIcon}
             contentContainerClassName={contentContainerClassName}>
             {children}
         </BandTemplate>

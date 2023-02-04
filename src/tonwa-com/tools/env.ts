@@ -145,17 +145,17 @@ function initEnv(): {
 }
 
 function detectBrowser() {
-    let nav = navigator;
-    if (!nav) return;
-    if ((nav.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) >= 0)
+    let navi = navigator;
+    if (!navi) return;
+    if ((navi.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) >= 0)
         return 'Opera';
-    if (nav.userAgent.indexOf("Chrome") >= 0)
+    if (navi.userAgent.indexOf("Chrome") >= 0)
         return 'Chrome';
-    if (nav.userAgent.indexOf("Safari") >= 0)
+    if (navi.userAgent.indexOf("Safari") >= 0)
         return 'Safari';
-    if (nav.userAgent.indexOf("Firefox") >= 0)
+    if (navi.userAgent.indexOf("Firefox") >= 0)
         return 'Firefox';
-    if ((nav.userAgent.indexOf("MSIE") >= 0) || (!!(document as any).documentMode === true))
+    if ((navi.userAgent.indexOf("MSIE") >= 0) || (!!(document as any).documentMode === true))
         return 'IE'; //crap
     return 'Unknown';
 }

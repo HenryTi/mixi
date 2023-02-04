@@ -1,10 +1,17 @@
-import { UPage, useNav } from 'tonwa-com';
+import { PagePublic } from 'tonwa-com';
 import { Band } from 'tonwa-com';
 import { BandPassword } from 'tonwa-com';
 import { Form, Submit } from 'tonwa-com';
 import { useUqAppBase } from '../../UqApp';
 import { Pass } from './Pass';
-import { ForgetSuccess, RegisterSuccess } from './Success';
+import { ForgetSuccess, RegisterSuccess } from './PageSuccess';
+import { Outlet, Route, useNavigate } from 'react-router-dom';
+import { useRef } from 'react';
+
+export const pathForget = 'forget';
+export const pathRegister = 'register';
+
+const pathRegisterFail = 'registerFail';
 
 interface Props {
     header: string;
@@ -13,8 +20,13 @@ interface Props {
     onPasswordSubmit: (pwd: string) => Promise<string>;
 }
 
-function Password({ header, submitCaption, account, onPasswordSubmit }: Props) {
-    let nav = useNav();
+interface PasswordContext {
+    error?: string;
+}
+function PagePassword({ header, submitCaption, account, onPasswordSubmit }: Props) {
+    const navigate = useNavigate();
+    const context = useRef<PasswordContext>({})
+
     let onButtonSubmit = async (values: any): Promise<any> => {
         let { pwd, rePwd } = values;
         let error: string;
@@ -24,8 +36,9 @@ function Password({ header, submitCaption, account, onPasswordSubmit }: Props) {
         }
         else {
             error = await onPasswordSubmit(pwd);
+            context.current.error = error;
             if (error !== undefined) {
-                nav.open(<UPage header="注册不成功"><div className="p-5 text-danger">{error}</div></UPage>);
+                navigate(pathRegisterFail);
             }
         }
         return error;
@@ -37,21 +50,30 @@ function Password({ header, submitCaption, account, onPasswordSubmit }: Props) {
         }
     }
     */
-    return <UPage header={header}>
-        <div className="w-max-20c my-5 py-5"
-            style={{ marginLeft: 'auto', marginRight: 'auto' }}>
-            注册账号<br />
-            <div className="py-2 px-3 my-2 text-primary bg-light"><b>{account}</b></div>
-            <div className="h-1c" />
-            <Form>
-                <BandPassword name="pwd" label="密码" placeholder="密码" maxLength={100} />
-                <BandPassword name="rePwd" label="重复密码" placeholder="重复密码" maxLength={100} />
-                <Band contentContainerClassName="mt-3">
-                    <Submit onSubmit={onButtonSubmit}>{submitCaption}</Submit>
-                </Band>
-            </Form>
-        </div>
-    </UPage>;
+    function PageIndex() {
+        return <PagePublic header={header}>
+            <div className="w-max-20c my-5 py-5"
+                style={{ marginLeft: 'auto', marginRight: 'auto' }}>
+                注册账号<br />
+                <div className="py-2 px-3 my-2 text-primary bg-light"><b>{account}</b></div>
+                <div className="h-1c" />
+                <Form>
+                    <BandPassword name="pwd" label="密码" placeholder="密码" maxLength={100} />
+                    <BandPassword name="rePwd" label="重复密码" placeholder="重复密码" maxLength={100} />
+                    <Band contentContainerClassName="mt-3">
+                        <Submit onSubmit={onButtonSubmit}>{submitCaption}</Submit>
+                    </Band>
+                </Form>
+            </div>
+        </PagePublic>;
+    }
+    function PageRegisterFail() {
+        return <PagePublic header="注册不成功"><div className="p-5 text-danger">{context.current.error}</div></PagePublic>;
+    }
+
+    return <Route element={<Outlet context={context.current} />}>
+        <Route path={pathRegisterFail} element={<PageRegisterFail />} />
+    </Route>;
 }
 
 interface RegisterParameter {
@@ -66,7 +88,8 @@ interface RegisterParameter {
 };
 
 export function RegisterPassword({ pass }: { pass: Pass; }) {
-    let nav = useNav();
+    const pathRegSuccess = 'success';
+    const navigate = useNavigate();
     let { userApi } = useUqAppBase();
     let { type, account, verify } = pass;
     let onPasswordSubmit = async (pwd: string): Promise<string> => {
@@ -92,8 +115,7 @@ export function RegisterPassword({ pass }: { pass: Pass; }) {
         }
         let ret = await userApi.register(params);
         if (ret === 0) {
-            nav.clear();
-            nav.open(<RegisterSuccess pass={pass} />);
+            navigate(pathRegSuccess, { replace: true });
             return;
         }
         let error = regReturn(ret)
@@ -113,11 +135,16 @@ export function RegisterPassword({ pass }: { pass: Pass; }) {
         return msg + ' 已经被注册过了';
     }
 
-    return <Password header="注册账号" submitCaption="注册新账号" account={account} onPasswordSubmit={onPasswordSubmit} />;
+    const pathIndex = <PagePassword header="注册账号" submitCaption="注册新账号" account={account} onPasswordSubmit={onPasswordSubmit} />;
+    return <Route element={<Outlet />}>
+        <Route index element={pathIndex} />
+        <Route path={pathRegSuccess} element={<RegisterSuccess pass={pass} />} />
+    </Route>
 }
 
 export function ForgetPassword({ pass }: { pass: Pass; }) {
-    let nav = useNav();
+    const pathSuccess = 'success';
+    const navigate = useNavigate();
     let { userApi } = useUqAppBase();
     let { account, password, verify, type } = pass;
     let onPasswordSubmit = async (pwd: string): Promise<string> => {
@@ -128,10 +155,13 @@ export function ForgetPassword({ pass }: { pass: Pass; }) {
             console.log(err);
             throw err;
         }
-        nav.clear();
-        nav.open(<ForgetSuccess pass={pass} />);
+        navigate(pathSuccess, { replace: true });
         return;
     }
 
-    return <Password header="账号密码" submitCaption="改密码" account={account} onPasswordSubmit={onPasswordSubmit} />;
+    let pageIndex = <PagePassword header="账号密码" submitCaption="改密码" account={account} onPasswordSubmit={onPasswordSubmit} />;
+    return <Route element={<Outlet />}>
+        <Route index element={pageIndex} />
+        <Route path={pathSuccess} element={<ForgetSuccess pass={pass} />} />
+    </Route>;
 }

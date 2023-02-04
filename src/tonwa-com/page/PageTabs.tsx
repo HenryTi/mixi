@@ -1,10 +1,6 @@
-import React, { ReactElement, Suspense, useContext, useRef, useState } from "react";
+import React, { ReactElement, Suspense, useRef } from "react";
 import { proxy, useSnapshot } from "valtio";
-// import { Spinner } from "tonwa-com/coms";
-import { useNav } from "./nav";
-import { Page } from "./Page";
 import { PageSpinner } from "./PageSpinner";
-import { ScrollContext, useScroll } from "./useScroll";
 
 interface TabObject {
     id: number;
@@ -55,16 +51,6 @@ function createTabsFromChildren(children: React.ReactNode) {
 
 export function PageTabs({ children }: { children: React.ReactNode; }) {
     let { current: tabs } = useRef(createTabsFromChildren(children));
-    return <InnerPageTabs tabs={tabs} />;
-}
-
-function InnerPageTabs({ tabs }: { tabs: TabObject[]; }) {
-    let nav = useNav();
-    let scrollContext = useContext(ScrollContext);
-    //let [active, setActive] = useState(0);
-    //let activeTab = tabs[active];
-    //nav.setPageTab(activeTab);
-    // tabs[active].mountable = true;
     function onTabClick(tabCur: TabObject) {
         for (let tab of tabs) {
             let { element } = tab;
@@ -72,7 +58,6 @@ function InnerPageTabs({ tabs }: { tabs: TabObject[]; }) {
             if (tabCur === tab) {
                 cn = 'tonwa-pane active';
                 tab.state.mountable = true;
-                nav.setPageTab(tab);
                 setTimeout(() => {
                     let { element } = tabCur;
                     if (element !== undefined) element.className = cn;
@@ -85,21 +70,6 @@ function InnerPageTabs({ tabs }: { tabs: TabObject[]; }) {
                 element.className = cn;
             }
         }
-        /*
-        if (tabIndex === active) return;
-        let tab = tabs[tabIndex];
-        if (!tab) return;
-        tab.mountable = true;
-        setActive(tabIndex);
-        nav.setPageTab(tab);
-        */
-    }
-    scrollContext = scrollContext ?? 'page-tabs';
-    let overflowY: any;
-    switch (scrollContext) {
-        default: break;
-        case 'app-tabs': overflowY = 'auto'; break;
-        case 'page-tabs': overflowY = 'scroll'; break;
     }
 
     function Tags({ cur }: { cur: number; }) {
@@ -127,11 +97,11 @@ function InnerPageTabs({ tabs }: { tabs: TabObject[]; }) {
         </Suspense>;
     }
 
-    return <ScrollContext.Provider value={scrollContext}>
+    return <>
         {
             tabs.map((v, index) => <TabPane key={v.id} tab={v} active={0} index={index} />)
         }
-    </ScrollContext.Provider>;
+    </>;
 }
 
 function invariant(condition: boolean, message: string): asserts condition {

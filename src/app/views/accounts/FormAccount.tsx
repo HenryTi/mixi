@@ -1,102 +1,8 @@
-import { BandInput, FormInput, BandInputProps, FormRowsView, FormRow, FormRadios, FormSelect } from "app/coms";
-import { formatNumber } from "app/coms/ItemViewStock";
-import { HoldingStock } from "app/stores";
+import { FormRowsView, FormRow } from "app/coms";
 import { MiAccount } from "app/stores/MiAccount";
 import { useForm } from "react-hook-form";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import { Page, useNav } from "tonwa-com";
-
-interface AccountProps {
-    miAccount: MiAccount;
-}
-
-interface FormAccountProps {
-    valueLabel: string; // {return '股票数量'}
-    placeholder: string; // {return '股票数量'}
-}
-
-function A() {
-    const { register, handleSubmit, watch, formState: { errors } } = useForm({ mode: 'onBlur' });
-    const onSubmit = (data: any) => {
-        console.log(data);
-    }
-    //console.error(errors);
-    //console.log(watch("example")); // watch input value by passing the name of it
-
-    function B(props: BandInputProps) {
-        return <BandInput errors={errors} {...props} />
-    }
-    const fields: FormInput[] = [
-        { name: 'f1', type: 'text', label: 'F1' },
-        { name: 'f2', type: 'password', label: 'F2', options: { required: 'f1 needed' } },
-        { name: 'f3', type: 'text', label: 'F3', options: { required: 'f2 needed' } },
-    ];
-    /* "handleSubmit" will validate your inputs before invoking "onSubmit" */
-    const f4Checks: FormInput[] = [
-        { name: 'f41', label: 'F41', type: "checkbox" },
-        { name: 'f42', label: 'F42', type: "checkbox" },
-        { name: 'f43', type: "checkbox" },
-    ];
-    const f5Radios: FormRadios = {
-        label: 'F5',
-        name: 'f5',
-        default: 2,
-        radios: [
-            { label: 'a1', value: 1 },
-            { label: 'a2', value: 2 },
-            { label: 'a3', value: 3 },
-        ],
-    };
-    const f6Select: FormSelect = {
-        label: 'F6',
-        name: 'f6',
-        // default: 2,
-        placeHolder: '请选择-f6-F6',
-        options: { required: true },
-        items: [
-            { label: 'a1', value: 1 },
-            { label: 'a2', value: 2 },
-            { label: 'a3', value: 3 },
-        ]
-    };
-
-    const formRows: FormRow[] = [
-        { name: 'f1', type: 'text', label: 'F1' },
-        { name: 'f2', type: 'number', label: 'F2', options: { required: 'f2 needed' } },
-        { label: 'F4', inputs: f4Checks },
-        f5Radios,
-        f6Select,
-        { name: 'f3', type: 'text', label: 'F3', options: { required: 'f3 needed' } },
-        { type: 'submit' },
-    ];
-
-    return (
-        <form onSubmit={handleSubmit(onSubmit)} className="container my-3">
-            <FormRowsView rows={formRows} register={register} errors={errors} />
-        </form>
-    );
-}
-
-function renderValue(caption: string, value: number, dec: number = 0) {
-    return <div className="mx-1 border rounded w-min-5c px-1 py-2">
-        <small className="text-muted">{caption}</small>
-        <div>{formatNumber(value ?? 0)}</div>
-    </div>;
-}
-function ViewHoldingStock({ holdingStock, elQuantity }: { holdingStock: HoldingStock; elQuantity: JSX.Element; }) {
-    let { stockObj, quantity, miValue, market } = holdingStock;
-    let { name, no } = stockObj;
-    return <div className="py-2">
-        <div className="me-auto px-3 mb-2">
-            <b>{name}</b> <span className="ms-2 small text-muted">{no}</span>
-        </div>
-        <div className="d-flex my-2 py-2 border-top border-bottom justify-content-center text-center bg-white">
-            {elQuantity}
-            {renderValue('米息', miValue, 2)}
-            {renderValue('市值', market, 2)}
-        </div>
-    </div>;
-}
+import { Page } from "tonwa-com";
 
 interface FormActProps<T = any> {
     onSubmit: (data: T) => Promise<void>;
@@ -104,7 +10,7 @@ interface FormActProps<T = any> {
 }
 
 function FormAct({ onSubmit, formRows }: FormActProps) {
-    const { register, handleSubmit, watch, formState: { errors } } = useForm({ mode: 'onBlur' });
+    const { register, handleSubmit, formState: { errors } } = useForm({ mode: 'onBlur' });
     return <form onSubmit={handleSubmit(onSubmit)} className="container my-3">
         <FormRowsView rows={formRows} register={register} errors={errors} />
     </form>

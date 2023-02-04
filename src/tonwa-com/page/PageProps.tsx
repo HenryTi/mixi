@@ -1,3 +1,4 @@
+import { RefObject } from 'react';
 const scrollAfter = 20; // 20ms之后，scroll执行
 export class Scroller {
     private el: HTMLBaseElement;
@@ -15,6 +16,7 @@ export class Scroller {
 
 export interface PageBackProps {
     back?: 'close' | 'back' | 'none';
+    onBack?: () => void;
 }
 
 export interface PageHeaderProps extends PageBackProps {
@@ -47,6 +49,6 @@ export interface PageTemplateProps {
 }
 
 export interface PageProps extends PageHeaderProps, PageFooterProps, PageContentProps, PageTemplateProps {
-    template?: string;
-    id?: string;
+    onClosing?: () => Promise<boolean>;
+    onClosed?: () => Promise<void> | void;
 }

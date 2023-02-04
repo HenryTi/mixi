@@ -6,19 +6,17 @@ import { PageBlog } from "./PageBlog";
 import { PageBlogs } from "./PageBlogs";
 import { PagePrinciple } from "./PagePrinciple";
 
-function LayoutBlogs() {
+function OutletBlogs() {
     let uqApp = useUqApp();
     let { data: blogsStore } = useQuery('LayoutBlogs', async function () {
         let ret = new StoreBlogs(uqApp);
         await ret.init();
         return ret;
     });
-    return <div>
-        <Outlet context={blogsStore} />
-    </div>;
+    return <Outlet context={blogsStore} />;
 }
 
-export const routeBlogs = <Route path="/blogs" element={<LayoutBlogs />}>
+export const routeBlogs = <Route path="/blogs" element={<OutletBlogs />}>
     <Route index element={<PageBlogs />} />
     <Route path="blog/:id" element={<PageBlog />} />
     <Route path="principle" element={<PagePrinciple />} />

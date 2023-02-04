@@ -1,20 +1,24 @@
 import { useUqApp } from "app/MyUqApp";
-import { Link } from "react-router-dom";
-import { FA, LMR, Page, Sep, useNav, useT } from "tonwa-com";
-import { Image } from "tonwa-uq-com";
+import { AppLogout } from "app/tool";
+import { Link, Outlet, Route, Routes } from "react-router-dom";
+import { FA, LMR, Page, Sep, useT } from "tonwa-com";
+import { Image, UserQuit } from "tonwa-uq-com";
 import { useSnapshot } from "valtio";
 import { appT } from "../../res";
-import { pathAbout, pathEditMe } from "./routeMe";
+import { PageAbout } from "./PageAbout";
+import { OutletEditMe, pathEditMe } from "./routeMe";
+
+const pathAbout = 'about';
 
 export function TabMe() {
     const t = useT(appT);
     const uqApp = useUqApp();
-    const { user } = useSnapshot(uqApp.uqAppState);
+    const { user } = useSnapshot(uqApp.state);
 
     function MeInfo() {
         if (!user) return null;
         let { id, name, nick, icon } = user;
-        return <Link to={pathEditMe()}>
+        return <Link to={pathEditMe}>
             <LMR className="py-3 px-3 w-100">
                 <Image className="w-3c h-3c me-3" src={icon || '.user-o'} />
                 <div>
@@ -35,7 +39,7 @@ export function TabMe() {
             </LMR>
         </Link>;
     }
-    return <Page header={t('me')} back="none">
+    const pageMe = <Page header={t('me')} back="none">
         <div>
             <MeInfo />
             <Sep />
@@ -43,7 +47,10 @@ export function TabMe() {
             <Sep />
         </div>
     </Page>;
+    return pageMe;
 }
+
+
 
 
 function userSpan(name: string, nick: string): JSX.Element {

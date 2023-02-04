@@ -50,9 +50,6 @@ export class MyUqApp extends UqApp<UQs> {
     unitTimezone: number;
     unitBizDate: number;
     unitBizMonth: number;
-    state = proxy({
-        refreshTime: Date.now() / 1000,
-    });
 
     miNet: MiNet;
     storeApp: StoreApp;
@@ -78,7 +75,7 @@ export class MyUqApp extends UqApp<UQs> {
     }
 
     protected override async loadOnLogined(): Promise<void> {
-        this.miNet = new MiNet(this.uqAppState.user);
+        this.miNet = new MiNet(this.state.user);
         let { BrMi } = this.uqs;
         this.storeApp = new StoreApp(this);
         let [] = await Promise.all([

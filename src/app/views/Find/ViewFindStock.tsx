@@ -1,7 +1,7 @@
 import { useUqApp } from "app/MyUqApp";
 import { MGroup } from "app/stores/MGroup";
 import { Link, useNavigate } from "react-router-dom";
-import { FA, LMR, Page, SearchBox, useNav } from "tonwa-com";
+import { FA, LMR, Page, SearchBox } from "tonwa-com";
 import { pathSearch } from "../Search";
 import { pathGroupStocks, pathMyAll, pathMyBlocks } from "./routeFind";
 import { ViewGroups } from "./ViewGroups";
@@ -22,20 +22,6 @@ export function ViewFindStock() {
     const navigate = useNavigate();
     const uqApp = useUqApp();
     const { stocksMyAll, myAllCaption, stocksMyBlock, myBlockCaption, rootIndustries, miGroups, industries } = uqApp.storeApp;
-
-    /*
-    function showStocksAll() {
-        nav.open(<Page header={myAllCaption}>
-            <ViewStockList stocks={stocksMyAll} />
-        </Page>);
-    }
-
-    function showStocksBlock() {
-        nav.open(<Page header={myBlockCaption}>
-            <ViewStockList stocks={stocksMyBlock} />
-        </Page>);
-    }
-    */
 
     function renderMyAll() {
         return renderSpec(stocksMyAll?.length, myAllCaption, 'home', 'text-primary', pathMyAll);

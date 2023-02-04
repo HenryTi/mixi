@@ -1,9 +1,7 @@
 import { ViewStockRow } from "app/coms/ItemViewStock";
-import { useUqApp } from "app/MyUqApp";
 import { useNavigate } from "react-router-dom";
-import { List, useNav } from "tonwa-com";
+import { List } from "tonwa-com";
 import { Stock, StockValue } from "uqs/BrMi";
-import { PageStockInfo } from "../StockInfo";
 import { pathStockInfo } from "../StockInfo/routeStock";
 
 interface ViewStockListProps {

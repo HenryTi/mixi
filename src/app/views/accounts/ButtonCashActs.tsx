@@ -1,6 +1,6 @@
 import { MiAccount } from "app/stores/MiAccount";
 import { Link } from "react-router-dom";
-import { DropdownAction, DropdownActions, FA, useNav } from "tonwa-com";
+import { DropdownAction, DropdownActions, FA } from "tonwa-com";
 import { useSnapshot } from "valtio";
 import { pathCashAdjust, pathCashIn, pathCashInit, pathCashOut } from "./routeAccount";
 

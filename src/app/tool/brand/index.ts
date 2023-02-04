@@ -1,2 +1,2 @@
+export * from './AppImage';
 export * from './PrivacyLink';
-export * from './LoginTop';

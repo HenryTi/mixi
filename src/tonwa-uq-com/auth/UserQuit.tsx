@@ -1,7 +1,9 @@
-import { Page, useNav } from "tonwa-com";
+import { Link, Outlet, Route, useNavigate } from "react-router-dom";
+import { Page } from "tonwa-com";
 import { useUqAppBase } from "../UqApp";
 
 const waitingTime = '一小时';
+const pathQuitDone = 'done';
 
 interface QuitPageProps {
     header?: string;
@@ -20,17 +22,6 @@ function Quit({ header, back, note, children }: QuitPageProps) {
     </Page>
 }
 
-function Button1({ caption, onClick }: { caption?: string; onClick: () => void }) {
-    return <button className="btn btn-primary" onClick={onClick}>
-        {caption ?? '不注销'}
-    </button>;
-}
-
-function Button2({ caption, onClick }: { caption: string; onClick: () => void }) {
-    return <button className="btn btn-outline-info ms-3" onClick={onClick}>
-        {caption ?? '确认注销'}
-    </button>;
-}
 /*
 abstract class VUserQuitBase extends VPage<CLogin> {
     protected abstract get note(): any;
@@ -71,19 +62,28 @@ abstract class VUserQuitBase extends VPage<CLogin> {
 */
 
 export function UserQuit() {
-    let nav = useNav();
+    const pathConfirm = 'confirm';
     let note = <>
         注意：账号注销后，账号绑定手机、邮件等相关信息将被释放。账号无法将登录。<br />
         请确认！
     </>;
-    return <Quit note={note}>
-        <Button1 onClick={() => nav.close()} />
-        <Button2 onClick={() => nav.open(<QuitConfirm />)} caption="我已了解，仍然注销" />
-    </Quit>
+    const pageIndex = <Quit note={note}>
+        <Link className="btn btn-primary" to={-1 as any}>
+            不注销
+        </Link>
+        <Link className="btn btn-outline-info ms-3" to={pathConfirm}>
+            我已了解，仍然注销
+        </Link>
+    </Quit>;
+    return <Route element={<Outlet />}>
+        <Route index element={pageIndex} />
+        <Route path={pathConfirm} element={<QuitConfirm />} />
+        <Route path={pathQuitDone} element={<QuitDone />} />
+    </Route>;
 }
 
 function QuitConfirm() {
-    let nav = useNav();
+    const navigate = useNavigate();
     let uqApp = useUqAppBase();
     let note = <>
         账号注销后，如果在{waitingTime}内容重新登录账号，账号自动恢复。
@@ -94,11 +94,15 @@ function QuitConfirm() {
         await uqApp.userApi.userQuit();
         //let centerAppApi = new CenterAppApi(this.controller.net, 'tv/');
         //await centerAppApi.userQuit();
-        nav.open(<QuitDone />);
+        navigate(pathQuitDone);
     }
     return <Quit note={note}>
-        <Button1 onClick={() => nav.close(2)} />
-        <Button2 onClick={onClickButton2} caption="确认注销" />
+        <Link className="btn btn-primary" to={-2 as any}>
+            不注销
+        </Link>
+        <button className="btn btn-outline-info ms-3" onClick={onClickButton2}>
+            确认注销
+        </button>
     </Quit>
 }
 
@@ -113,6 +117,8 @@ function QuitDone() {
         await uqApp.logined(undefined);
     }
     return <Quit header="注销已账号" note={note} back="none">
-        <Button1 onClick={onClickButton1} caption="退出" />
+        <button className="btn btn-primary" onClick={onClickButton1}>
+            不注销
+        </button>
     </Quit>
 }

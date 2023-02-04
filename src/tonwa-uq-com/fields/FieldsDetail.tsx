@@ -1,4 +1,4 @@
-import { Detail, OnValuesChanged } from "tonwa-com";
+import { PropEdit, OnValuesChanged } from "tonwa-com";
 import { createBandsFromFields, FieldsBandsProps } from "./FieldsBands";
 
 interface Props extends FieldsBandsProps {
@@ -10,8 +10,8 @@ interface Props extends FieldsBandsProps {
 }
 export function FieldsDetail(props: Props) {
     let { className, values, onValuesChanged, children, sep } = props;
-    return <Detail className={className} values={values} onValuesChanged={onValuesChanged}>
+    return <PropEdit className={className} values={values} onValuesChanged={onValuesChanged}>
         {createBandsFromFields(props, sep)}
         {children}
-    </Detail>;
+    </PropEdit>;
 }

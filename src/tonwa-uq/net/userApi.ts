@@ -68,7 +68,6 @@ export class UserApi extends CenterApiBase {
     }
 
     async guest(): Promise<any> {
-        //let guest = nav.local.guest.get();
         let ret = await this.get('guest/', {});
         switch (typeof ret) {
             default: return;

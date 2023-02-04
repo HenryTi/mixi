@@ -1,8 +1,9 @@
-import React, { useContext, useRef } from "react";
+import React, { useRef } from "react";
 import { FA, Sep } from "../coms";
 import { Form, Submit } from "../form";
-import { Page, useNav } from "../page";
+import { Page } from "../page";
 import { Band, BandContainerContext, BandContainerProps, BandContentType, BandFieldErrors, BandMemos, BandTemplateProps, useBand, useBandContainer, VBandContainerContext } from "../band";
+import { Link, Route, Routes, useNavigate, useOutletContext } from "react-router-dom";
 
 interface DetailProps extends BandContainerProps {
 }
@@ -11,61 +12,63 @@ class DetailContext extends BandContainerContext<DetailProps> {
     get isDetail(): boolean {
         return true;
     }
+    label: string | JSX.Element;
+    content: React.ReactNode;
+    values: any;
 }
 
-const DetailContextContainer = React.createContext<DetailContext>(undefined);
-export function useDetail() {
-    return useContext(DetailContextContainer);
-}
-
-export function Detail(props: DetailProps) {
-    let { className, children, BandTemplate } = props;
+const pathEditDetail = 'edit';
+export function PropEdit(props: DetailProps) {
+    let { children, BandTemplate } = props;
     BandTemplate = BandTemplate ?? DefaultBandTemplate;
     let { current: detailContext } = useRef(new DetailContext({ ...props, BandTemplate }));
-    return <DetailContextContainer.Provider value={detailContext}>
-        <VBandContainerContext.Provider value={detailContext}>
-            <div className={className}>
-                {children}
-            </div>
-        </VBandContainerContext.Provider>
-    </DetailContextContainer.Provider>;
+    function Main() {
+        return <VBandContainerContext.Provider value={detailContext}>
+            {children}
+        </VBandContainerContext.Provider>;
+    }
+
+    return <>
+        <Routes>
+            <Route index element={<Main />} />
+            <Route path={pathEditDetail} element={<ValueEditPage detail={detailContext} />} />
+        </Routes>
+    </>;
 }
 
 function DefaultBandTemplate(props: BandTemplateProps) {
-    let nav = useNav();
-    let bandContainer = useBandContainer();
+    // let detailContext = useOutletContext<DetailContext>();
+    let detailContext = useBandContainer() as DetailContext;
     let band = useBand();
-    let { label, children, errors, memos, onEdit, content, sep, contentType, rightIcon } = props;
+    let { label, children, errors, memos, toEdit, content, sep, contentType, rightIcon } = props;
     let labelContent = contentType === BandContentType.check ? null : <b>{label}</b>;
     let vLabel = <label className="col-sm-2 col-form-label text-sm-end tonwa-bg-gray-1 border-end align-self-center py-3">
         {labelContent}
     </label>;
     let cnContent = 'col-sm-10 d-flex pe-0 align-items-center';
-    function RightIcon({ icon, onEdit }: { icon: JSX.Element; onEdit: () => Promise<void>; }) {
-        return <div onClick={onEdit}
+    function RightIcon({ icon, toEdit }: { icon: JSX.Element; toEdit: string; }) {
+        return <Link to={toEdit}
             className="px-3 align-self-stretch d-flex align-items-center cursor-pointer"
         >
             {icon ?? <FA name="pencil" className="text-info" />}
-        </div>;
+        </Link>;
     }
 
     if (band.readOnly === true) {
         rightIcon = null;
     }
     else if (contentType === BandContentType.com) {
-        if (onEdit) {
-            rightIcon = <RightIcon onEdit={onEdit} icon={rightIcon} />;
+        if (toEdit) {
+            rightIcon = <RightIcon toEdit={toEdit} icon={rightIcon} />;
         }
     }
     else {
-        onEdit = onEdit ?? async function () {
-            nav.open(<ValueEditPage label={label}
-                content={content}
-                values={{ ...bandContainer.valueResponse.values }}
-                onValuesChanged={bandContainer.onValuesChanged}
-            />);
-        }
-        rightIcon = <RightIcon onEdit={onEdit} icon={rightIcon} />;
+        detailContext.label = label;
+        detailContext.content = content;
+        detailContext.values = { ...detailContext.valueResponse.values };
+        // detailContext.onValuesChanged = detailContext.onValuesChanged;
+        toEdit = pathEditDetail;
+        rightIcon = <RightIcon toEdit={toEdit} icon={rightIcon} />;
     }
     return <>
         <Sep sep={sep} />
@@ -83,17 +86,12 @@ function DefaultBandTemplate(props: BandTemplateProps) {
     </>;
 }
 
-interface ValueEditPageProps {
-    label: string | JSX.Element;
-    content: React.ReactNode;
-    values: any;
-    onValuesChanged: (values: any) => Promise<void>;
-}
-function ValueEditPage({ content, label, values, onValuesChanged }: ValueEditPageProps) {
-    let nav = useNav();
+function ValueEditPage({ detail }: { detail: DetailContext; }) {
+    const { content, label, values, onValuesChanged } = detail; // useOutletContext<DetailContext>();
+    const navigate = useNavigate();
     async function onSubmit(data: any) {
         await onValuesChanged(data);
-        nav.close();
+        navigate(-1);
     }
     return <Page header={label} back="close">
         <Form className="container px-3 py-3" values={values} BandTemplate={ValueEditBandTemplate}>

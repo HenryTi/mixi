@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ButtonAsync, MutedSmall, Page, SearchBox, useNav, wait } from "tonwa-com";
+import { ButtonAsync, MutedSmall, Page, SearchBox, wait } from "tonwa-com";
 import { FA } from "tonwa-com";
 import { User } from "tonwa-uq";
 import { useUqAppBase } from "../UqApp";
@@ -10,7 +10,10 @@ interface Props {
     top?: string | JSX.Element;
 }
 export function SelectUser({ header, top }: Props) {
-    let nav = useNav();
+    return <Page>
+        select user
+    </Page>
+    /*
     let app = useUqAppBase();
     let [user, setUser] = useState<User>(null);
     let onSearch = async (key: string) => {
@@ -56,4 +59,5 @@ export function SelectUser({ header, top }: Props) {
             {vContent}
         </div>
     </Page>;
+*/
 }

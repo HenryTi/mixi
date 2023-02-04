@@ -12,7 +12,7 @@ interface Props {
     onVerify: OnVerify;
 }
 
-export function Verify({ pass, onVerify }: Props) {
+export function PageVerify({ pass, onVerify }: Props) {
     let { type, account } = pass;
 
     let onSubmit = async (values: any): Promise<any> => {

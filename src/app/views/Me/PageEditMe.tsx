@@ -1,15 +1,14 @@
 import { useSnapshot } from "valtio";
-import { Page, useT, FA, Detail, BandString, Sep, BandCom, useNav } from "tonwa-com";
+import { Page, useT, FA, PropEdit, BandString, Sep, BandCom, LabelRow, ContainerProps, LabelRowProps, LabelRowEdit } from "tonwa-com";
 import { appT } from '../../res';
 import { useUqApp } from "app/MyUqApp";
 import { meT } from "./meRes";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { pathChangePassword, pathEditMe, pathLogout, pathUserQuit } from "./routeMe";
 
-export function PageEditMeIndex() {
-    const navigate = useNavigate();
+export function PageEditMe() {
     let uqApp = useUqApp();
-    let { user } = useSnapshot(uqApp.uqAppState);
+    let { user } = useSnapshot(uqApp.state);
     let t = useT(meT, appT);
 
     let onValuesChanged = async (values: { name: string; value: any; preValue: any; }) => {
@@ -17,35 +16,44 @@ export function PageEditMeIndex() {
         uqApp.setUserProp(name, value);
     }
 
-    let onExit = () => {
-        navigate(pathLogout);
+    function LabelContainer({ children }: ContainerProps) {
+        return <div className="d-flex flex-fill">a <div className="flex-fill" /> {children}</div>;
     }
-
-    let changePassword = async () => {
-        navigate(pathEditMe() + pathChangePassword);
+    let temp: Partial<LabelRowProps> = {
+        // LabelContainer,
+        labelAlign: 'end',
     }
-
-    let userQuit = async () => {
-        navigate(pathUserQuit);
-    }
-
     //<BandImage label="头像" name="icon" />
     return <Page header="个人信息">
         <div>
-            <Detail values={user} onValuesChanged={onValuesChanged}>
+            <LabelRow {...temp}>
+                ok
+                <div>content</div>
+                <div>right</div>
+            </LabelRow>
+            <Sep />
+            <LabelRow {...temp}>
+                ok1
+                <div>content</div>
+                <div>right</div>
+            </LabelRow>
+            <Sep />
+            <LabelRowEdit {...temp} label={"a"} value={1} />
+
+            <PropEdit values={user} onValuesChanged={onValuesChanged}>
                 <BandString label="别名" name="nick" placeholder="好的别名更方便记忆" />
-                <BandCom label={t('changePassword')} onEdit={changePassword}>
+                <BandCom label={t('changePassword')} toEdit={pathEditMe + pathChangePassword}>
                     <FA className="text-info m-2 align-self-center" name="key" />
                 </BandCom>
-                <BandCom label={t('userQuit')} onEdit={userQuit}>
+                <BandCom label={t('userQuit')} toEdit={pathUserQuit}>
                     <FA className="text-info m-2 align-self-center" name="key" />
                 </BandCom>
-            </Detail>
+            </PropEdit>
             <Sep />
             <div className="mt-5 w-100 text-center">
-                <button className="btn btn-danger w-100 w-max-20c" onClick={onExit}>
+                <Link className="btn btn-danger w-100 w-max-20c" to={pathLogout}>
                     <FA name="sign-out" size="lg" /> {t('logout')}
-                </button>
+                </Link>
             </div>
         </div>
     </Page>;

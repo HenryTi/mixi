@@ -45,7 +45,7 @@ export class MiNet {
     }
 
     async t_tagstock$query(tagId: any, id: any) {
-        return this.miApi.query('t_tagstock$query', [this.user.id, tagId, id]) //this.uqs.mi.TagStock.query({ user: nav.user.id, stock: id })
+        return this.miApi.query('t_tagstock$query', [this.user.id, tagId, id]);
     }
 
     async t_tag$all() {
