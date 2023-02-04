@@ -15,9 +15,9 @@ import { routeAccount } from 'app/views/accounts/routeAccount';
 
 export function ViewsRoutes() {
     const homeLayout = <PageTabsLayout tabs={[
-        { to: '/', caption: 'Home' },
-        { to: '/find', caption: 'Find' },
-        { to: '/' + pathMe, caption: 'Me' },
+        { to: '/', caption: '首页' },
+        { to: '/find', caption: '发现' },
+        { to: '/' + pathMe, caption: '我的' },
     ]} />;
 
     return <Suspense fallback={<PageSpinner />}>
