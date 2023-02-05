@@ -44,8 +44,18 @@ export class StoreApp {
         this.miGroups = new MiGroups(this);
         this.industries = new MIndustries(this);
         this.rootIndustries = new MRootIndustries(this);
-        let smooth = localStorage.getItem(find_smooth);
-        this.smooth = atom(smooth ?? 0) as any;
+        let smoothLocal = localStorage.getItem(find_smooth);
+        let smooth: number;
+        if (smoothLocal === undefined) {
+            smooth = 0;
+        }
+        else {
+            smooth = Number(smoothLocal);
+            if (Number.isNaN(smooth) === true) {
+                smooth = 0;
+            }
+        }
+        this.smooth = atom(smooth) as any;
     }
 
     stockFromId(stockId: number): Stock & StockValue {
@@ -54,7 +64,7 @@ export class StoreApp {
 
     setSmooth(smooth: number) {
         setAtomValue(this.smooth, smooth);
-        localStorage.setItem(find_smooth, String(this.smooth));
+        localStorage.setItem(find_smooth, String(smooth));
     }
 
     async loadMiAccountFromId(id: number) {

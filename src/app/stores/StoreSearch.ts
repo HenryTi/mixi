@@ -1,4 +1,3 @@
-import { UqApp } from "app";
 import { StorePage } from "app/StorePage";
 import { proxy } from "valtio";
 
@@ -48,7 +47,6 @@ export class StoreSearch extends StorePage {
         const yumi = this.uqs.BrMi;
         let ret = await yumi.SearchStock.page(param, pageStart, pageSize);
         let { $page } = ret;
-        //$page.forEach(v => this.uqApp.storeApp.buildStockValues(v as unknown as (Stock & StockValue)));
         return $page;
     }
 }

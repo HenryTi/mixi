@@ -1,7 +1,7 @@
 import { PageQueryMore } from "app/coms";
 import { useUqApp } from "app/UqApp";
 import { useAtom } from "jotai";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { FA, LMR } from "tonwa-com";
 import { ItemViewStock } from "../Find";
@@ -10,16 +10,14 @@ type SearchOrder = 'miRateDesc' | 'miRateAsc' | 'dvRateDesc' | 'dvRateAsc' | 'ro
 const cnStar = 'small border rounded py-1 px-2 me-3 ';
 
 export function PageSearch() {
-    const uqApp = useUqApp();
+    const { storeApp, uqs } = useUqApp();
     const { state: { header, searchKey, markets } } = useLocation();
-    // const storeSearch = useInitPageStore(() => new StoreSearch(searchKey, markets))
-    // const { items } = useSnapshot(storeSearch.state);
     const tickReload = useRef(1);
-    let [smooth, setSmooth] = useAtom(uqApp.storeApp.smooth)
+    let [smooth, setSmooth] = useAtom(storeApp.smooth);
     function changeSmooth(v: number) {
         ++tickReload.current;
         setSmooth(v);
-        uqApp.storeApp.setSmooth(v);
+        storeApp.setSmooth(v);
     }
     function ViewStars() {
         let stars: number[] = [];
@@ -59,7 +57,7 @@ export function PageSearch() {
         $orderSwitch: searchOrder,
         smooth: (searchKey ? 0 : smooth) + 1,
     };
-    return <PageQueryMore header={header ?? '搜索'} query={uqApp.uqs.BrMi.SearchStock}
+    return <PageQueryMore header={header ?? '搜索'} query={uqs.BrMi.SearchStock}
         param={searchParam}
         sortField="$order"
         ItemView={ItemViewStock}

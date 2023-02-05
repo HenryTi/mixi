@@ -15,24 +15,9 @@ export const env = (function () {
         district,
         timeZone,
         browser: detectBrowser(),
-        // isDevelopment: process.env.NODE_ENV === 'development',
         isMobile,
         localDb: new LocalMap(testing === true ? '$$' : '$'),
-        isDevelopment: true,
-        /*
-        setTimeout: (tag: string, callback: (...args: any[]) => void, ms: number, ...args: any[]): NodeJS.Timer => {
-            return setTimeout(callback, ms, ...args);
-        },
-        clearTimeout: (handle: Timer): void => {
-            clearTimeout(handle);
-        },
-        setInterval: (callback: (...args: any[]) => void, ms: number, ...args: any[]): NodeJS.Timer => {
-            return setInterval(callback, ms, ...args);
-        },
-        clearInterval: (handle: NodeJS.Timer): void => {
-            global.clearInterval(handle);
-        }
-        */
+        isDevelopment: import.meta.env.DEV,
     }
 }());
 

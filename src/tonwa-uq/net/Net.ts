@@ -1,13 +1,7 @@
-/* eslint-disable */
-// import { UqTokens } from "./UqTokens";
-// import { CenterApi } from "./centerApi";
 import { UqTokenApi } from "./uqApi";
-// import { CallCenterApi, UqTokenApi } from "./uqApi";
 import { UserApi } from "./userApi";
 import { HttpChannel } from './httpChannel';
-// import { MessageHub } from "./messageHub";
-// import { WsBridge, WSChannel } from "./wsChannel";
-import { buildHosts, Hosts } from './host';
+import { buildHosts } from './host';
 import { LocalDb } from "../tool";
 import { env } from "tonwa-com";
 
@@ -40,7 +34,6 @@ export class Net {
     private uqDebug: string;
     private resDebug: string;
     private debugUqs: Set<string> = new Set<string>();
-    // private hosts: Hosts;
     private testing: boolean;
     private uqChannels: { [uq: string]: (HttpChannel | Promise<HttpChannel>) } = {};
 
@@ -51,49 +44,18 @@ export class Net {
     private _loginedUserId: number = 0;
     private readonly localDb: LocalDb;
 
-    // centerHost: string;
-
-    // readonly centerApi: CenterApi;
-    // readonly uqTokens: UqTokens;
     readonly userApi: UserApi;
     readonly uqTokenApi: UqTokenApi;
-    // readonly callCenterapi: CallCenterApi;
-    //readonly guestApi: GuestApi;
-    // readonly messageHub: MessageHub;
-    // readonly wsBridge: WsBridge;
-    //readonly hostMan: HostMan;
-
-    // 下面的变量应该以后会去掉
-    // isBuildingUQ: boolean;
-    // _uqs: any;
-    // user: any;
-    // -- end -------------------
 
     constructor(props: NetProps) {
         this.props = props;
         this.isDevelopment = env.isDevelopment;
-        /*
-        if (process.env.REACT_APP_NODE_ENV === 'production') {
-            this.isDevelopment = false;
-        }
-        else {
-            this.isDevelopment = process.env.NODE_ENV === 'development';
-        }
-        */
         this.testing = props.testing;
         this.localDb = this.props.localDb;
         this.createObservableMap = this.props.createObservableMap;
 
         this.userApi = new UserApi(this, 'tv/');
         this.uqTokenApi = new UqTokenApi(this, 'tv/');
-
-        // this.centerApi = new CenterApi(this, 'tv/');
-        // this.uqTokens = new UqTokens(this);
-        // this.callCenterapi = new CallCenterApi(this, '');
-        //this.guestApi = new GuestApi(this, 'tv/guest/');
-        // this.messageHub = new MessageHub(this);
-        // this.wsBridge = new WsBridge(this);
-        //this.hostMan = HostMan.createHost(this.isDevelopment);
     }
 
     async init() {
