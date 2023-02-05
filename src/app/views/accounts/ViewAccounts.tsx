@@ -7,12 +7,9 @@ import { pathAccount } from "./routeAccount";
 export function ViewAccounts() {
     const { storeApp } = useUqApp();
     const { miAccounts } = storeApp;
-    // const nav = useNav();
 
     async function onClickAccount(item: MiAccount) {
         return pathAccount(item.state.id)
-        // await item.loadItems();
-        // return <PageAccount miAccount={item} />;
     }
 
     function ItemViewAccount({ value }: { value: MiAccount }) {
