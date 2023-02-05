@@ -67,6 +67,16 @@ export class StoreApp {
         localStorage.setItem(find_smooth, String(smooth));
     }
 
+    groupFromId(id: string): MGroup {
+        if (!id) return undefined;
+        let n = Number(id);
+        if (Number.isNaN(n) === true) return undefined;
+        let group = this.miGroups.groups.find(v => v.id === n);
+        if (!group) return undefined;
+        this.group = group;
+        return group;
+    }
+
     async loadMiAccountFromId(id: number) {
         let ret = this.miAccounts.accounts.find(v => v.state.id === id);
         await ret.loadItems();

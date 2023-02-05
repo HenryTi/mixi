@@ -51,7 +51,7 @@ export function ViewFindStock() {
     }
     async function onGroupClick(group: MGroup) {
         uqApp.storeApp.group = group;
-        return pathGroupStocks;
+        return pathGroupStocks(group.id);
         //navigate('/test');
     }
     return <div className="bg-light">
