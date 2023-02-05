@@ -1,7 +1,7 @@
+import { useAtomValue } from "jotai";
 import { ChangeEvent, useEffect, useRef } from "react";
 import { Band, BandContentType, BandProps, useBand, useBandContainer } from '../band';
 import { FieldProps, FieldItem } from './field';
-import { useSnapshot } from "valtio";
 
 type CheckInputProps = {
     indeterminate?: boolean;
@@ -31,9 +31,9 @@ function CheckInput({ name, id, readOnly, indeterminate, checkedValue, unchecked
     let input = useRef<HTMLInputElement>();
     let band = useBand();
     let bandContainer = useBandContainer();
-    let { props, valueResponse } = bandContainer;
-    let snapShotValues = useSnapshot(valueResponse.values);
-    let initChecked = snapShotValues?.[name] === (checkedValue ?? true)
+    let { props } = bandContainer;
+    let val = bandContainer.getValue(name);
+    let initChecked = val === (checkedValue ?? true)
     let onClick: (evt: React.MouseEvent<HTMLInputElement>) => void;
     let checked: boolean;
     if (bandContainer.isDetail === true) {

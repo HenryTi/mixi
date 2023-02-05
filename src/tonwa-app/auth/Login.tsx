@@ -4,14 +4,14 @@ import { User } from 'tonwa-uq';
 import { BandString, ruleIsRequired } from 'tonwa-com';
 import { Submit } from 'tonwa-com';
 import { BandPassword } from 'tonwa-com';
-import { FormBandTemplate1 } from 'tonwa-com';
 import { Band } from 'tonwa-com';
 import { FormErrors } from 'tonwa-com';
 import { useUqAppBase } from '../UqAppBase';
 import { PageForget, PageRegister } from './register/PageRegister';
 import { getSender } from './tools';
-import { Link, Outlet, Route, useNavigate } from 'react-router-dom';
-import { pathForget, pathRegister } from './register/PagePassword';
+import { Link, Outlet, Route, Routes, useNavigate } from 'react-router-dom';
+import { pathForget, pathRegister } from './register/ModalPassword';
+import { AuthFormBandTemplate } from './AuthFormBandTemplate';
 
 /*
 const schema: Schema = [
@@ -44,7 +44,7 @@ export function Login({ url, withBack, loginTop, privacy, callback }: Props) {
         console.log("onLoginSubmit: user=%s pwd:%s", user.name, user.token);
         await uqApp.logined(user);
         await callback?.(user);
-        if (url) navigate(url, { replace: true });
+        navigate(url ?? '/', { replace: true });
         return true;
     }
 
@@ -76,7 +76,7 @@ export function Login({ url, withBack, loginTop, privacy, callback }: Props) {
                 <div className="w-20c">
                     {loginTop ?? <div className="text-center p-3 fs-5 text-primary">登录</div>}
                     <div className="h-2c" />
-                    <Form BandTemplate={FormBandTemplate1}>
+                    <Form BandTemplate={AuthFormBandTemplate}>
                         <BandString label="登录账号" name="username"
                             placeholder="手机/邮箱/用户名" rule={ruleIsRequired}
                             maxLength={100} />
@@ -103,9 +103,11 @@ export function Login({ url, withBack, loginTop, privacy, callback }: Props) {
     function OutletLogin() {
         return <Outlet />;
     }
-    return <Route element={<OutletLogin />} >
-        <Route index element={<PageIndex />} />
-        <Route path={pathForget} element={<PageForget loginTop={loginTop} privacy={privacy} />} />
-        <Route path={pathRegister} element={<PageRegister loginTop={loginTop} privacy={privacy} />} />
-    </Route>;
+    return <Routes>
+        <Route element={<OutletLogin />} >
+            <Route index element={<PageIndex />} />
+            <Route path={pathForget} element={<PageForget loginTop={loginTop} privacy={privacy} />} />
+            <Route path={pathRegister} element={<PageRegister loginTop={loginTop} privacy={privacy} />} />
+        </Route>
+    </Routes>;
 }

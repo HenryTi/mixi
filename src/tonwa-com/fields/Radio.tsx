@@ -1,8 +1,8 @@
 import { ChangeEvent, useEffect, useRef } from "react";
 import { Band, BandProps, useBand, useBandContainer } from '../band';
 import { FieldProps, FieldItem } from './field';
-import { useSnapshot } from "valtio";
 import { OptionItem } from "../defines";
+import { useAtomValue } from "jotai";
 
 type RadioInputProps = {
     item: OptionItem;
@@ -71,9 +71,8 @@ interface RadioProps extends FieldProps {
 export function Radio(props: RadioProps) {
     let band = useBand();
     let bandContainer = useBandContainer();
-    let { values } = useSnapshot(bandContainer.valueResponse);
     let { name, options } = props;
-    let val = values[name];
+    let val = bandContainer.getValue(name);
     let { current: fieldItem } = useRef(new RadioFieldItem(name, bandContainer.props.values?.[name]));
     if (band) band.fields[name] = true;
     bandContainer.fields[name] = fieldItem;

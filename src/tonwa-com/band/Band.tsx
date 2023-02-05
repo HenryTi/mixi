@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
-import { useSnapshot } from 'valtio';
 import { BandContext, VBandContext } from './BandContext';
 import { FA } from '../coms';
 import { useBandContainer } from './BandContainer';
 import { OptionItem } from '../defines';
+import { useAtomValue } from 'jotai';
 
 export enum BandContentType {
     check,      // checkbox
@@ -12,6 +12,7 @@ export enum BandContentType {
 
 interface BandBaseProps {
     label?: string | JSX.Element;
+    labelSize?: number;
     toEdit?: string;
     sep?: number | JSX.Element;
     contentType?: BandContentType;
@@ -122,9 +123,8 @@ function buildDetailChildren(children: React.ReactNode): [React.ReactNode[], boo
 
 function Value({ name, options }: { name: string; options?: OptionItem[]; }) {
     let bandContainer = useBandContainer();
-    let { valueResponse, defaultNone } = bandContainer;
-    let snapshop = useSnapshot(valueResponse.values);
-    let val = snapshop[name];
+    let { defaultNone } = bandContainer;
+    let val = bandContainer.getValue(name);
     if (options) {
         if (val) {
             let option = options.find(v => v.value === val);
@@ -137,12 +137,13 @@ function Value({ name, options }: { name: string; options?: OptionItem[]; }) {
 }
 
 export function Band(props: BandProps & { children: React.ReactNode; }) {
-    let { label, children, BandTemplate, sep, contentType, toEdit, rightIcon, contentContainerClassName } = props;
+    let { label, labelSize, children, BandTemplate, sep, contentType, toEdit, rightIcon, contentContainerClassName } = props;
     let content = children;
     let bandContainer = useBandContainer();
+    labelSize = bandContainer.props.labelSize;
     let memos: string[] | undefined = buildMemosFromChildren(children);
     let { current: band } = useRef(new BandContext(bandContainer, memos));
-    let errors = useSnapshot(band.errors);
+    let errors = useAtomValue(band.errors);
     if (!bandContainer) {
         return <div>Error: {'<Band /> can only be in <Form />'}</div>;
     }
@@ -170,7 +171,8 @@ export function Band(props: BandProps & { children: React.ReactNode; }) {
             break;
     }
     return <VBandContext.Provider value={band}>
-        <BandTemplate label={label} errors={errors} memos={band.memos}
+        <BandTemplate label={label} labelSize={labelSize}
+            errors={errors} memos={band.memos}
             content={content} sep={sep} contentType={contentType}
             toEdit={toEdit} rightIcon={rightIcon}
             contentContainerClassName={contentContainerClassName}>

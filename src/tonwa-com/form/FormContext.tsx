@@ -1,21 +1,18 @@
+import { atom } from 'jotai';
 import React, { useContext } from 'react';
-import { proxy } from 'valtio';
+import { setAtomValue } from 'tonwa-com/tools';
 import { BandContainerContext } from '../band';
 import { FormProps } from './Form';
 
+export interface ErrorResponse {
+    hasError: boolean;
+    errors: string[];
+}
 export class FormContext extends BandContainerContext<FormProps> {
-    readonly errorResponse: {
-        hasError: boolean;
-        errors: string[];
-    };
-
-    constructor(props: FormProps) {
-        super(props);
-        this.errorResponse = proxy({
-            hasError: false,
-            errors: undefined,
-        });
-    }
+    readonly errorResponse = atom({
+        hasError: false,
+        errors: undefined,
+    } as ErrorResponse);
 
     get isDetail(): boolean {
         return false;
@@ -23,37 +20,40 @@ export class FormContext extends BandContainerContext<FormProps> {
 
     setError(name: string, err: string | string[]): boolean {
         if (!err) return;
+        let errors: string[];
+        let hasError: boolean;
         if (Array.isArray(err) === false) err = [err as string];
         if (!name) {
             if (err && err.length > 0) {
-                this.errorResponse.errors = [...(err as string[])];
-                this.errorResponse.hasError = true;
+                errors = [...(err as string[])];
+                hasError = true;
             }
             return;
         }
-        let hasError = super.setError(name, err as string[]);
-        if (hasError === true) {
-            this.errorResponse.hasError = hasError;
-        }
+        hasError = super.setError(name, err as string[]);
+        setAtomValue(this.errorResponse, { hasError, errors });
         return hasError;
     }
 
-    clearError(name: string): boolean {
-        let hasError = super.clearError(name);
-        this.errorResponse.hasError = hasError;
-        this.errorResponse.errors = undefined;
-        return hasError;
+    clearError(name: string) {
+        super.clearError(name);
+        setAtomValue(this.errorResponse, {
+            hasError: false,
+            errors: undefined,
+        });
     }
 
     clearAllErrors() {
         super.clearAllErrors();
-        this.errorResponse.hasError = false;
+        setAtomValue(this.errorResponse, {
+            hasError: false,
+            errors: undefined,
+        });
     }
 
     clearValues() {
-        let { values } = this.valueResponse;
-        for (let i in values) {
-            values[i] = undefined;
+        for (let i in this.valueAtoms) {
+            this.setValue(i, undefined);
         }
         for (let i in this.fields) {
             this.fields[i].reset();

@@ -52,6 +52,7 @@ export class UqApp extends UqAppBase<UQs> {
     miNet: MiNet;
     storeApp: StoreApp;
 
+    get pathLogin() { return '/login'; }
     // 数据服务器提醒客户端刷新，下面代码重新调入的数据
     refresh = async () => {
         let d = Date.now() / 1000;

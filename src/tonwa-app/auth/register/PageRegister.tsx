@@ -1,15 +1,15 @@
 import { FunctionComponent, useRef } from 'react';
-import { PagePublic } from 'tonwa-com';
+import { PagePublic, ruleIsRequired, setAtomValue } from 'tonwa-com';
 import { getSender } from '../tools';
-import { PageVerify } from './PageVerify';
-import { Pass } from './Pass';
-import { ForgetPassword, RegisterPassword } from './PagePassword';
-import { Login } from '../Login';
-import { useUqAppBase } from '../../UqAppBase';
+import { ModalVerify } from './ModalVerify';
+import { PasswordParams } from './PasswordParams';
+import { ModalForgetPassword, ModalRegisterPassword } from './ModalPassword';
+import { useModal, useUqAppBase } from '../../UqAppBase';
 import { BandString } from 'tonwa-com';
 import { Band, BandContainerContext } from 'tonwa-com';
-import { Form, FormBandTemplate1, Submit } from 'tonwa-com';
-import { Link, Outlet, Route, useNavigate } from 'react-router-dom';
+import { Form, Submit } from 'tonwa-com';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthFormBandTemplate } from '../AuthFormBandTemplate';
 
 interface StartProps {
     privacy: JSX.Element;
@@ -19,17 +19,21 @@ interface StartProps {
 interface Props extends StartProps {
     header: string;
     accountLable: string;
-    Password: FunctionComponent<{ pass: Pass; }>;
+    ModalPassword: FunctionComponent<{ passwordParams: PasswordParams; }>;
     accountError: (isExists: number) => string;
     sendVerifyOem: string;          // 发送短信或者邮件的时候的厂家标志
 }
 
-function PageRegisterBase({ header, accountLable, privacy, loginTop, Password, accountError, sendVerifyOem }: Props) {
-    const pathPassword = 'password';
-    const pathVerify = 'verify';
+function PageRegisterBase({ header, accountLable, privacy, loginTop, ModalPassword, accountError, sendVerifyOem }: Props) {
+    const { openModal } = useModal();
     const navigate = useNavigate();
-    let { userApi } = useUqAppBase();
-    let { current: pass } = useRef({} as Pass);
+    const uqApp = useUqAppBase();
+    const { userApi, pathLogin } = uqApp;
+    let { current: passwordParams } = useRef({ toLogin } as PasswordParams);
+    function toLogin() {
+        uqApp.closeAllModal();
+        navigate(pathLogin);
+    }
     async function onValuesChanged({ name, value }: { name: string; value: any; }, context: BandContainerContext<any>) {
         let field = context.fields['submit'];
         if (field) {
@@ -49,25 +53,27 @@ function PageRegisterBase({ header, accountLable, privacy, loginTop, Password, a
                 return [undefined, [user, '请输入正确的手机号']];
             }
         }
-        //this.controller.account = value;
-        //this.controller.type = type;
-        //await checkAccount(type, value);
         let account = value;
         let ret = await userApi.isExists(account);
         let error = accountError(ret);
         if (error !== undefined) return error;
         ret = await userApi.sendVerify(account, type, sendVerifyOem);
-        if (ret !== undefined) {
+        // ret值  0: 60秒之内发送过，1: 新发送,  2: 超过60秒，已经发送
+        passwordParams.account = account;
+        passwordParams.type = type;
+        /*
+        if (ret) {
             return [undefined, [user, ret]];
         }
+        */
 
-        let onVerify = async (verify: string) => {
-            pass.verify = verify;
+        async function onVerify(verify: string) {
+            passwordParams.verify = verify;
             let ret = await userApi.checkVerify(account, verify);
             if (ret === 0) return ret;
-            navigate(pathPassword);
+            openModal(<ModalPassword passwordParams={passwordParams} />, header);
         }
-        navigate(pathVerify);
+        openModal(<ModalVerify onVerify={onVerify} passwordParams={passwordParams} />, header);
     }
     /*
         let onEnter = async (name: string, context: Context): Promise<string> => {
@@ -77,15 +83,15 @@ function PageRegisterBase({ header, accountLable, privacy, loginTop, Password, a
         }
     */
 
-    let pageIndex = <PagePublic header={header} footer={privacy}>
+    return <PagePublic header={header} footer={privacy}>
         <div className="d-grid">
             <div className="d-grid w-20c my-5 py-5"
                 style={{ marginLeft: 'auto', marginRight: 'auto' }}>
                 {loginTop ?? <div className="text-center p-3 fs-5 text-primary">注册</div>}
                 <div className="h-3c" />
-                <Form BandTemplate={FormBandTemplate1} onValuesChanged={onValuesChanged}>
+                <Form BandTemplate={AuthFormBandTemplate} onValuesChanged={onValuesChanged}>
                     <BandString name="user" label={accountLable} placeholder="手机号或邮箱" />
-                    <Band contentContainerClassName='mt-3 d-flex justify-content-center'>
+                    <Band contentContainerClassName='mt-3'>
                         <Submit name="submit" onSubmit={onSubmit} disabled={true}>发送验证码</Submit>
                     </Band>
                 </Form>
@@ -95,11 +101,6 @@ function PageRegisterBase({ header, accountLable, privacy, loginTop, Password, a
             </div>
         </div>
     </PagePublic>;
-    return <Route element={<Outlet />}>
-        <Route index element={pageIndex} />
-        <Route path={pathPassword} element={<Password pass={pass} />} />
-        <Route path={pathVerify} element={<PageVerify onVerify={undefined/*onVerify*/} pass={pass} />} />
-    </Route>;
 }
 
 export function PageRegister(props: StartProps) {
@@ -107,7 +108,8 @@ export function PageRegister(props: StartProps) {
     let accountError = (isExists: number) => {
         if (isExists > 0) return '已经被注册使用了';
     }
-    return <PageRegisterBase header="注册账号" accountLable="账号" Password={RegisterPassword}
+    return <PageRegisterBase header="注册账号" accountLable="账号"
+        ModalPassword={ModalRegisterPassword}
         accountError={accountError} sendVerifyOem={undefined}
         loginTop={loginTop} privacy={privacy} />;
 }
@@ -117,7 +119,8 @@ export function PageForget(props: StartProps) {
     let accountError = (isExists: number) => {
         if (isExists === 0) return '请输入正确的账号';
     }
-    return <PageRegisterBase header="密码找回" accountLable="账号" Password={ForgetPassword}
+    return <PageRegisterBase header="密码找回" accountLable="账号"
+        ModalPassword={ModalForgetPassword}
         accountError={accountError} sendVerifyOem={undefined}
         loginTop={loginTop} privacy={privacy} />;
 }

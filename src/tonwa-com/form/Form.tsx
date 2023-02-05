@@ -1,20 +1,21 @@
 import { FormEvent, useRef } from 'react';
 import { VBandContainerContext, Band, BandContainerProps, BandFieldErrors, BandMemos, BandTemplateProps } from '../band';
-import { useSnapshot } from 'valtio';
 import { FormContext, VFormContext, useForm } from './FormContext';
 import { BandFieldError } from '../band';
 import { Rule } from '../fields';
+import { useAtomValue } from 'jotai';
 
 export interface FormProps extends BandContainerProps {
     rule?: Rule | Rule[];
 }
 
 function DefaultBandTemplate(props: BandTemplateProps) {
-    let { label, children, errors, memos, contentContainerClassName } = props;
+    let { label, labelSize, children, errors, memos, contentContainerClassName } = props;
+    labelSize = labelSize ?? 2;
     let vLabel: any;
-    let cnContent = 'col-sm-10 ' + (contentContainerClassName ?? '');
+    let cnContent = `col-sm-${12 - labelSize} ${contentContainerClassName ?? ''}`;
     if (label) {
-        vLabel = <label className="col-sm-2 col-form-label text-sm-end"><b>{label}</b></label>;
+        vLabel = <label className={`col-sm-${labelSize} col-form-label text-sm-end`}><b>{label}</b></label>;
     }
     else {
         cnContent += ' offset-sm-2';
@@ -28,27 +29,6 @@ function DefaultBandTemplate(props: BandTemplateProps) {
         </div>
     </div>;
 }
-
-export function FormBandTemplate1(props: BandTemplateProps) {
-    let { label, children, errors, memos, contentContainerClassName } = props;
-    let vLabel: any;
-    let cnContent = contentContainerClassName ?? '';
-    if (label) {
-        vLabel = <label className="col-form-label"><b>{label}</b></label>;
-    }
-    else {
-        cnContent += ' ';
-    }
-    return <div className="mb-3 row bg-white">
-        {vLabel}
-        <div className={cnContent}>
-            {children}
-            <BandFieldErrors errors={errors} />
-            <BandMemos memos={memos} />
-        </div>
-    </div>;
-}
-
 export function Form(props: FormProps) {
     let { className, children, BandTemplate } = props;
     BandTemplate = BandTemplate ?? DefaultBandTemplate;
@@ -67,7 +47,7 @@ export function Form(props: FormProps) {
 
 export function FormErrors() {
     let form = useForm();
-    let { errors } = useSnapshot(form.errorResponse);
+    let { errors } = useAtomValue(form.errorResponse);
     if (!errors) return null;
     return <>
         {errors.map((v, index) => <BandFieldError key={index} error={v} />)}
@@ -76,7 +56,7 @@ export function FormErrors() {
 
 export function BandFormErrors() {
     let form = useForm();
-    let { errors } = useSnapshot(form.errorResponse);
+    let { errors } = useAtomValue(form.errorResponse);
     if (!errors) return null;
     return <Band>
         {errors.map((v, index) => <BandFieldError key={index} error={v} />)}

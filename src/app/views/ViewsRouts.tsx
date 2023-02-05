@@ -35,7 +35,7 @@ export function ViewsRoutes() {
                 <Route path="/test" element={<Page header="Test">test</Page>} />
                 {routeBlogs}
                 {routeSearch}
-                <Route path="/login" element={<AppLogin />} />
+                <Route path="/login/*" element={<AppLogin />} />
                 <Route path="/register" element={<AppRegister />} />
                 {routePrivacy}
             </Routes>

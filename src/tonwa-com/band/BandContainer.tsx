@@ -1,12 +1,14 @@
 import React, { useContext } from "react";
-import { proxy } from "valtio";
 import { BandTemplateProps } from "./Band";
 import { BandContext } from "./BandContext";
 import { FieldItem } from "../fields";
+import { atom, WritableAtom } from "jotai";
+import { getAtomValue, setAtomValue } from "tonwa-com/tools";
 
 export type OnValuesChanged = (values: { name: string; value: any; preValue: any; }, context: BandContainerContext<any>) => Promise<void>;
 export interface BandContainerProps {
     className?: string;
+    labelSize?: number;
     children: React.ReactNode;
     stringClassName?: string;    // for string and number and date
     checkClassName?: string;     // for checkbox and radio
@@ -24,6 +26,7 @@ const defaultPickClassName = 'form-control';
 const defaultRangeClassName = 'form-range';
 
 export abstract class BandContainerContext<P extends BandContainerProps> {
+    protected readonly valueAtoms: { [name: string]: WritableAtom<any, any, any> };
     readonly defaultStringClassName = defaultStringClassName;
     readonly defaultCheckClassName = defaultCheckClassName;
     readonly defaultSelectClassName = defaultSelectClassName;
@@ -31,13 +34,10 @@ export abstract class BandContainerContext<P extends BandContainerProps> {
     readonly defaultRangeClassName = defaultRangeClassName;
     readonly defaultNone = '-';
     readonly fields: { [name: string]: FieldItem };
-    readonly fieldStates: { [name: string]: { readOnly: boolean; disabled: boolean; } };
+    readonly fieldStates: { [name: string]: WritableAtom<{ readOnly: boolean; disabled: boolean; }, any, any> };
     readonly bands: BandContext[];
     readonly BandTemplate?: (props: BandTemplateProps) => JSX.Element;
     readonly props: P;
-    readonly valueResponse: {
-        values: { [name: string]: any };
-    };
     readonly readOnly: boolean;
 
     constructor(props: P) {
@@ -46,9 +46,12 @@ export abstract class BandContainerContext<P extends BandContainerProps> {
         this.BandTemplate = BandTemplate;
         this.props = props;
         this.readOnly = readOnly;
-        this.valueResponse = proxy({
-            values: values ?? {},
-        });
+        this.valueAtoms = {};
+        if (values) {
+            for (let i in values) {
+                this.valueAtoms[i] = atom(values[i]);
+            }
+        }
         this.fields = {};
         this.fieldStates = {};
         let each = (cs: React.ReactNode) => {
@@ -59,7 +62,7 @@ export abstract class BandContainerContext<P extends BandContainerProps> {
                 let { props: cProps } = e;
                 if (cProps) {
                     let { name } = cProps;
-                    if (name) this.fieldStates[name] = proxy({ readOnly: false, disabled: false });
+                    if (name) this.fieldStates[name] = atom({ readOnly: false, disabled: false });
                     each(cProps.children);
                 }
             })
@@ -67,46 +70,59 @@ export abstract class BandContainerContext<P extends BandContainerProps> {
         each(props.children);
     }
 
-    abstract get isDetail(): boolean;
-    onValuesChanged = async (values: any) => {
-        let oldValues = this.valueResponse.values;
-        for (let i in values) {
-            let vNew = values[i];
-            let vOld = oldValues[i];
-            if (vNew !== vOld) {
-                await this.props.onValuesChanged?.({ name: i, value: vNew, preValue: vOld }, this);
-                oldValues[i] = vNew;
-            }
-        }
+    getValue(name: string): any {
+        let atom = this.valueAtoms[name];
+        if (!atom) return undefined;
+        return getAtomValue(atom);
     }
 
-    setValue(name: string, value: any) {
+    setValue(name: string, val: any) {
+        let a = this.valueAtoms[name];
+        if (!a) {
+            this.valueAtoms[name] = atom(val);
+        }
+        else {
+            setAtomValue(a, val);
+        }
         let values: { [name: string]: any } = {};
-        values[name] = value;
+        values[name] = val;
         this.onValuesChanged(values);
-        this.valueResponse.values[name] = value;
+    }
+
+    getValues() {
+        let values: { [name: string]: any } = {};
+        for (let i in this.valueAtoms) {
+            values[i] = getAtomValue(this.valueAtoms[i]);
+        }
+        return values;
+    }
+
+    abstract get isDetail(): boolean;
+    onValuesChanged = async (values: any) => {
+        for (let i in values) {
+            let vNew = values[i];
+            let vOld = this.getValue(i);
+            if (vNew !== vOld) {
+                await this.props.onValuesChanged?.({ name: i, value: vNew, preValue: vOld }, this);
+                this.setValue(i, vNew);
+            }
+        }
     }
 
     setError(name: string, err: string[]): boolean {
         let hasError = false;
         for (let band of this.bands) {
-            band.setError(name, err);
-            if (hasError === false) {
-                hasError = band.errors.length > 0;
-            }
+            let bandHasError = band.setError(name, err);
+            if (bandHasError === false) continue;
+            hasError = true;
         }
         return hasError;
     }
 
-    clearError(name: string): boolean {
-        let hasError = false;
+    clearError(name: string) {
         for (let band of this.bands) {
             band.clearError(name);
-            if (hasError === false) {
-                hasError = band.errors.length > 0;
-            }
         }
-        return hasError;
     }
 
     clearAllErrors() {
@@ -116,13 +132,25 @@ export abstract class BandContainerContext<P extends BandContainerProps> {
     }
 
     setReadonly(name: string, readOnly: boolean) {
-        let fieldState = this.fieldStates[name];
-        if (fieldState) fieldState.readOnly = readOnly;
+        let atomFieldState = this.fieldStates[name];
+        let fieldState = getAtomValue(atomFieldState);
+        if (fieldState) {
+            setAtomValue(atomFieldState, {
+                ...fieldState,
+                readOnly,
+            });
+        }
     }
 
     setDisabled(name: string, disabled: boolean) {
-        let fieldState = this.fieldStates[name];
-        if (fieldState) fieldState.disabled = disabled;
+        let atomFieldState = this.fieldStates[name];
+        let fieldState = getAtomValue(atomFieldState);
+        if (fieldState) {
+            setAtomValue(atomFieldState, {
+                ...fieldState,
+                disabled,
+            });
+        }
     }
 }
 

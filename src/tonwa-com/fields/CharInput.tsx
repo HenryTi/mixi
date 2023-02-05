@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useBand, useBandContainer } from '../band';
 import { checkRule } from './Rule';
 import { FieldProps, FieldItem } from './field';
-import { useSnapshot } from "valtio";
+import { useAtomValue } from "jotai";
 
 type CharInputBaseProps = {
     placeholder: string;
@@ -40,7 +40,7 @@ export function CharInputBase({ name, className, readOnly, placeholder, maxLengt
     let band = useBand();
     let bandContainer = useBandContainer();
     let { props, fields, fieldStates } = bandContainer;
-    let fieldState = useSnapshot(fieldStates[name]);
+    let fieldState = useAtomValue(fieldStates[name]);
     readOnly = readOnly ?? (fieldState?.readOnly) ?? props.readOnly ?? false;
     useEffect(() => {
         if (!band) return;

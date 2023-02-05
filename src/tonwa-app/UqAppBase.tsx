@@ -9,6 +9,7 @@ import { uqsProxy } from './uq';
 import { AutoRefresh } from './AutoRefresh';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { atom, useAtom } from 'jotai';
+import { useNavigate } from 'react-router-dom';
 
 export interface AppConfig { //extends UqsConfig {
     center: string;
@@ -46,14 +47,14 @@ export abstract class UqAppBase<U = any> {
     //}
     readonly refreshTime = atom(Date.now() / 1000);
     readonly user = atom(undefined as User);
-    readonly modalStack = atom([] as [JSX.Element, (value: any | PromiseLike<any>) => void][]);
+    readonly modal = {
+        stack: atom([] as [JSX.Element, (value: any | PromiseLike<any>) => void][]),
+    }
     uqsMan: UQsMan;
     store: any;
     guest: number;
     uqs: U;
-    // uq: Uq;
     uqUnit: UqUnit;
-    pathLogin = '/login';
 
     constructor(appConfig: AppConfig, uqConfigs: UqConfig[], uqsSchema: { [uq: string]: any; }) {
         this.uqAppBaseId = uqAppId++;
@@ -62,13 +63,6 @@ export abstract class UqAppBase<U = any> {
         this.uqsSchema = uqsSchema;
         this.version = appConfig.version;
         this.mustLogin = appConfig.mustLogin !== false;
-        /*
-        this.responsive = proxy({
-            user: undefined,
-        });
-        */
-        // this.user = proxy({} as User);
-        // this.stores = [];
         let props: NetProps = {
             center: appConfig.center,
             unit: env.unit,
@@ -84,12 +78,17 @@ export abstract class UqAppBase<U = any> {
         setAtomValue(this.user, user);
     }
 
+    abstract get pathLogin(): string;
+
     protected get defaultUqRoleNames(): { [lang: string]: any } { return undefined }
     loginUnit(userUnit: UserUnit) {
         this.uqUnit.loginUnit(userUnit);
     }
     logoutUnit() {
         this.uqUnit.logoutUnit();
+    }
+    closeAllModal() {
+        setAtomValue(this.modal.stack, []);
     }
     get userUnit() { return this.uqUnit.userUnit; }
     // get me() { return this.user.read().user.read() return this.responsive.user?.id; }
@@ -132,17 +131,9 @@ export abstract class UqAppBase<U = any> {
         this.localData.saveToLocalStorage();
     }
 
-    // private initCalled = false;
     initErrors: string[];
-    /*
-    init(initPage: React.ReactNode, navigateFunc: NavigateFunction): void {
-        this.appNav.init(initPage, navigateFunc);
-    }
-    */
 
     async init(): Promise<void> {
-        // if (this.initCalled === true) return;
-        // this.initCalled = true;
         console.log('UqApp.load()');
         await this.net.init();
         console.log('await this.net.init()');
@@ -174,7 +165,6 @@ export abstract class UqAppBase<U = any> {
             else {
                 await this.loadWithoutLogin();
                 await this.logined(user);
-                // console.log('loadAfterLogin');
             }
         }
         catch (error) {
@@ -222,7 +212,8 @@ class LocalStorageDb extends LocalDb {
 }
 
 export function useModal() {
-    let { modalStack: modalStackAtom } = useUqAppBase();
+    const { modal } = useUqAppBase();
+    const { stack: modalStackAtom } = modal;
     const [modalStack, setModalStack] = useAtom(modalStackAtom);
     async function openModal<T = any>(element: JSX.Element, caption?: string | JSX.Element): Promise<T> {
         return new Promise<T>((resolve, reject) => {
@@ -232,15 +223,15 @@ export function useModal() {
             }
             function Modal() {
                 const { closeModal } = useModal();
-                return <PagePublic
+                return <PagePublic header={caption}
                     onBack={() => closeModal(undefined)}
                     back={'close'}>{element}</PagePublic>;
             }
             //state.modalStack.push(ref([<Modal />, resolve]));
-            setModalStack([...modalStack, [<Modal />, resolve]])
+            setModalStack([...modalStack, [<Modal />, resolve]]);
         })
     }
-    function closeModal(result: any) {
+    function closeModal(result?: any) {
         let [, resolve] = modalStack.pop();
         setModalStack([...modalStack]);
         resolve(result);
@@ -262,7 +253,7 @@ const queryClient = new QueryClient({
 });
 
 export function ViewUqAppBase({ uqApp, children }: { uqApp: UqAppBase; children: ReactNode; }) {
-    const [modalStack] = useAtom(uqApp.modalStack);
+    const [modalStack] = useAtom(uqApp.modal.stack);
     let [appInited, setAppInited] = useState<boolean>(false);
     useEffectOnce(() => {
         (async function () {

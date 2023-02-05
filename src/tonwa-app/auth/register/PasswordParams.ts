@@ -1,9 +1,9 @@
 export type AccountType = 'email' | 'mobile';
 
-export interface Pass {
+export interface PasswordParams {
     account: string;
     password: string;
     verify: string;
     type: AccountType;
-    login: () => void;
+    toLogin: () => void;
 }

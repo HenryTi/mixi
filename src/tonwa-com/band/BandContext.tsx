@@ -1,5 +1,6 @@
+import { atom } from "jotai";
 import React, { useContext } from "react";
-import { proxy } from "valtio";
+import { getAtomValue, setAtomValue } from "tonwa-com/tools";
 import { BandContainerContext } from "./BandContainer";
 
 interface NamedError {
@@ -9,41 +10,40 @@ interface NamedError {
 
 export class BandContext {
     readonly container: BandContainerContext<any>;
-    readonly errors: NamedError[];
+    readonly errors = atom([] as NamedError[]);
     readonly memos?: string[];
     readonly fields: { [name: string]: boolean };
     readOnly: boolean = false;
 
     constructor(container: BandContainerContext<any>, memos?: string[]) {
         this.container = container;
-        this.errors = proxy([]);
         this.memos = memos;
         this.fields = {};
         container?.bands.push(this);
     }
 
-    setError(name: string, error: string[]) {
+    setError(name: string, error: string[]): boolean {
         if (this.fields[name] === true) {
+            let errors = getAtomValue(this.errors);
             if (error) {
-                for (let err of error) {
-                    this.errors.push({ name, error: err });
-                }
+                setAtomValue(this.errors, [...errors, ...error.map(v => ({ name, error: v }))])
+                return true;
             }
+            return errors.length > 0;
         }
+        return false;
     }
 
+
+
     clearError(name: string) {
-        let last = this.errors.length - 1;
-        for (let i = last; i >= 0; i--) {
-            let err = this.errors[i];
-            if (err.name === name) {
-                this.errors.splice(i, 1);
-            }
+        if (this.fields[name] === true) {
+            setAtomValue(this.errors, []);
         }
     }
 
     clearAllErrors() {
-        this.errors.splice(0);
+        setAtomValue(this.errors, []);
     }
 }
 

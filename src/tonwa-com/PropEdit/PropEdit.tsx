@@ -14,7 +14,6 @@ class DetailContext extends BandContainerContext<DetailProps> {
     }
     label: string | JSX.Element;
     content: React.ReactNode;
-    values: any;
 }
 
 const pathEditDetail = 'edit';
@@ -40,12 +39,13 @@ function DefaultBandTemplate(props: BandTemplateProps) {
     // let detailContext = useOutletContext<DetailContext>();
     let detailContext = useBandContainer() as DetailContext;
     let band = useBand();
-    let { label, children, errors, memos, toEdit, content, sep, contentType, rightIcon } = props;
+    let { label, labelSize, children, errors, memos, toEdit, content, sep, contentType, rightIcon } = props;
+    labelSize = labelSize ?? 2;
     let labelContent = contentType === BandContentType.check ? null : <b>{label}</b>;
-    let vLabel = <label className="col-sm-2 col-form-label text-sm-end tonwa-bg-gray-1 border-end align-self-center py-3">
+    let vLabel = <label className={`col-sm-${labelSize} col-form-label text-sm-end tonwa-bg-gray-1 border-end align-self-center py-3`}>
         {labelContent}
     </label>;
-    let cnContent = 'col-sm-10 d-flex pe-0 align-items-center';
+    let cnContent = `col-sm-${12 - labelSize} d-flex pe-0 align-items-center`;
     function RightIcon({ icon, toEdit }: { icon: JSX.Element; toEdit: string; }) {
         return <Link to={toEdit}
             className="px-3 align-self-stretch d-flex align-items-center cursor-pointer"
@@ -65,13 +65,12 @@ function DefaultBandTemplate(props: BandTemplateProps) {
     else {
         detailContext.label = label;
         detailContext.content = content;
-        detailContext.values = { ...detailContext.valueResponse.values };
+        //detailContext.values = { ...detailContext.values.values };
         // detailContext.onValuesChanged = detailContext.onValuesChanged;
         toEdit = pathEditDetail;
         rightIcon = <RightIcon toEdit={toEdit} icon={rightIcon} />;
     }
     return <>
-        <Sep sep={sep} />
         <div className="row bg-white mx-0">
             {vLabel}
             <div className={cnContent}>
@@ -87,12 +86,13 @@ function DefaultBandTemplate(props: BandTemplateProps) {
 }
 
 function ValueEditPage({ detail }: { detail: DetailContext; }) {
-    const { content, label, values, onValuesChanged } = detail; // useOutletContext<DetailContext>();
+    const { content, label, onValuesChanged } = detail; // useOutletContext<DetailContext>();
     const navigate = useNavigate();
     async function onSubmit(data: any) {
         await onValuesChanged(data);
         navigate(-1);
     }
+    let values = detail.getValues();
     return <Page header={label} back="close">
         <Form className="container px-3 py-3" values={values} BandTemplate={ValueEditBandTemplate}>
             <Band>

@@ -6,7 +6,7 @@ import { ButtonPageBack } from "./ButtonPageBack";
 import { useUqApp } from "app";
 import { PageSpinner } from "./PageSpinner";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAtom } from "jotai/react";
+import { useAtomValue } from "jotai/react";
 
 const scrollTimeGap = 100;
 const scrollEdgeGap = 30;
@@ -99,13 +99,14 @@ export function Page(props: PageProps) {
     const uqApp = useUqApp();
     const navigate = useNavigate();
     const { user: userAtom, mustLogin, pathLogin } = uqApp;
-    const [user] = useAtom(userAtom);
+    const user = useAtomValue(userAtom);
     const { pathname } = useLocation();
     useEffect(() => {
         if (mustLogin && !user && pathLogin) {
             navigate(pathLogin, { state: pathname });
         }
     }, [user, mustLogin, pathLogin]);
+    if (mustLogin && !user) return null;
     return <PagePublic {...props} />;
 }
 

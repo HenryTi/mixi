@@ -3,6 +3,7 @@ import { FA } from "../coms";
 import { Band, BandProps, useBand, useBandContainer } from '../band';
 import { FieldProps, FieldItem } from './field';
 import { EnumString, resStrings } from "../res";
+import { setAtomValue } from "tonwa-com/tools";
 
 type PickProps = {
     className?: string;
@@ -29,7 +30,7 @@ export function Pick(props: PickProps) {
         if (band) band.fields[name] = true;
         bandContainer.fields[name] = new PickFieldItem(name/*, val*/);
     }, [band, bandContainer, props]);
-    let { props: formProps, valueResponse } = bandContainer;
+    let { props: formProps } = bandContainer;
     let { name, className, onPick, placeholder, readOnly, Value } = props;
     readOnly = readOnly ?? formProps.readOnly;
     value = value ?? bandContainer.props.values?.[name];
@@ -42,7 +43,7 @@ export function Pick(props: PickProps) {
         vRight = <div><FA name="angle-right" /></div>;
         onClick = async function () {
             let ret = await onPick(value);
-            valueResponse.values[name] = ret;
+            setAtomValue(bandContainer.getValue(name), ret);
             setValue(ret);
         }
         if (value === null) {

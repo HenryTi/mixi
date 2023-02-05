@@ -2,8 +2,9 @@ import { Outlet, Route, useNavigate } from "react-router-dom";
 import { PagePublic } from "tonwa-com";
 import { Band } from "tonwa-com";
 import { BandPassword } from "tonwa-com";
-import { Form, FormBandTemplate1, Submit, FormErrors } from "tonwa-com";
+import { Form, Submit, FormErrors } from "tonwa-com";
 import { useUqAppBase } from "../UqAppBase";
+import { AuthFormBandTemplate } from "./AuthFormBandTemplate";
 
 const pathChangeSucceed = '/changeSucceed';
 
@@ -35,7 +36,7 @@ function PageChangePasswordIndex() {
     }
 
     return <PagePublic header="修改密码">
-        <Form className="m-3 w-30c mx-auto" BandTemplate={FormBandTemplate1}>
+        <Form className="m-3 w-30c mx-auto" BandTemplate={AuthFormBandTemplate}>
             <BandPassword name="orgPassword" label="原密码" placeholder="输入原来的密码" maxLength={60} />
             <BandPassword name="newPassword" label="新密码" placeholder="输入新设的密码" maxLength={60} />
             <BandPassword name="newPassword1" label="确认密码" placeholder="再次输入新设密码" maxLength={60} />

@@ -289,9 +289,6 @@ export class StoreApp {
     }
 
     async load() {
-        // let ret = await this.yumi.CustomerCredits.query({ customer: 1, credits: 1 });
-        // let retId = await this.yumi.ID({ IDX: this.yumi.IDBlogTest, id: 1048578 });
-
         await this.loadMarkets();
         await Promise.all([
             this.miAccounts.load(),

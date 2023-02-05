@@ -16,9 +16,6 @@ export function PageEditMe() {
         uqApp.setUserProp(name, value);
     }
 
-    function LabelContainer({ children }: ContainerProps) {
-        return <div className="d-flex flex-fill">a <div className="flex-fill" /> {children}</div>;
-    }
     let temp: Partial<LabelRowProps> = {
         // LabelContainer,
         labelAlign: 'end',
@@ -45,12 +42,14 @@ export function PageEditMe() {
             </LabelRow>
             <Sep />
             <LabelRowEdit {...temp} label={"a"} value={1} />
-
-            <PropEdit values={user} onValuesChanged={onValuesChanged}>
+            <Sep />
+            <PropEdit className="container" values={user} onValuesChanged={onValuesChanged} labelSize={3} >
                 <BandString label="别名" name="nick" placeholder="好的别名更方便记忆" />
+                <Sep />
                 <BandCom label={t('changePassword')} toEdit={pathEditMe + pathChangePassword}>
                     <FA className="text-info m-2 align-self-center" name="key" />
                 </BandCom>
+                <Sep />
                 <BandCom label={t('userQuit')} toEdit={pathUserQuit}>
                     <FA className="text-info m-2 align-self-center" name="key" />
                 </BandCom>

@@ -30,7 +30,7 @@ export class Net {
     logout() {
         // throw new Error('Method not implemented.');
     }
-    private centerDebug: string;
+    private centerUrl: string;
     private uqDebug: string;
     private resDebug: string;
     private debugUqs: Set<string> = new Set<string>();
@@ -59,9 +59,10 @@ export class Net {
     }
 
     async init() {
+        if (this.centerUrl !== undefined) return;
         let { center } = this.props;
-        let { center: centerDebug, uqDebug, uqs, res } = await buildHosts(center, this.isDevelopment);
-        this.centerDebug = centerDebug;
+        let { center: centerUrl, uqDebug, uqs, res } = await buildHosts(center, this.isDevelopment);
+        this.centerUrl = centerUrl;
         this.uqDebug = uqDebug;
         this.resDebug = res;
         if (uqs !== undefined) {
@@ -115,7 +116,7 @@ export class Net {
 
     getCenterChannel(): HttpChannel {
         if (this.centerChannel !== undefined) return this.centerChannel;
-        return this.centerChannel = new HttpChannel(this, this.centerDebug, this.centerToken);
+        return this.centerChannel = new HttpChannel(this, this.centerUrl, this.centerToken);
     }
 
     buildUqUrl(db: string, url: string, urlTest: string): string {

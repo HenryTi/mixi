@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import { proxy, useSnapshot } from 'valtio';
 import { useBandContainer } from '../band';
 import { ButtonAsync, FA } from '../coms';
 import { EnumString, resStrings } from '../res';
 import { checkRule, FieldItem } from '../fields';
 import { useForm } from './FormContext';
+import { atom, useAtom, useAtomValue } from 'jotai';
 
 export interface ButtonProps {
     name?: string;
@@ -26,12 +26,11 @@ class SubmitItem implements FieldItem {
 
 export function Submit({ name, className, children, onSubmit, disabled }: ButtonProps & { onSubmit: (data: any) => Promise<[name: string, err: string][] | string[] | string | void>; }) {
     let form = useForm();
-    let { hasError } = useSnapshot(form.errorResponse);
+    let [errorResponse, setErrorResponse] = useAtom(form.errorResponse);
     let bandContainer = useBandContainer();
     let { fields, fieldStates } = bandContainer;
-    let state = useRef({ readOnly: false, disabled }).current;
-    let stateProxy = useRef(proxy(state)).current;
-    let fieldState = useSnapshot(name ? fieldStates[name] : stateProxy);
+    let { current: atomState } = useRef(atom({ readOnly: false, disabled }));
+    let fieldState = useAtomValue(name ? fieldStates[name] : atomState);
     className = className ?? 'btn btn-primary';
     children = children ?? <><FA name='share-square-o' /> {resStrings[EnumString.string_submit]}</>;
     useEffect(() => {
@@ -42,15 +41,21 @@ export function Submit({ name, className, children, onSubmit, disabled }: Button
     }, [fields, fieldStates, name, disabled]);
     async function onClick(evt: React.MouseEvent) {
         evt.preventDefault();
-        let { props, valueResponse, errorResponse } = form;
+        let { props } = form;
         let { rule } = props;
-        let errors = checkRule(valueResponse.values, rule);
-        if (errors) {
-            errorResponse.errors = errors;
-            errorResponse.hasError = true;
+        let values = form.getValues();
+        let errors: string[] = [];
+        for (let i in values) {
+            checkRule(values[i], rule);
+        }
+        if (errors.length > 0) {
+            setErrorResponse({
+                errors,
+                hasError: true
+            });
         }
         else {
-            let ret = await onSubmit(form.valueResponse.values);
+            let ret = await onSubmit(form.getValues());
             if (ret) {
                 switch (typeof ret) {
                     default:
@@ -80,7 +85,7 @@ export function Submit({ name, className, children, onSubmit, disabled }: Button
         }
     }
     return <ButtonAsync onClick={onClick}
-        disabled={(fieldState.disabled ?? false) || hasError}
+        disabled={(fieldState.disabled ?? false) || errorResponse.hasError}
         className={className}
     >
         {children}
@@ -100,7 +105,7 @@ export function Clear({ className, children }: ButtonProps) {
 
 export function ClearErrorsButton({ className, children }: ButtonProps) {
     let form = useForm();
-    let { hasError } = useSnapshot(form?.errorResponse);
+    let { hasError } = useAtomValue(form.errorResponse);
     function onClick(evt: React.MouseEvent) {
         evt.preventDefault();
         form.clearAllErrors();
