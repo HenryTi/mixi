@@ -24,7 +24,7 @@
         "react-router-dom": "^6.8.0",
         "tonwa-app": "^1.0.5",
         "tonwa-com": "^1.0.7",
-        "tonwa-uq": "^1.0.3",
+        "tonwa-uq": "^1.0.5",
         "valtio": "^1.9.0"
     },
     "devDependencies": {
