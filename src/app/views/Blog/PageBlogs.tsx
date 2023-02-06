@@ -15,13 +15,9 @@ export function PageBlogs() {
             <small className="text-muted"><EasyTime date={(value as any).$create} /></small>
         </LMR>;
     }
-
-    function Icon({ icon }: { icon: string; }) {
-        return <FA name={icon} className="text-info align-self-center me-3 me-sm-3" size="lg" fixWidth={true} />
-    }
-    function IconBlog() {
-        return <Icon icon="file-o" />
-    }
+    const Icon = ({ icon }: { icon: string; }) =>
+        <FA name={icon} className="text-info align-self-center me-3 me-sm-3" size="lg" fixWidth={true} />;
+    const IconBlog = () => <Icon icon="file-o" />;
     return <Page header="米投博客" footer={<div className="text-center py-1">米投博客</div>}>
         <div className="pb-3">
             <Link className="d-flex px-3 my-2 cursor-pointer bg-white fw-bold text-primary"

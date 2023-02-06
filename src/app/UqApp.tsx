@@ -14,7 +14,6 @@ const appConfig: AppConfig = {
     center: 'https://tv.jkchemical.com',
     noUnit: true,
     oem: undefined,
-    htmlTitle: 'Warehouse',
 };
 
 function uqConfigsFromJson(json: { devs: { [dev: string]: any }; uqs: any[]; }): UqConfig[] {

@@ -57,7 +57,8 @@ export function PageSearch() {
         $orderSwitch: searchOrder,
         smooth: (searchKey ? 0 : smooth) + 1,
     };
-    return <PageQueryMore header={header ?? '搜索'} query={uqs.BrMi.SearchStock}
+    return <PageQueryMore header={header ?? '搜索'}
+        query={uqs.BrMi.SearchStock}
         param={searchParam}
         sortField="$order"
         ItemView={ItemViewStock}
