@@ -1,8 +1,8 @@
-import { FormRowsView, FormRow } from "app/coms";
-import { MiAccount } from "app/stores/MiAccount";
 import { useForm } from "react-hook-form";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import { Page } from "tonwa-com";
+import { Page, useModal } from "tonwa-app";
+import { FormRowsView, FormRow } from "app/coms";
+import { MiAccount } from "app/stores/MiAccount";
 
 interface FormActProps<T = any> {
     onSubmit: (data: T) => Promise<void>;
@@ -202,9 +202,10 @@ export class VChangeCost extends VForm {
 }
 */
 
-export function PageCashIn() {
-    const miAccount = useOutletContext<MiAccount>();
-    const navigate = useNavigate();
+export function ModalCashIn({ miAccount }: { miAccount: MiAccount; }) {
+    const { closeModal } = useModal();
+    //const miAccount = useOutletContext<MiAccount>();
+    //const navigate = useNavigate();
     const formRows: FormRow[] = [
         { name: 'value', label: '调入金额', type: 'number', options: { validate: checkCash } },
         { type: 'submit' },
@@ -216,15 +217,21 @@ export function PageCashIn() {
     async function onSubmit(data: any) {
         let { value } = data;
         await miAccount.cashIn(value);
-        navigate(-1);
+        closeModal();
+        //navigate(-1);
     }
+    return <FormAct
+        onSubmit={onSubmit}
+        formRows={formRows}
+    />;
+}
+/*
+export function PageCashIn() {
     return <Page header="调入资金">
-        <FormAct
-            onSubmit={onSubmit}
-            formRows={formRows}
-        />
+        <ModalCashIn />
     </Page>;
 }
+*/
 
 export function PageCashOut() {
     const miAccount = useOutletContext<MiAccount>();

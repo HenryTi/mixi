@@ -1,12 +1,13 @@
 import { useContext } from 'react';
 import { getAtomValue, setAtomValue } from 'tonwa-com';
-import { AppConfig, UqAppBase, UqAppContext, ViewUqAppBase } from "tonwa-app";
+import { AppConfig, AppEnv, UqAppBase, UqAppContext, ViewUqAppBase } from "tonwa-app";
 import { UqConfig, UqQuery } from 'tonwa-uq';
 import { UQs, uqsSchema } from "uqs";
 import uqconfigJson from '../uqconfig.json';
 import { ViewsRoutes } from './views';
 import { MiNet } from './tool';
 import { StoreApp } from './stores';
+import { appEnv } from './appEnv';
 
 const appConfig: AppConfig = {
     version: '0.1.0',
@@ -87,7 +88,8 @@ export class UqApp extends UqAppBase<UQs> {
 }
 
 const uqConfigs = uqConfigsFromJson(uqconfigJson);
-export const uqApp = new UqApp(appConfig, uqConfigs, uqsSchema);
+
+export const uqApp = new UqApp(appConfig, uqConfigs, uqsSchema, appEnv);
 export function ViewUqApp() {
     return <ViewUqAppBase uqApp={uqApp}>
         <ViewsRoutes />

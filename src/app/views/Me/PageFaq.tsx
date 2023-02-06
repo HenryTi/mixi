@@ -1,4 +1,4 @@
-import { Page } from "tonwa-com"
+import { Page } from "tonwa-app"
 
 export function PageFaq() {
     return <Page header='米投体系'>

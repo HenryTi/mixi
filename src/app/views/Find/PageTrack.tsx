@@ -1,9 +1,9 @@
-import { FormRow, FormRowsView } from "app/coms";
-import { useUqApp } from "app/UqApp";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { Page } from "tonwa-com";
+import { Page } from "tonwa-app";
+import { FormRow, FormRowsView } from "app/coms";
+import { useUqApp } from "app/UqApp";
 import { LinkMiRateAvg, trackCaption } from "./Links";
 import { pathSetTrackDay } from "./routeFind";
 import { ViewFindStock } from "./ViewFindStock";

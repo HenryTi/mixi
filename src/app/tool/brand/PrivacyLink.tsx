@@ -1,5 +1,5 @@
 import { Link, Route } from "react-router-dom";
-import { PagePublic } from "tonwa-com";
+import { PagePublic } from "tonwa-app";
 
 export const pathPrivacy = '/privacy';
 export const routePrivacy = <>

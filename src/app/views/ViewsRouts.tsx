@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Page, PageTabsLayout } from 'tonwa-com';
+import { Page, PageTabsLayout, PageSpinner } from 'tonwa-app';
 import { AppLogin, AppRegister } from '../tool';
 import { TabHome } from './Home';
 import { routeBlogs } from './Blog';
@@ -8,7 +8,6 @@ import { routeFind } from './Find';
 import { pathMe, routeMe, TabMe } from './Me';
 import { TabFind } from './Find';
 import { routeStock } from './StockInfo';
-import { PageSpinner } from 'tonwa-com/page/PageSpinner';
 import { routeSearch } from './Search';
 import { routePrivacy } from 'app/tool';
 import { routeAccount } from 'app/views/accounts/routeAccount';

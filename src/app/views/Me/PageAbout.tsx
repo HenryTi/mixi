@@ -1,5 +1,5 @@
+import { Page } from "tonwa-app";
 import { useUqApp } from "app/UqApp";
-import { Page } from "tonwa-com";
 
 export function PageAbout() {
     let app = useUqApp();

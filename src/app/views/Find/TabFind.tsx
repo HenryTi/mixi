@@ -1,4 +1,4 @@
-import { Page } from "tonwa-com";
+import { Page } from "tonwa-app";
 import { LinkMiRateAvg, LinkTrack } from "./Links";
 import { ViewFindStock } from "./ViewFindStock";
 

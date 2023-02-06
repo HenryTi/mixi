@@ -1,6 +1,7 @@
 import { StoreBlogs } from "app/stores";
 import { Link, useOutletContext } from "react-router-dom";
-import { EasyTime, FA, List, LMR, Page } from "tonwa-com";
+import { EasyTime, FA, List, LMR } from "tonwa-com";
+import { Page } from 'tonwa-app';
 import { Blog } from "uqs/BrMi";
 
 export function PageBlogs() {

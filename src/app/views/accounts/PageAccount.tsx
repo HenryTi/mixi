@@ -1,6 +1,7 @@
 import { NFormat, nFormat0, nFormat1, nFormat2, smallPercent } from "app/coms/ItemViewStock";
 import { HoldingStock } from "app/stores/HoldingStock";
-import { List, LMR, Page } from "tonwa-com";
+import { List, LMR } from "tonwa-com";
+import { Page } from 'tonwa-app';
 import { ItemViewHolding } from "./ItemViewHolding";
 import { ButtonCashActs } from "./ButtonCashActs";
 import { ViewNote } from "./ViewNote";

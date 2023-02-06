@@ -1,6 +1,7 @@
 import { Chart } from 'react-chartjs-2'
 import { useOutletContext } from 'react-router-dom';
-import { List, Page } from 'tonwa-com';
+import { List } from 'tonwa-com';
+import { Page } from 'tonwa-app';
 import { StoreStockInfo, GFunc } from '../../stores';
 
 export function PageProfitDetail() {

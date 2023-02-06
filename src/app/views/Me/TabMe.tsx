@@ -1,8 +1,8 @@
 import { useUqApp } from "app/UqApp";
 import { useAtom } from "jotai/react";
-import { Link, Outlet, Route, Routes } from "react-router-dom";
-import { FA, LMR, Page, Sep, useT } from "tonwa-com";
-import { Image, UserQuit } from "tonwa-app";
+import { Link } from "react-router-dom";
+import { FA, LMR, Sep, useT } from "tonwa-com";
+import { Image, Page } from "tonwa-app";
 import { appT } from "../../res";
 import { pathEditMe } from "./routeMe";
 

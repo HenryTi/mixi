@@ -1,5 +1,6 @@
 import { Chart } from 'react-chartjs-2'
-import { List, Page } from 'tonwa-com';
+import { List } from 'tonwa-com';
+import { Page } from 'tonwa-app';
 import { StockBonus } from 'app/model/StockInfoType';
 import { StoreStockInfo, GFunc, SlrForEarning } from '../../stores';
 import { useUqApp } from 'app/UqApp';

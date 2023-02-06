@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { List, Page, PageProps, Scroller, Spinner, useEffectOnce } from "tonwa-com";
+import { List, Spinner, useEffectOnce } from "tonwa-com";
 import { UqQuery } from "tonwa-uq";
+import { Page, PageProps, Scroller } from "tonwa-app";
 
 interface PageQueryMoreProps<P, R> extends PageProps {
     query: UqQuery<P, R>;

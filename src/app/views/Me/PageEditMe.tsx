@@ -1,4 +1,5 @@
-import { Page, useT, FA, PropEdit, BandString, Sep, BandCom, LabelRow, ContainerProps, LabelRowProps, LabelRowEdit } from "tonwa-com";
+import { useT, FA, BandString, Sep, BandCom, LabelRow, ContainerProps, LabelRowProps } from "tonwa-com";
+import { Page, PropEdit, LabelRowEdit } from "tonwa-app";
 import { appT } from '../../res';
 import { useUqApp } from "app/UqApp";
 import { meT } from "./meRes";

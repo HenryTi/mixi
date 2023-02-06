@@ -1,5 +1,5 @@
 import { SectionList } from "app/coms";
-import { Page } from "tonwa-com";
+import { Page } from "tonwa-app";
 import { blogsSections } from "./blogsSections";
 
 export function PagePrinciple() {

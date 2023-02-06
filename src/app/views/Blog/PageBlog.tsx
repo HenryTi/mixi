@@ -1,7 +1,7 @@
 import { StoreBlogs } from 'app/stores';
 import { marked } from 'marked';
 import { useOutletContext, useParams } from 'react-router-dom';
-import { Page } from "tonwa-com";
+import { Page } from "tonwa-app";
 
 export function PageBlog() {
     const blogsStore = useOutletContext<StoreBlogs>();

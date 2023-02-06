@@ -1,36 +1,13 @@
-import { from62 } from './62';
-import { LocalMap } from './localDb';
+import { AppEnv } from "tonwa-app";
+import { from62 } from "tonwa-com";
 
 const defaultUnitName = '百灵威';
 const defaultUnit = 24;
 
-export const env = (function () {
-    let { unit, testing, params, lang, district, timeZone, isMobile } = initEnv();
-    return {
-        unit,
-        testing,
-        buildingUq: false,
-        params,
-        lang,
-        district,
-        timeZone,
-        browser: detectBrowser(),
-        isMobile,
-        localDb: new LocalMap(testing === true ? '$$' : '$'),
-        isDevelopment: import.meta.env.DEV,
-    }
-}());
+export const appEnv: AppEnv = (function () {
+    let testing: boolean; // = isTesting();
+    let unit: number;
 
-function initEnv(): {
-    unit: number;
-    testing: boolean;
-    params: { [key: string]: string };
-    lang: string;
-    district: string;
-    timeZone: number;
-    isMobile: boolean;
-} {
-    if (!window) return {} as any;
     let pl = /\+/g,  // Regex for replacing addition symbol with a space
         search = /([^&=]+)=?([^&]*)/g,
         decode = function (s: any) { return decodeURIComponent(s.replace(pl, " ")); };
@@ -46,10 +23,6 @@ function initEnv(): {
         if (!match) break;
         params[decode(match[1])] = decode(match[2]);
     }
-
-    let testing: boolean; // = isTesting();
-    let unit: number;
-
     let sUnit = params['u'] || params['unit'];
     if (sUnit) {
         let p = sUnit.indexOf('-');
@@ -107,40 +80,6 @@ function initEnv(): {
         }
         if (!unit) unit = 0;
     }
-    let lang: string, district: string;
-    let language = (navigator.languages && navigator.languages[0])  // Chrome / Firefox
-        || navigator.language; // ||   // All browsers
-    //navigator.userLanguage; // IE <= 10
-    if (!language) {
-        lang = 'zh';
-        district = 'CN';
-    }
-    else {
-        let parts = language.split('-');
-        lang = parts[0];
-        if (parts.length > 1) district = parts[1].toUpperCase();
-    }
-    let timeZone = -new Date().getTimezoneOffset() / 60;
-    const regEx = new RegExp('Android|webOS|iPhone|iPad|' +
-        'BlackBerry|Windows Phone|' +
-        'Opera Mini|IEMobile|Mobile',
-        'i');
-    const isMobile = regEx.test(navigator.userAgent);
-    return { unit, testing, params, lang, district, timeZone, isMobile };
-}
-
-function detectBrowser() {
-    let navi = navigator;
-    if (!navi) return;
-    if ((navi.userAgent.indexOf("Opera") || navigator.userAgent.indexOf('OPR')) >= 0)
-        return 'Opera';
-    if (navi.userAgent.indexOf("Chrome") >= 0)
-        return 'Chrome';
-    if (navi.userAgent.indexOf("Safari") >= 0)
-        return 'Safari';
-    if (navi.userAgent.indexOf("Firefox") >= 0)
-        return 'Firefox';
-    if ((navi.userAgent.indexOf("MSIE") >= 0) || (!!(document as any).documentMode === true))
-        return 'IE'; //crap
-    return 'Unknown';
-}
+    let isDevelopment = import.meta.env.DEV;
+    return { isDevelopment, testing, unit };
+}());

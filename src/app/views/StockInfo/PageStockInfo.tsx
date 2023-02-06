@@ -1,4 +1,4 @@
-import { Page } from "tonwa-com";
+import { Page } from "tonwa-app";
 import { StoreStockInfo } from "app/stores";
 import { ViewBaseInfo } from "./ViewBaseInfo";
 import { ViewChartBonus } from "./ViewChartBonus";

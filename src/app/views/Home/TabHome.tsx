@@ -1,6 +1,7 @@
 import { ViewAccounts } from "app/views/accounts";
 import { Link, useNavigate } from "react-router-dom";
-import { FA, Page, SearchBox, useT } from "tonwa-com";
+import { FA, SearchBox, useT } from "tonwa-com";
+import { Page } from 'tonwa-app';
 import { appT } from "../../res";
 import { pathSearch } from "../Search";
 //import { PageBlogs } from "../Blog";

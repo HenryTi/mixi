@@ -1,7 +1,7 @@
 import { useUqApp } from "app/UqApp";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
-import { Page } from "tonwa-com";
+import { Page } from "tonwa-app";
 import { ViewStockList } from "./ViewStockList";
 
 export function PageGroupStock() {

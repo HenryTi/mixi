@@ -1,7 +1,8 @@
 import { useUqApp } from "app/UqApp";
 import { MGroup } from "app/stores/MGroup";
 import { Link, useNavigate } from "react-router-dom";
-import { FA, LMR, Page, SearchBox } from "tonwa-com";
+import { FA, LMR, SearchBox } from "tonwa-com";
+import { Page } from "tonwa-app";
 import { pathSearch } from "../Search";
 import { pathGroupStocks, pathMyAll, pathMyBlocks } from "./routeFind";
 import { ViewGroups } from "./ViewGroups";

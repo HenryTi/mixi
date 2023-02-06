@@ -3,7 +3,7 @@ import { useUqApp } from 'app/UqApp';
 import { GFunc } from 'app/stores';
 import { Chart } from 'react-chartjs-2'
 import { useQuery } from 'react-query';
-import { Page } from 'tonwa-com';
+import { Page } from 'tonwa-app';
 import { useAtomValue } from 'jotai';
 
 export function PageMirateAvg() {
