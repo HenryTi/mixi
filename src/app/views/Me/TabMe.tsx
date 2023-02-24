@@ -3,7 +3,7 @@ import { useAtom } from "jotai/react";
 import { Link } from "react-router-dom";
 import { FA, LMR, Sep, useT } from "tonwa-com";
 import { Image, Page } from "tonwa-app";
-import { appT } from "../../res";
+import { appT, ResApp } from "../../res";
 import { pathEditMe } from "./routeMe";
 
 const pathAbout = 'about';
@@ -32,12 +32,12 @@ export function TabMe() {
         return <Link to={pathAbout}>
             <LMR className="w-100 py-3 px-3 align-items-center">
                 <FA className="text-info me-3" name="smile-o" fixWidth={true} size="lg" />
-                <b className="">{t('aboutTheApp')} <small>{t('version')} {uqApp.version}</small></b>
+                <b className="">{t(ResApp.aboutTheApp)} <small>{t(ResApp.version)} {uqApp.version}</small></b>
                 <FA className="align-self-center" name="angle-right" />
             </LMR>
         </Link>;
     }
-    const pageMe = <Page header={t('me')} back="none">
+    const pageMe = <Page header={t(ResApp.me)} back="none">
         <div>
             <MeInfo />
             <Sep />

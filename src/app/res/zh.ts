@@ -10,6 +10,7 @@ export const zh = {
     [ResApp.debug]: 'Debug',
     [ResApp.me]: '我',
     [ResApp.find]: '发现',
+    [ResApp.version]: '版本',
 
     [ResApp.changePassword]: '修改密码',
     [ResApp.aboutTheApp]: '关于本APP',

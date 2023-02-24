@@ -8,6 +8,7 @@ export enum ResApp {
     debug,
     me,
     find,
+    version,
 
     changePassword,
     aboutTheApp,

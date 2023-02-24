@@ -10,6 +10,7 @@ export const en = {
     [ResApp.debug]: 'Debug',
     [ResApp.me]: 'Me',
     [ResApp.find]: 'Find',
+    [ResApp.version]: 'Version',
 
     [ResApp.changePassword]: 'Change password',
     [ResApp.aboutTheApp]: 'About the APP',
