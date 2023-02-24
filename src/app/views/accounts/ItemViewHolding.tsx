@@ -1,20 +1,19 @@
-import { NFormat, nFormat0, nFormat1, nFormat2, smallPercent } from "app/coms/ItemViewStock";
-import { useUqApp } from "app/UqApp";
-import { HoldingStock } from "app/stores";
-import { pathStockInfo } from "../StockInfo";
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAtomValue } from "jotai";
 import { FA } from "tonwa-com";
-import { useSnapshot } from "valtio";
+import { NFormat, nFormat0, nFormat1, nFormat2, smallPercent } from "app/coms/ItemViewStock";
+import { HoldingStock } from "app/stores";
+import { pathStockInfo } from "../StockInfo";
 import { pathStockBuy, pathStockSell } from "./routeAccount";
 
 export function ItemViewHolding({ value }: { value: HoldingStock }) {
-    const { storeApp } = useUqApp();
     const navigate = useNavigate();
     let [visible, setVisible] = useState(false);
     let refDivAct = useRef<HTMLDivElement>();
     let { miAccount, stockObj, quantity, market, cost } = value;
-    let { portionAmount, cash } = useSnapshot(miAccount.state);
+    let portionAmount = useAtomValue(miAccount.portionAmount);
+    let cash = useAtomValue(miAccount.cash);
     let { name, no } = stockObj;
     let profit: number, profitRate: number, costPrice: number;
     if (quantity < 1) { // = 0

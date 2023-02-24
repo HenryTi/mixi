@@ -2,18 +2,16 @@ import { ViewAccounts } from "app/views/accounts";
 import { Link, useNavigate } from "react-router-dom";
 import { FA, SearchBox, useT } from "tonwa-com";
 import { Page } from 'tonwa-app';
-import { appT } from "../../res";
+import { appT, ResApp } from "../../res";
 import { pathSearch } from "../Search";
-//import { PageBlogs } from "../Blog";
 
 export function TabHome() {
-    let t = useT(appT);
+    let t = useT<ResApp>(appT);
     const navigate = useNavigate();
     async function onSearch(key: string) {
         navigate(pathSearch(), { state: { searchKey: key, } });
     }
-    //onClick={onBlogs}
-    return <Page header={t('home')} back="none">
+    return <Page header={t(ResApp.home)} back="none">
         <div>
             <div className="px-3 py-4">
                 <SearchBox className="mb-0" onSearch={onSearch} placeholder="股票代码，名称" />

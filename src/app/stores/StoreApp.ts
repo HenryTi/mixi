@@ -78,7 +78,7 @@ export class StoreApp {
     }
 
     async loadMiAccountFromId(id: number) {
-        let ret = this.miAccounts.accounts.find(v => v.state.id === id);
+        let ret = this.miAccounts.accounts.find(v => v.id === id);
         await ret.loadItems();
         return ret;
     }
@@ -345,7 +345,8 @@ export class StoreApp {
     inAnyAccount(stockId: number): { [accountId: number]: [inAccount: boolean, everBought: boolean] } {
         let inAccount: { [accountId: number]: [inAccount: boolean, everBought: boolean] } = {};
         this.miAccounts.accounts.forEach(v => {
-            let { holdingStocks, id } = v.state;
+            const { id } = v;
+            const holdingStocks = getAtomValue(v.holdingStocks);
             if (!holdingStocks) return;
             let len = holdingStocks.length;
             for (let i = 0; i < len; i++) {

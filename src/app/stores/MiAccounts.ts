@@ -1,3 +1,4 @@
+import { getAtomValue } from "tonwa-com";
 import { ParamIX } from "tonwa-uq";
 import { Account, AccountValue, Stock, StockValue } from "uqs/BrMi";
 import { HoldingStock } from "./HoldingStock";
@@ -46,7 +47,7 @@ export class MiAccounts {
     }
 
     accountFromId(id: number) {
-        return this.accounts.find(v => v.state.id === id);
+        return this.accounts.find(v => v.id === id);
     }
 
     accountsFromIds(ids: number[]): MiAccount[] {
@@ -54,7 +55,7 @@ export class MiAccounts {
         let len = this.accounts.length;
         for (let i = 0; i < len; i++) {
             let account = this.accounts[i];
-            let { id } = account.state;
+            let { id } = account;
             if (ids.findIndex(v => v === id) >= 0) {
                 ret.push(account);
             }
@@ -64,7 +65,8 @@ export class MiAccounts {
 
     async addStockToAccount(stock: Stock & StockValue, account: MiAccount) {
         let { yumi } = this.storeApp;
-        let { holdingStocks, id } = account.state;
+        let { id } = account;
+        const holdingStocks = getAtomValue(account.holdingStocks);
         if (holdingStocks) {
             let index = holdingStocks.findIndex(v => v.stock === stock.id);
             if (index >= 0) return;
@@ -81,7 +83,7 @@ export class MiAccounts {
 
     async removeStockFromAccount(stock: Stock & StockValue, account: MiAccount) {
         let { yumi } = this.storeApp;
-        let { id } = account.state;
+        let { id } = account;
         await yumi.ActIX({
             IX: yumi.AccountHolding,
             values: [{ ix: id, xi: -stock.id }],

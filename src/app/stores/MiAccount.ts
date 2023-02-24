@@ -1,29 +1,36 @@
+import { atom } from "jotai";
+import { getAtomValue, setAtomValue } from "tonwa-com";
 import { Account, AccountValue, Holding, Portfolio } from "uqs/BrMi";
-import { proxy, ref } from "valtio";
 import { HoldingStock } from "./HoldingStock";
 import { holdingMiRateSorter } from "./sorter";
 import { StoreApp } from "./StoreApp";
 
-interface MiAccountState {
-    holdingStocks: HoldingStock[];
-    portionAmount: number;
-    buyableCount: number;
-    divident: number;
-}
-
 export class MiAccount {
     protected readonly storeApp: StoreApp;
-    readonly state: Account & AccountValue & MiAccountState;
+    //readonly state: Account & AccountValue & MiAccountState;
+    readonly id: number;
+    readonly no: string;
+    readonly name: string;
+    readonly market = atom(undefined as number);
+    readonly miValue = atom(undefined as number);
+    readonly cash = atom(undefined as number);
+    readonly portion = atom(undefined as number);
+    readonly count = atom(undefined as number);
+    readonly holdingStocks = atom(null as HoldingStock[]);
+    readonly portionAmount = atom(undefined as number);
+    readonly buyableCount = atom(undefined as number);
+    readonly divident = atom(undefined as number);
 
     constructor(store: StoreApp, account: Account & AccountValue) {
         this.storeApp = store;
+        /*
         this.state = proxy<Account & AccountValue & MiAccountState>({
             id: null,
             no: null,
             name: null,
-            miValue: 0,
-            market: 0,
 
+            market: 0,
+            miValue: 0,
             cash: null,
             portion: 20,
             count: 0,
@@ -33,10 +40,20 @@ export class MiAccount {
             divident: 0,
         });
         Object.assign(this.state, account);
+        */
+        this.id = account.id;
+        this.no = account.no;
+        this.name = account.name;
+        setAtomValue(this.portion, account.portion);
+        setAtomValue(this.miValue, account.miValue);
+        setAtomValue(this.market, account.market);
+        setAtomValue(this.count, account.count);
+        setAtomValue(this.cash, account.cash);
+
     }
 
     async loadItems() {
-        const { holdingStocks, id } = this.state;
+        const holdingStocks = getAtomValue(this.holdingStocks);
         if (holdingStocks) {
             holdingStocks.sort(holdingMiRateSorter);
             return;
@@ -44,7 +61,7 @@ export class MiAccount {
         let { yumi } = this.storeApp;
         let ret = await yumi.IX<Holding & Portfolio>({
             IX: yumi.AccountHolding,
-            ix: id,
+            ix: this.id,
             IDX: [yumi.Holding, yumi.Portfolio]
         });
         let noneStocks = ret.filter(v => !this.storeApp.stockFromId(v.stock));
@@ -63,34 +80,37 @@ export class MiAccount {
             return holdingStock;
         });
         list.sort(holdingMiRateSorter);
-        this.state.holdingStocks = list.map(v => ref(v));
-        this.state.count = list.length;
+        setAtomValue(this.holdingStocks, list);
+        setAtomValue(this.count, list.length);
         this.recalc();
         this.setPortionAmount();
     }
 
     private setPortionAmount() {
-        let { market, cash, portion } = this.state;
+        let market = getAtomValue(this.market);
+        let cash = getAtomValue(this.cash);
+        let portion = getAtomValue(this.portion);
         let v = (market + (cash ?? 0));
         let p = v / portion;
         p = Math.round(p / 1000) * 1000;
         if (p > 0) {
-            this.state.portionAmount = p;
+            setAtomValue(this.portionAmount, p);
             return;
         }
-        this.state.portion = 5;
+        setAtomValue(this.portion, 5);
         p = v / portion;
         p = Math.round(p / 1000) * 1000;
         if (p > 0) {
-            this.state.portionAmount = p;
+            setAtomValue(this.portionAmount, p);
             return;
         }
-        this.state.portion = 1;
-        this.state.portionAmount = undefined;
+        setAtomValue(this.portion, 1);
+        setAtomValue(this.portionAmount, undefined);
     }
 
     async buyNewHolding(stockId: number, price: number, quantity: number) {
-        const { holdingStocks, cash } = this.state;
+        const holdingStocks = getAtomValue(this.holdingStocks);
+        let cash = getAtomValue(this.cash);
         let holdingId: number;
         let stock = this.storeApp.stockFromId(stockId);
         if (!stock) {
@@ -115,13 +135,15 @@ export class MiAccount {
             orgHs.changeCost(price, quantity);
         }
         if (cash) {
-            this.state.cash -= price * quantity;
+            setAtomValue(this.cash, price * quantity);
         }
         await this.bookHolding(holdingId, price, quantity);
+        setAtomValue(this.holdingStocks, [...holdingStocks]);
     }
 
     async buyHolding(stockId: number, price: number, quantity: number) {
-        const { holdingStocks, cash } = this.state;
+        let cash = getAtomValue(this.cash);
+        const holdingStocks = getAtomValue(this.holdingStocks);
         let index = holdingStocks.findIndex(v => v.stock === stockId);
         if (index < 0) return;
         let orgHs = holdingStocks[index];
@@ -130,32 +152,34 @@ export class MiAccount {
         orgHs.setQuantity(holdingQuantity);
         orgHs.changeCost(price, quantity);
         if (cash) {
-            this.state.cash -= price * quantity;
+            setAtomValue(this.cash, price * quantity);
         }
         await this.bookHolding(holdingId, price, quantity);
     }
 
     private async saveHolding(stock: number): Promise<number> {
-        const { id } = this.state;
         let ret = await this.storeApp.yumi.Acts({
-            holding: [{ account: id, stock, everBought: 1 }]
+            holding: [{ account: this.id, stock, everBought: 1 }]
         });
         return ret.holding[0];
     }
 
     private async bookHolding(holdingId: number, price: number, quantity: number): Promise<void> {
         this.recalc();
-        const { id, miValue, market, count, cash } = this.state;
+        const miValue = getAtomValue(this.miValue);
+        const market = getAtomValue(this.market);
+        const count = getAtomValue(this.count);
+        const cash = getAtomValue(this.cash);
         await this.storeApp.yumi.Acts({
             accountValue: [{
-                id: id,
+                id: this.id,
                 miValue: miValue,
                 market: market,
                 count: count,
                 cash: { value: cash, setAdd: '=' },
             }],
             accountHolding: [{
-                ix: id,
+                ix: this.id,
                 xi: holdingId
             }],
             portfolio: [{
@@ -175,10 +199,12 @@ export class MiAccount {
 
     private async bookSetCost(holdingId: number, cost: number): Promise<void> {
         this.recalc();
-        const { id, miValue, market, count, cash } = this.state;
+        const miValue = getAtomValue(this.miValue);
+        const market = getAtomValue(this.market);
+        const count = getAtomValue(this.count);
         await this.storeApp.yumi.Acts({
             accountValue: [{
-                id: id,
+                id: this.id,
                 miValue: miValue,
                 market: market,
                 count: count,
@@ -191,19 +217,20 @@ export class MiAccount {
     }
 
     async sellHolding(stockId: number, price: number, quantity: number) {
-        const { holdingStocks, cash } = this.state;
+        let cash = getAtomValue(this.cash);
+        const holdingStocks = getAtomValue(this.holdingStocks);
         let holding = holdingStocks.find(v => v.stock === stockId);
         if (holding === undefined) return;
         holding.setQuantity(holding.quantity - quantity);
         holding.changeCost(-price, quantity);
         if (cash) {
-            this.state.cash += price * quantity;
+            setAtomValue(this.cash, cash + price * quantity);
         }
         await this.bookHolding(holding.id, price, -quantity);
     }
 
     async changeCost(stockId: number, costPrice: number) {
-        const { holdingStocks, cash } = this.state;
+        const holdingStocks = getAtomValue(this.holdingStocks);
         let holding = holdingStocks.find(v => v.stock === stockId);
         if (holding === undefined) return;
         holding.setCostPrice(costPrice);
@@ -211,15 +238,16 @@ export class MiAccount {
     }
 
     addHoldingStock(holdingStock: HoldingStock) {
-        const { holdingStocks } = this.state;
+        const holdingStocks = getAtomValue(this.holdingStocks);
         if (holdingStocks) {
             holdingStocks.push(holdingStock);
             this.recalc();
         }
+        setAtomValue(this.holdingStocks, [...holdingStocks]);
     }
 
     removeHoldingStock(stockId: number) {
-        const { holdingStocks } = this.state;
+        const holdingStocks = getAtomValue(this.holdingStocks);
         if (holdingStocks) {
             let index = holdingStocks.findIndex(v => v.stock === stockId);
             if (index >= 0) {
@@ -227,11 +255,13 @@ export class MiAccount {
                 this.recalc();
             }
         }
+        setAtomValue(this.holdingStocks, [...holdingStocks]);
     }
 
     private recalc() {
-        const { holdingStocks, portion } = this.state;
-        this.state.count = holdingStocks.length;
+        const holdingStocks = getAtomValue(this.holdingStocks);
+        let portion = getAtomValue(this.portion);
+        setAtomValue(this.count, holdingStocks.length);
         let sumMiValue = 0, sumMarket = 0, sumDivident = 0, boughtCount = 0;
         for (let hs of holdingStocks) {
             let { stockObj, market, divident, quantity, everBought } = hs;
@@ -244,17 +274,17 @@ export class MiAccount {
             sumDivident += divident;
             if (quantity > 0) ++boughtCount;
         }
-        this.state.miValue = sumMiValue;
-        this.state.market = sumMarket;
-        this.state.divident = sumDivident;
-        this.state.buyableCount = portion - boughtCount;
+        setAtomValue(this.miValue, sumMiValue);
+        setAtomValue(this.market, sumMarket);
+        setAtomValue(this.divident, sumDivident);
+        setAtomValue(this.buyableCount, portion - boughtCount);
     }
 
     private async cashAct(cash: number): Promise<void> {
         await this.storeApp.yumi.Acts({
-            accountValue: [{ id: this.state.id, cash }]
+            accountValue: [{ id: this.id, cash }]
         });
-        this.state.cash = cash;
+        setAtomValue(this.cash, cash);
     }
 
     async cashInit(amount: number) {
@@ -263,17 +293,17 @@ export class MiAccount {
     }
 
     async cashIn(amount: number) {
-        let cash = this.state.cash + amount;
+        let cash = getAtomValue(this.cash) + amount;
         await this.cashAct(cash);
     }
 
     async cashOut(amount: number) {
-        let cash = this.state.cash - amount;
+        let cash = getAtomValue(this.cash) - amount;
         await this.cashAct(cash);
     }
 
     async cashAdjust(amount: number) {
-        let { cash } = this.state;
+        let cash = getAtomValue(this.cash);
         if (cash) {
             amount += cash;
         }

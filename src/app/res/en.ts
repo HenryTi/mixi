@@ -1,22 +1,24 @@
+import { ResApp } from "./enum";
+
 export const en = {
-    home: 'Home',
-    relation: 'Relation',
-    discover: 'Discover',
-    supervise: 'Supervise',
-    ids: 'Items',
-    test: 'Test',
-    debug: 'Debug',
-    me: 'Me',
-    find: 'Find',
+    [ResApp.home]: 'Home',
+    [ResApp.relation]: 'Relation',
+    [ResApp.discover]: 'Discover',
+    [ResApp.supervise]: 'Supervise',
+    [ResApp.ids]: 'Items',
+    [ResApp.test]: 'Test',
+    [ResApp.debug]: 'Debug',
+    [ResApp.me]: 'Me',
+    [ResApp.find]: 'Find',
 
-    changePassword: 'Change password',
-    aboutTheApp: 'About the APP',
-    logout: 'Logout',
-    pleaseLogin: 'Login',
-    userQuit: 'User quit',
+    [ResApp.changePassword]: 'Change password',
+    [ResApp.aboutTheApp]: 'About the APP',
+    [ResApp.logout]: 'Logout',
+    [ResApp.pleaseLogin]: 'Login',
+    [ResApp.userQuit]: 'User quit',
 
-    content: 'Content',
-    backend: 'Backend Management',
+    [ResApp.content]: 'Content',
+    [ResApp.backend]: 'Backend Management',
 
-    list: 'List',
+    [ResApp.list]: 'List',
 }

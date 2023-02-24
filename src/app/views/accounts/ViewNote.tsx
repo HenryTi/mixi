@@ -1,8 +1,11 @@
 import { MiAccount } from "app/stores/MiAccount";
-import { useSnapshot } from "valtio";
+import { useAtom, useAtomValue } from "jotai";
 
 export function ViewNote({ account }: { account: MiAccount }) {
-    let { cash, portionAmount, portion, buyableCount } = useSnapshot(account.state);
+    let cash = useAtomValue(account.cash);
+    let portionAmount = useAtomValue(account.portionAmount);
+    let portion = useAtomValue(account.portion);
+    let buyableCount = useAtomValue(account.buyableCount);
     let lis = (cash && portionAmount) ?
         <>
             <li>
@@ -20,8 +23,6 @@ export function ViewNote({ account }: { account: MiAccount }) {
             </li>
         </>
         :
-        <li className="">设置资金后，会根据分散要求，提供股数建议</li>
-        ;
-
+        <li className="">设置资金后，会根据分散要求，提供股数建议</li>;
     return <ul className="small text-muted mb-0">{lis}</ul>;
 }

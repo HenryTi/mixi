@@ -3,6 +3,7 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import { Page, useModal } from "tonwa-app";
 import { FormRowsView, FormRow } from "app/coms";
 import { MiAccount } from "app/stores/MiAccount";
+import { useAtomValue } from "jotai";
 
 interface FormActProps<T = any> {
     onSubmit: (data: T) => Promise<void>;
@@ -241,7 +242,7 @@ export function PageCashOut() {
         { type: 'submit' },
     ];
     function checkCash(value: number) {
-        let { cash } = miAccount.state;
+        let cash = useAtomValue(miAccount.cash);
         if (value > cash)
             return `调出金额不能超过总现金${cash}`;
     }
@@ -266,7 +267,7 @@ export function PageCashAdjust() {
         { type: 'submit' },
     ];
     function checkCash(value: number) {
-        let { cash } = miAccount.state;
+        let cash = useAtomValue(miAccount.cash);
         if (value < 0 && -value > cash)
             return `负向调整金额不能超过总现金${cash}`;
     }

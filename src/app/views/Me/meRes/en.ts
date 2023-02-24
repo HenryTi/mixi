@@ -1,5 +1,5 @@
-import { MeRes } from "./defs";
+import { ResMe } from "./defs";
 
-export const en: MeRes = {
-    admin: 'Admin',
+export const en = {
+    [ResMe.admin]: 'Admin',
 }

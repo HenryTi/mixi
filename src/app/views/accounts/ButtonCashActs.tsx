@@ -1,14 +1,14 @@
 import { MiAccount } from "app/stores/MiAccount";
+import { useAtomValue } from "jotai";
 import { Link } from "react-router-dom";
 import { useModal } from "tonwa-app";
 import { DropdownAction, DropdownActions, FA } from "tonwa-com";
-import { useSnapshot } from "valtio";
 import { ModalCashIn } from "./FormAccount";
 import { pathCashAdjust, pathCashInit, pathCashOut } from "./routeAccount";
 
 export function ButtonCashActs({ miAccount }: { miAccount: MiAccount }) {
     const { openModal } = useModal();
-    const { cash } = useSnapshot(miAccount.state);
+    const cash = useAtomValue(miAccount.cash);
     let actions: DropdownAction[] = [
         { caption: '调入资金', action: showCashIn, icon: 'sign-in' },
         { caption: '调出资金', action: pathCashOut, icon: 'sign-out' },

@@ -17,7 +17,7 @@ export function AppLogout() {
         //alert('logout');
     }
     let resetAll = () => {
-        alert('reset all');
+        // alert('reset all');
     }
     return <Logout onLogout={onLogout} resetAll={resetAll} />;
 }

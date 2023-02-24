@@ -22,10 +22,7 @@
         "react-hook-form": "^7.42.1",
         "react-query": "^3.39.2",
         "react-router-dom": "^6.8.0",
-        "tonwa-app": "^1.0.5",
-        "tonwa-com": "^1.0.7",
-        "tonwa-uq": "^1.0.5",
-        "valtio": "^1.9.0"
+        "tonwa-uq": "^1.0.5"
     },
     "devDependencies": {
         "@types/react": "^18.0.26",

@@ -1,14 +1,14 @@
-import { NFormat, nFormat0, nFormat1, nFormat2, smallPercent } from "app/coms/ItemViewStock";
-import { HoldingStock } from "app/stores/HoldingStock";
+import { Link, useParams } from "react-router-dom";
+import { useQuery } from "react-query";
+import { useAtomValue } from "jotai";
 import { List, LMR } from "tonwa-com";
 import { Page } from 'tonwa-app';
+import { nFormat1, smallPercent } from "app/coms/ItemViewStock";
+import { HoldingStock } from "app/stores/HoldingStock";
 import { ItemViewHolding } from "./ItemViewHolding";
 import { ButtonCashActs } from "./ButtonCashActs";
 import { ViewNote } from "./ViewNote";
-import { useSnapshot } from "valtio";
-import { Link, useParams } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
-import { useQuery } from "react-query";
 import { pathStockBuy } from "./routeAccount";
 
 export function PageAccount() {
@@ -36,8 +36,11 @@ export function PageAccount() {
         </div>;
     }
     // let { miAccount, showBuy, showCashIn, showCashOut, showCashAdjust } = this.controller;
-    let state = useSnapshot(miAccount.state);
-    let { no, name, miValue, market, cash, holdingStocks, portion, portionAmount, buyableCount } = state;
+    let { no, name } = miAccount;
+    let miValue = useAtomValue(miAccount.miValue);
+    let market = useAtomValue(miAccount.market);
+    let cash = useAtomValue(miAccount.cash);
+    let holdingStocks = useAtomValue(miAccount.holdingStocks);
 
     let holdings: HoldingStock[], holdings0: HoldingStock[];
     if (holdingStocks) {

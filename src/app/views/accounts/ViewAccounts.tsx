@@ -3,13 +3,14 @@ import { useUqApp } from "app/UqApp";
 import { MiAccount } from "app/stores/MiAccount";
 import { FA, List, LMR } from "tonwa-com";
 import { pathAccount } from "./routeAccount";
+import { useAtomValue } from "jotai";
 
 export function ViewAccounts() {
     const { storeApp } = useUqApp();
     const { miAccounts } = storeApp;
 
     async function onClickAccount(item: MiAccount) {
-        return pathAccount(item.state.id)
+        return pathAccount(item.id)
     }
 
     function ItemViewAccount({ value }: { value: MiAccount }) {
@@ -22,7 +23,10 @@ export function ViewAccounts() {
                 {content}
             </div>;
         }
-        let { name, miValue, market, count } = value.state;
+        let { name } = value;
+        let miValue = useAtomValue(value.miValue);
+        let market = useAtomValue(value.market);
+        let count = useAtomValue(value.count);
         let miRate = market > 1 ? miValue * 100 / market : 0;
         return <LMR>
             <FA name="money" className="text-warning align-self-start mt-3 ms-2 ms-sm-3" size="lg" fixWidth={true} />

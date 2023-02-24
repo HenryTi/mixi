@@ -1,3 +1,3 @@
-export type MeRes = {
-    [admin in 'admin']: string;
+export enum ResMe {
+    admin,
 };
