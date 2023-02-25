@@ -30,9 +30,11 @@ export function PageQueryMore<P, R>(props: PageQueryMoreProps<P, R>) {
         let ret = await query.page(param, pageStart.current, pageSize);
         let { $page } = ret as any;
         let { length } = $page;
-        if (length === 0) return;
+        //if (length === 0) return;
         setItems(pageStart.current === undefined || items === undefined ? $page : [...items, ...$page]);
-        pageStart.current = $page[length - 1][sortField];
+        if (length > 0) {
+            pageStart.current = $page[length - 1][sortField];
+        }
         setLoading(false);
         //isLoadingInOneRender = false;
     }
