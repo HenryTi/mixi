@@ -29,7 +29,6 @@ export class StoreApp {
     miGroups: MiGroups;
     industries: MIndustries;
     rootIndustries: MRootIndustries;
-    group: MGroup;   // after click group，set current group，for show group stocks
 
     stocksMyAll: (Stock & StockValue)[];
     stocksMyBlock: (Stock & StockValue)[];
@@ -71,9 +70,10 @@ export class StoreApp {
         if (!id) return undefined;
         let n = Number(id);
         if (Number.isNaN(n) === true) return undefined;
-        let group = this.miGroups.groups.find(v => v.id === n);
-        if (!group) return undefined;
-        this.group = group;
+        let group: MGroup = this.miGroups.groups.find(v => v.id === n);
+        if (!group) {
+            group = this.industries.groups.find(v => v.id === n);
+        }
         return group;
     }
 

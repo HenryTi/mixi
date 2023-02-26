@@ -1,9 +1,12 @@
+import { useAtomValue } from 'jotai';
 import { Chart } from 'react-chartjs-2';
 import { useOutletContext } from 'react-router-dom';
 import { StoreStockInfo, GFunc, SlrForEarning } from "../../stores";
 
 export function ViewChartBonus() {
     const storeStockInfo = useOutletContext<StoreStockInfo>();
+    const baseItem = useAtomValue(storeStockInfo.baseItem);
+    if (!baseItem) return <></>;
     let { predictBonusData, dividents } = storeStockInfo;
     if (dividents !== undefined) {
         let len = dividents.length;

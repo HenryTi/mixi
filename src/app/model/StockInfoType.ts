@@ -11,9 +11,8 @@ export interface BaseStockInfo {
 };
 
 export interface NStockInfo extends BaseStockInfo {
-    stock?: Stock,
-    day?: number,
-    trackDay?: number,
+    stock?: Stock;
+    day?: number;
 };
 
 export interface StockPrice {

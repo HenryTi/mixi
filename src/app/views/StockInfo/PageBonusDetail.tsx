@@ -5,13 +5,14 @@ import { StockBonus } from 'app/model/StockInfoType';
 import { StoreStockInfo, GFunc, SlrForEarning } from '../../stores';
 import { useUqApp } from 'app/UqApp';
 import { useOutletContext } from 'react-router-dom';
+import { useAtomValue } from 'jotai';
 
 export function PageBonusDetail() {
     const uqApp = useUqApp();
     const storeStockInfo = useOutletContext<StoreStockInfo>();
     const { baseItem, bonus, dividentOrg } = storeStockInfo;
-    let { name, code, day } = baseItem;
-    let market = uqApp.storeApp.getMarket(baseItem.stock);
+    let { name, code, day, stock } = useAtomValue(baseItem);
+    let market = uqApp.storeApp.getMarket(stock);
     let marketName = market?.name;
     let symbol = (marketName ?? '') + code;
 

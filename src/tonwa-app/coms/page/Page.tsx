@@ -1,5 +1,5 @@
 import { Suspense, useEffect, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useNavigationType } from "react-router-dom";
 import { useAtomValue } from "jotai/react";
 import 'font-awesome/css/font-awesome.min.css';
 import '../../css/tonwa-page.css';
@@ -7,6 +7,7 @@ import { useUqAppBase } from "../../UqAppBase";
 import { PageProps, Scroller } from "./PageProps";
 import { ButtonPageBack } from "./ButtonPageBack";
 import { PageSpinner } from "./PageSpinner";
+import { useEffectOnce } from "tonwa-com";
 
 const scrollTimeGap = 100;
 const scrollEdgeGap = 30;
@@ -14,12 +15,15 @@ const scrollEdgeGap = 30;
 // unanthorized page
 export function PagePublic(props: PageProps) {
     let { children, header, back, right, footer, onClosed } = props;
-    const div = useRef<HTMLDivElement>();
+    const divRef = useRef<HTMLDivElement>();
+    const uqApp = useUqAppBase();
+    const { pathname } = document.location;
+    const navAction = useNavigationType();
     useEffect(() => {
         function setScroll() {
-            let { current: el } = div;
-            if (!el) return;
-            let elScroll = getScrollableParent(el);
+            let { current: div } = divRef;
+            if (!div) return;
+            let elScroll = getScrollableParent(div);
             if (!elScroll) return;
             elScroll.onscroll = onScroll;
             window.onscroll = onScroll;
@@ -31,9 +35,16 @@ export function PagePublic(props: PageProps) {
                 let { onScroll, onScrollTop, onScrollBottom } = props;
                 if (onScroll) onScroll(e);
                 let el = (e.target as Document).scrollingElement as HTMLBaseElement;
-                if (el.scrollTop > scrollTopSave) scrollTopSave = el.scrollTop;
+                const { scrollTop, offsetHeight, scrollHeight } = el;
+                if (scrollTop > scrollTopSave) {
+                    scrollTopSave = scrollTop;
+                }
+                const urlCache = uqApp.getUrlCache(pathname);
+                if (urlCache !== undefined && scrollTop > 0) {
+                    Object.assign(urlCache, { scrollTop });
+                }
                 let scroller = new Scroller(el);
-                if (el.scrollTop < scrollEdgeGap) {
+                if (scrollTop < scrollEdgeGap) {
                     if (onScrollTop !== undefined) {
                         let topTime = new Date().getTime();
                         if (topTime - topTimeSave > scrollTimeGap) {
@@ -41,7 +52,7 @@ export function PagePublic(props: PageProps) {
                             onScrollTop(scroller).then(ret => {
                                 // has more
                                 if (ret === true) {
-                                    let sh = el.scrollHeight;
+                                    let sh = scrollHeight;
                                     let top = 200;
                                     if (top > sh) top = sh;
                                     el.scrollTop = top;
@@ -50,8 +61,8 @@ export function PagePublic(props: PageProps) {
                         }
                     }
                 }
-                if (el.scrollTop + el.offsetHeight > el.scrollHeight - scrollEdgeGap) {
-                    if (onScrollBottom !== undefined && el.scrollTop >= scrollTopSave) {
+                if (scrollTop + offsetHeight > scrollHeight - scrollEdgeGap) {
+                    if (onScrollBottom !== undefined && scrollTop >= scrollTopSave) {
                         ++scrollTopSave;
                         let bottomTime = new Date().getTime();
                         if (bottomTime - bottomTimeSave > scrollTimeGap) {
@@ -67,6 +78,18 @@ export function PagePublic(props: PageProps) {
             onClosed?.();
         }
     });
+    useEffectOnce(() => {
+        if (navAction !== 'POP') return;
+        const urlCache = uqApp.getUrlCache(pathname);
+        if (urlCache === undefined) return;
+        const { scrollTop } = urlCache;
+        if (scrollTop) {
+            setTimeout(() => {
+                const scrollOptions = { top: scrollTop };
+                window.scroll(scrollOptions);
+            }, 10);
+        }
+    });
     if (header || back || right) {
         header = <div className="d-flex align-items-center">
             <ButtonPageBack {...props} />
@@ -74,7 +97,7 @@ export function PagePublic(props: PageProps) {
             {right}
         </div>;
     }
-    return <div ref={div} className="tonwa-page">
+    return <div ref={divRef} className="tonwa-page">
         <Suspense fallback={<PageSpinner />}>
             <div className='tonwa-page-header position-sticky top-0'>
                 <div className='container px-0 d-flex'>

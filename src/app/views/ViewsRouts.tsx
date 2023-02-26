@@ -10,7 +10,7 @@ import { TabFind } from './Find';
 import { routeStock } from './StockInfo';
 import { routeSearch } from './Search';
 import { routePrivacy } from 'app/tool';
-import { routeAccount } from 'app/views/accounts/routeAccount';
+import { routeAccount } from 'app/views/accounts';
 
 export function ViewsRoutes() {
     const homeLayout = <PageTabsLayout tabs={[

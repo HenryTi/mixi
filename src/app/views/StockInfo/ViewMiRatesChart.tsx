@@ -1,3 +1,4 @@
+import { useAtomValue } from 'jotai';
 import { Chart } from 'react-chartjs-2';
 import { useOutletContext } from 'react-router-dom';
 import { StoreStockInfo, GFunc } from "../../stores";
@@ -5,6 +6,8 @@ import { StoreStockInfo, GFunc } from "../../stores";
 export function ViewMiRatesChart() {
     const storeStockInfo = useOutletContext<StoreStockInfo>();
     const { mirates } = storeStockInfo;
+    const baseItem = useAtomValue(storeStockInfo.baseItem);
+    if (!baseItem) return <></>;
     let len = mirates.length;
     if (len <= 0) return <></>;
     let labels = [];

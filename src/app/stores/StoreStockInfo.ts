@@ -5,12 +5,15 @@ import { Stock, StockValue } from "uqs/BrMi";
 import { GFunc } from './GFunc';
 import { ErForEarning } from './ErForEarning';
 import { SlrForEarning } from './SlrForEarning';
-import { getAtomValue } from "tonwa-com";
+import { getAtomValue, setAtomValue } from "tonwa-com";
+import { atom } from "jotai";
 
 export class StoreStockInfo extends StorePage {
+    private day: number;
+    private trackDay: number;
     readonly id: number;
     stock: Stock & StockValue;
-    baseItem: NStockInfo;
+    baseItem = atom(undefined as NStockInfo);
     constructor(id: number) {
         super();
         this.id = id;
@@ -55,13 +58,12 @@ export class StoreStockInfo extends StorePage {
     };
 
     get dividents() {
-        //if (this.loaded === false) return undefined;
+        if (!this._divident) return undefined;
         if (this._divident.length <= 0) return undefined;
-        let { day, trackDay } = this.baseItem;
-        let lday = trackDay;
+        let lday = this.trackDay;
         let lastYear: number;
         if (lday === undefined || lday === null) {
-            lday = day;
+            lday = this.day;
         }
         let y = Math.floor(lday / 10000);
         let m = Math.floor((lday % 10000) / 100);
@@ -101,7 +103,7 @@ export class StoreStockInfo extends StorePage {
                 yearDataA[year] = { bonus: yb.bonus + divident * shares }
             }
         }
-        if (maxYear > lastYear && trackDay === undefined) {
+        if (maxYear > lastYear && this.trackDay === undefined) {
             lastYear = maxYear;
         }
 
@@ -168,28 +170,17 @@ export class StoreStockInfo extends StorePage {
         let year = date.getFullYear();
         let month = date.getMonth() + 1;
         let dt = date.getDate();
-        this.baseItem = {
-            id: id,
-            rawId: rawId,
-            name,
-            code: no,
-            //market: market?.name,
-            //symbol: market?.name + no,
-            day: year * 10000 + month * 100 + dt,
-            stock,
-            trackDay: getAtomValue(storeApp.trackDay),
-        };
-
-        let { day, trackDay } = this.baseItem;
+        this.day = year * 10000 + month * 100 + dt;
+        this.trackDay = getAtomValue(storeApp.trackDay);
         let rets;
-        if (trackDay !== undefined) {
+        if (this.trackDay !== undefined) {
             rets = await Promise.all([
-                miNet.q_stockallinfotrack(rawId, trackDay)
+                miNet.q_stockallinfotrack(rawId, this.trackDay)
             ]);
         }
         else {
             rets = await Promise.all([
-                miNet.q_stockallinfo(rawId, day)
+                miNet.q_stockallinfo(rawId, this.day)
             ]);
         }
         let ret = rets[0];
@@ -246,10 +237,10 @@ export class StoreStockInfo extends StorePage {
 
                 rates.unshift({ day: day, mirate: mirate, price: priceEx });
             });
-            if (trackDay === null && this.stock !== undefined && rates.length > 0) {
-                let nItem = { day: day, mirate: this.stock.miRate, price: this.stock.price };
+            if (this.trackDay === null && this.stock !== undefined && rates.length > 0) {
+                let nItem = { day: this.day, mirate: this.stock.miRate, price: this.stock.price };
                 let lItem = rates[rates.length - 1];
-                if (day > lItem.day) {
+                if (this.day > lItem.day) {
                     rates.push(nItem);
                 }
             }
@@ -259,8 +250,14 @@ export class StoreStockInfo extends StorePage {
             this.LoadDivident(ret[8]);
             this.LoadBonusData();
         }
-
-        //        this.loaded = true;
+        setAtomValue(this.baseItem, {
+            id: id,
+            rawId: rawId,
+            name,
+            code: no,
+            stock,
+            day: this.day,
+        });
     }
 
     protected loadTTMEarning(list: { seasonno: number, capital: number, revenue: number, profit: number, netprofit: number, shares: number }[]) {
@@ -344,14 +341,13 @@ export class StoreStockInfo extends StorePage {
     protected LoadBonusData() {
         if (this._sharesArr === undefined || this._sharesArr.length <= 0) return;
         let maxNo: number;
-        let trackDay = this.baseItem.trackDay;
-        if (trackDay === null) {
+        if (this.trackDay === null) {
             let dt = new Date();
             maxNo = GFunc.SeasonnoFromYearMonth(dt.getFullYear(), dt.getMonth() + 1) - 2;
         }
         else {
             let y =
-                maxNo = GFunc.SeasonnoFromYearMonth(Math.floor(trackDay / 10000), Math.floor((trackDay % 10000) / 100));
+                maxNo = GFunc.SeasonnoFromYearMonth(Math.floor(this.trackDay / 10000), Math.floor((this.trackDay % 10000) / 100));
         }
         let minNo = -1;
         let dataOrg: { [index: number]: { bonus: number, shares: number } } = {};

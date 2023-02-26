@@ -21,10 +21,5 @@ export const routeStock = <Route path={pathStockInfo(':id')} element={<LayoutSto
 
 function LayoutStockInfo() {
     const { id } = useParams();
-    const { data: storeStockInfo } = useQuery('stockinfo', async function () {
-        let ret = new StoreStockInfo(Number(id));
-        await ret.init();
-        return ret;
-    });
-    return <Outlet context={storeStockInfo} />;
+    return <Outlet context={new StoreStockInfo(Number(id))} />;
 }

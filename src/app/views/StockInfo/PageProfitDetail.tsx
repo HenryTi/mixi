@@ -3,11 +3,12 @@ import { useOutletContext } from 'react-router-dom';
 import { List } from 'tonwa-com';
 import { Page } from 'tonwa-app';
 import { StoreStockInfo, GFunc } from '../../stores';
+import { useAtomValue } from 'jotai';
 
 export function PageProfitDetail() {
     const storeStockInfo = useOutletContext<StoreStockInfo>();
     const { baseItem, seasonData } = storeStockInfo;
-    const { name, code, day } = baseItem;
+    const { name, code, day } = useAtomValue(baseItem);
 
     let headStr = name + ' ' + code;
     if (day !== undefined) {

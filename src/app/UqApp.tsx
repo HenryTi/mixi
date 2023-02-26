@@ -41,9 +41,7 @@ export interface Title {
     fixed?: number;
 }
 
-let myUqAppId = 1;
 export class UqApp extends UqAppBase<UQs> {
-    id = myUqAppId++;
     timezone: number;
     unitTimezone: number;
     unitBizDate: number;

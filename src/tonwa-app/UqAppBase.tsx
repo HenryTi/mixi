@@ -37,15 +37,19 @@ export interface RoleName {
     color?: string;
 }
 
-let uqAppId = 1;
+interface UrlCache {
+    scrollTop: number;
+    data: any;
+}
+
 export abstract class UqAppBase<U = any> {
     private readonly appConfig: AppConfig;
     private readonly uqConfigs: UqConfig[];
     private readonly uqsSchema: { [uq: string]: any; };
+    private map: Map<string, UrlCache> = new Map();
     //private readonly stores: Store[];          // 用于在同一个模块中传递
     private localData: LocalData;
     private roleNames: { [key: string]: RoleName };
-    readonly uqAppBaseId: number;
     readonly net: Net;
     readonly userApi: UserApi;
     readonly version: string;    // version in appConfig;
@@ -58,6 +62,7 @@ export abstract class UqAppBase<U = any> {
     readonly modal = {
         stack: atom([] as [JSX.Element, (value: any | PromiseLike<any>) => void, (result: any) => void][]),
     }
+
     uqsMan: UQsMan;
     store: any;
     guest: number;
@@ -65,7 +70,7 @@ export abstract class UqAppBase<U = any> {
     uqUnit: UqUnit;
 
     constructor(appConfig: AppConfig, uqConfigs: UqConfig[], uqsSchema: { [uq: string]: any; }, appEnv: AppEnv) {
-        this.uqAppBaseId = uqAppId++;
+        window.history.scrollRestoration = 'manual';
         this.appConfig = appConfig;
         this.uqConfigs = uqConfigs;
         this.uqsSchema = uqsSchema;
@@ -132,6 +137,37 @@ export abstract class UqAppBase<U = any> {
     restart() {
         document.location.assign('/');
     }
+
+    createUrlCache(url: string) {
+        let uc = this.map.get(url);
+        if (!uc) {
+            this.map.set(url, { scrollTop: undefined, data: undefined });
+        }
+    }
+    setUrlCacheScrollTop(url: string, scrollTop: number) {
+        let uc = this.map.get(url);
+        if (uc) {
+            uc.scrollTop = scrollTop;
+            return;
+        }
+        this.map.set(url, { scrollTop, data: undefined });
+    }
+    setUrlCacheData(url: string, data: any) {
+        let uc = this.map.get(url);
+        if (uc) {
+            uc.data = data;
+            return;
+        }
+        this.map.set(url, { scrollTop: undefined, data });
+    }
+    getUrlCache(url: string): UrlCache {
+        return this.map.get(url);
+    }
+    /*
+    deleteUrlCache(url: string) {
+        this.map.delete(url);
+    }
+    */
 
     async setUserProp(propName: string, value: any) {
         await this.userApi.userSetProp(propName, value);
@@ -253,6 +289,12 @@ export function useModal() {
         onClosed?.(result);
     }
     return { openModal, closeModal }
+}
+
+export function useScrollRestoration() {
+    const uqApp = useUqAppBase();
+    const { pathname } = document.location;
+    uqApp.createUrlCache(pathname);
 }
 
 export const UqAppContext = React.createContext(undefined);
