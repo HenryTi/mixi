@@ -19,7 +19,6 @@ const searchButtons: [string, string[]][] = [
 ];
 
 export function ViewFindStock() {
-    // const nav = useNav();
     const navigate = useNavigate();
     const uqApp = useUqApp();
     const { stocksMyAll, myAllCaption, stocksMyBlock, myBlockCaption, rootIndustries, miGroups, industries } = uqApp.storeApp;

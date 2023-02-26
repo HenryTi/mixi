@@ -24,9 +24,7 @@ export function ViewAccounts() {
             </div>;
         }
         let { name } = value;
-        let miValue = useAtomValue(value.miValue);
-        let market = useAtomValue(value.market);
-        let count = useAtomValue(value.count);
+        let { miValue, market, count } = useAtomValue(value.accountValue);
         let miRate = market > 1 ? miValue * 100 / market : 0;
         return <LMR>
             <FA name="money" className="text-warning align-self-start mt-3 ms-2 ms-sm-3" size="lg" fixWidth={true} />

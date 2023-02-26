@@ -13,12 +13,11 @@ const scrollTimeGap = 100;
 const scrollEdgeGap = 30;
 
 // unanthorized page
-export function PagePublic(props: PageProps) {
+export function PageBase(props: PageProps) {
     let { children, header, back, right, footer, onClosed } = props;
     const divRef = useRef<HTMLDivElement>();
     const uqApp = useUqAppBase();
     const { pathname } = document.location;
-    const navAction = useNavigationType();
     useEffect(() => {
         function setScroll() {
             let { current: div } = divRef;
@@ -78,18 +77,6 @@ export function PagePublic(props: PageProps) {
             onClosed?.();
         }
     });
-    useEffectOnce(() => {
-        if (navAction !== 'POP') return;
-        const urlCache = uqApp.getUrlCache(pathname);
-        if (urlCache === undefined) return;
-        const { scrollTop } = urlCache;
-        if (scrollTop) {
-            setTimeout(() => {
-                const scrollOptions = { top: scrollTop };
-                window.scroll(scrollOptions);
-            }, 10);
-        }
-    });
     if (header || back || right) {
         header = <div className="d-flex align-items-center">
             <ButtonPageBack {...props} />
@@ -116,6 +103,25 @@ export function PagePublic(props: PageProps) {
             </div>
         </Suspense>
     </div>;
+}
+
+export function PagePublic(props: PageProps) {
+    const navAction = useNavigationType();
+    const uqApp = useUqAppBase();
+    const { pathname } = document.location;
+    useEffectOnce(() => {
+        if (navAction !== 'POP') return;
+        const urlCache = uqApp.getUrlCache(pathname);
+        if (urlCache === undefined) return;
+        const { scrollTop } = urlCache;
+        if (scrollTop) {
+            setTimeout(() => {
+                const scrollOptions = { top: scrollTop };
+                window.scroll(scrollOptions);
+            }, 10);
+        }
+    });
+    return <PageBase {...props} />;
 }
 
 export function Page(props: PageProps) {

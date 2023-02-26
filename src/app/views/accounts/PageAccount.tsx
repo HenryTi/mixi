@@ -37,9 +37,7 @@ export function PageAccount() {
     }
     // let { miAccount, showBuy, showCashIn, showCashOut, showCashAdjust } = this.controller;
     let { no, name } = miAccount;
-    let miValue = useAtomValue(miAccount.miValue);
-    let market = useAtomValue(miAccount.market);
-    let cash = useAtomValue(miAccount.cash);
+    let { miValue, market, cash } = useAtomValue(miAccount.accountValue);
     let holdingStocks = useAtomValue(miAccount.holdingStocks);
 
     let holdings: HoldingStock[], holdings0: HoldingStock[];

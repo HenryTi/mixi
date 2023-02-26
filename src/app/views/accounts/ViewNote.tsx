@@ -1,11 +1,8 @@
 import { MiAccount } from "app/stores/MiAccount";
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue } from "jotai";
 
 export function ViewNote({ account }: { account: MiAccount }) {
-    let cash = useAtomValue(account.cash);
-    let portionAmount = useAtomValue(account.portionAmount);
-    let portion = useAtomValue(account.portion);
-    let buyableCount = useAtomValue(account.buyableCount);
+    let { cash, portionAmount, portion, buyableCount } = useAtomValue(account.accountValue);
     let lis = (cash && portionAmount) ?
         <>
             <li>

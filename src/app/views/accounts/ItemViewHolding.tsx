@@ -12,8 +12,7 @@ export function ItemViewHolding({ value }: { value: HoldingStock }) {
     let [visible, setVisible] = useState(false);
     let refDivAct = useRef<HTMLDivElement>();
     let { miAccount, stockObj, quantity, market, cost } = value;
-    let portionAmount = useAtomValue(miAccount.portionAmount);
-    let cash = useAtomValue(miAccount.cash);
+    let { portionAmount, cash } = useAtomValue(miAccount.accountValue);
     let { name, no } = stockObj;
     let profit: number, profitRate: number, costPrice: number;
     if (quantity < 1) { // = 0

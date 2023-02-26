@@ -1,9 +1,9 @@
 /*eslint @typescript-eslint/no-unused-vars: ["off", { "vars": "all" }]*/
 
-import { NStockInfo } from "app/model/StockInfoType";
 import { useUqApp } from "app/UqApp";
 import { FA } from "tonwa-com";
-import { Market, Stock, StockValue } from "uqs/BrMi";
+import { Stock, StockValue } from "uqs/BrMi";
+import { NStockInfo } from "../stores";
 
 function renderValue(caption: string, value: number, valueType: 'p0' | 'p1' | 'n1' | 'n2' | 'yi'): JSX.Element {
     const _cn = 'px-2 px-sm-3 mb-1 text-end ';

@@ -8,7 +8,7 @@ import { pathCashAdjust, pathCashInit, pathCashOut } from "./routeAccount";
 
 export function ButtonCashActs({ miAccount }: { miAccount: MiAccount }) {
     const { openModal } = useModal();
-    const cash = useAtomValue(miAccount.cash);
+    const { cash } = useAtomValue(miAccount.accountValue);
     let actions: DropdownAction[] = [
         { caption: '调入资金', action: showCashIn, icon: 'sign-in' },
         { caption: '调出资金', action: pathCashOut, icon: 'sign-out' },

@@ -7,7 +7,7 @@ import {
     Guest, LocalDb, NetProps, UqConfig, User, UserApi
     , createUQsMan, Net, UqUnit, UserUnit, UQsMan
 } from 'tonwa-uq';
-import { PagePublic } from './coms';
+import { PageBase, PagePublic } from './coms';
 import { uqsProxy } from './uq';
 import { AutoRefresh } from './AutoRefresh';
 import { LocalData } from './tools';
@@ -275,9 +275,9 @@ export function useModal() {
             }
             function Modal() {
                 const { closeModal } = useModal();
-                return <PagePublic header={caption}
+                return <PageBase header={caption}
                     onBack={() => closeModal(undefined)}
-                    back={'close'}>{element}</PagePublic>;
+                    back={'close'}>{element}</PageBase>;
             }
             setModalStack([...modalStack, [<Modal />, resolve, onClosed]]);
         })

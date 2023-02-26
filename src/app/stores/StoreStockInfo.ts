@@ -1,6 +1,6 @@
-import { NStockInfo, StockBonus, StockCapitalearning, StockDividentInfo } from "app/model/StockInfoType";
+import { NStockInfo, StockBonus, StockCapitalearning, StockDividentInfo } from "./StockInfoType";
 import { StorePage } from "app/StorePage";
-import { StockPrice } from "app/model/StockInfoType";
+import { StockPrice } from "./StockInfoType";
 import { Stock, StockValue } from "uqs/BrMi";
 import { GFunc } from './GFunc';
 import { ErForEarning } from './ErForEarning';

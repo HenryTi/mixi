@@ -205,8 +205,6 @@ export class VChangeCost extends VForm {
 
 export function ModalCashIn({ miAccount }: { miAccount: MiAccount; }) {
     const { closeModal } = useModal();
-    //const miAccount = useOutletContext<MiAccount>();
-    //const navigate = useNavigate();
     const formRows: FormRow[] = [
         { name: 'value', label: '调入金额', type: 'number', options: { validate: checkCash } },
         { type: 'submit' },
@@ -241,8 +239,8 @@ export function PageCashOut() {
         { name: 'value', label: '调出金额', type: 'number', options: { validate: checkCash } },
         { type: 'submit' },
     ];
+    const { cash } = useAtomValue(miAccount.accountValue);
     function checkCash(value: number) {
-        let cash = useAtomValue(miAccount.cash);
         if (value > cash)
             return `调出金额不能超过总现金${cash}`;
     }
@@ -266,8 +264,8 @@ export function PageCashAdjust() {
         { name: 'value', label: '调整金额', type: 'number', options: { validate: checkCash } },
         { type: 'submit' },
     ];
+    const { cash } = useAtomValue(miAccount.accountValue);
     function checkCash(value: number) {
-        let cash = useAtomValue(miAccount.cash);
         if (value < 0 && -value > cash)
             return `负向调整金额不能超过总现金${cash}`;
     }
