@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { getAtomValue, setAtomValue } from 'tonwa-com';
-import { AppConfig, AppEnv, UqAppBase, UqAppContext, ViewUqAppBase } from "tonwa-app";
+import { AppConfig, UqAppBase, UqAppContext, ViewUqAppBase } from "tonwa-app";
 import { UqConfig, UqQuery } from 'tonwa-uq';
 import { UQs, uqsSchema } from "uqs";
 import uqconfigJson from '../uqconfig.json';

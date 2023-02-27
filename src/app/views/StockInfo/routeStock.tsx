@@ -1,7 +1,5 @@
-import { useUqApp } from "app/UqApp";
-import { StoreStockInfo } from "app/stores";
-import { useQuery } from "react-query";
 import { Outlet, Route, useParams } from "react-router-dom";
+import { StoreStockInfo } from "app/stores";
 import { PageBonusDetail } from "./PageBonusDetail";
 import { PageProfitDetail } from "./PageProfitDetail";
 import { PageStockInfo } from "./PageStockInfo";
