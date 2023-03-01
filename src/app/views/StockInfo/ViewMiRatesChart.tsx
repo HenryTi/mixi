@@ -12,6 +12,7 @@ export function ViewMiRatesChart() {
     if (len <= 0) return <></>;
     let labels = [];
     let y: number[] = [];
+    let yrates: number[] = [];
     let priceList: number[] = [];
     let priceOrg: number[] = [];
     let price60: number[] = [];
@@ -45,6 +46,7 @@ export function ViewMiRatesChart() {
         let pm = mirate !== undefined && mirate !== null && mirate > 0 ? 100 / mirate : undefined;
         pmmax = Math.max(pmmax, pm);
         y.push(GFunc.numberToPrecision(pm));
+        yrates.push(GFunc.numberToPrecision(mirate));
         priceList.push(GFunc.numberToPrecision(item.price));
     }
     let ymax = pmmax > 75 ? 80 : undefined;
@@ -99,6 +101,56 @@ export function ViewMiRatesChart() {
         }
     ];
     const chartdataFull = { labels, datasets, };
+    const datasetsRate = [
+        {
+            label: '价格',
+            data: priceList,
+            borderColor: 'navy',
+            backgroundColor: 'pink',
+            pointStyle: "crossRot",
+            borderWidth: 1,
+            pointRadius: 1,
+            fill: false,
+            yAxisID: 'y1',
+        },
+        {
+            label: 'MA20',
+            data: price20,
+            borderColor: 'violet',
+            backgroundColor: 'pink',
+            pointStyle: "crossRot",
+            borderWidth: 1,
+            pointRadius: 1,
+            fill: false,
+            lineTension: 0.3,
+            yAxisID: 'y1',
+        },
+        {
+            label: 'MA60',
+            data: price60,
+            borderColor: 'limegreen',
+            backgroundColor: 'pink',
+            pointStyle: "crossRot",
+            borderWidth: 1,
+            pointRadius: 1,
+            fill: false,
+            lineTension: 0.3,
+            yAxisID: 'y1',
+        },
+        {
+            label: '米息率',
+            data: yrates,
+            borderColor: 'magenta',
+            backgroundColor: 'skyBlue',
+            pointStyle: "crossRot",
+            borderWidth: 3,
+            pointRadius: 1,
+            fill: false,
+            lineTension: 0.3,
+            yAxisID: 'y2',
+        }
+    ];
+    const chartdataFullRate = { labels, datasets: datasetsRate, };
     const options: any = {
         scales: {
             y1: {
@@ -117,6 +169,26 @@ export function ViewMiRatesChart() {
             }
         }
     }
+    const optionsRate: any = {
+        scales: {
+            y1: {
+                type: 'linear',
+                display: true,
+                position: 'left',
+            },
+            y2: {
+                type: 'linear',
+                display: true,
+                position: 'right',
+                grid: {
+                    drawOnChartArea: false
+                }
+            }
+        }
+    }
 
-    return <Chart type='line' data={chartdataFull} options={options} />;
+    return <>
+        <Chart type='line' data={chartdataFull} options={options} />
+        <Chart type='line' data={chartdataFullRate} options={optionsRate} />
+    </>;
 }
