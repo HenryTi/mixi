@@ -18,6 +18,7 @@ export function ViewMiRatesChart() {
     let price20: number[] = [];
     let sum20: number = 0;
     let sum60: number = 0;
+    let pmmax: number = 0;
     for (let i = 0; i < len; ++i) {
         let item = mirates[i];
         if (item.day === undefined)
@@ -40,9 +41,13 @@ export function ViewMiRatesChart() {
         else {
             price60.push(undefined);
         }
-        y.push(GFunc.numberToPrecision(item.mirate));
+        let { mirate } = item;
+        let pm = mirate !== undefined && mirate !== null && mirate > 0 ? 100 / mirate : undefined;
+        pmmax = Math.max(pmmax, pm);
+        y.push(GFunc.numberToPrecision(pm));
         priceList.push(GFunc.numberToPrecision(item.price));
     }
+    let ymax = pmmax > 75 ? 80 : undefined;
 
     const datasets = [
         {
@@ -81,7 +86,7 @@ export function ViewMiRatesChart() {
             yAxisID: 'y1',
         },
         {
-            label: '米息率',
+            label: 'PM',
             data: y,
             borderColor: 'magenta',
             backgroundColor: 'skyBlue',
@@ -105,6 +110,7 @@ export function ViewMiRatesChart() {
                 type: 'linear',
                 display: true,
                 position: 'right',
+                max: ymax,
                 grid: {
                     drawOnChartArea: false
                 }
