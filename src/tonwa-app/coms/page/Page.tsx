@@ -12,67 +12,62 @@ import { useEffectOnce } from "tonwa-com";
 const scrollTimeGap = 100;
 const scrollEdgeGap = 30;
 
-// unanthorized page
 export function PageBase(props: PageProps) {
     let { children, header, back, right, footer, onClosed } = props;
     const divRef = useRef<HTMLDivElement>();
     const uqApp = useUqAppBase();
     const { pathname } = document.location;
-    useEffect(() => {
-        function setScroll() {
-            let { current: div } = divRef;
-            if (!div) return;
-            let elScroll = getScrollableParent(div);
-            if (!elScroll) return;
-            elScroll.onscroll = onScroll;
-            window.onscroll = onScroll;
+    useEffectOnce(() => {
+        let { current: div } = divRef;
+        if (!div) return;
+        let elScroll = getScrollableParent(div);
+        if (!elScroll) return;
+        //elScroll.addEventListener("scroll", onScroll);
+        window.onscroll = onScroll;
 
-            let bottomTimeSave = 0;
-            let topTimeSave = 0;
-            let scrollTopSave = elScroll.scrollTop;
-            function onScroll(e: any) {
-                let { onScroll, onScrollTop, onScrollBottom } = props;
-                if (onScroll) onScroll(e);
-                let el = (e.target as Document).scrollingElement as HTMLBaseElement;
-                const { scrollTop, offsetHeight, scrollHeight } = el;
-                if (scrollTop > scrollTopSave) {
-                    scrollTopSave = scrollTop;
-                }
-                const urlCache = uqApp.getUrlCache(pathname);
-                if (urlCache !== undefined && scrollTop > 0) {
-                    Object.assign(urlCache, { scrollTop });
-                }
-                let scroller = new Scroller(el);
-                if (scrollTop < scrollEdgeGap) {
-                    if (onScrollTop !== undefined) {
-                        let topTime = new Date().getTime();
-                        if (topTime - topTimeSave > scrollTimeGap) {
-                            topTimeSave = topTime;
-                            onScrollTop(scroller).then(ret => {
-                                // has more
-                                if (ret === true) {
-                                    let sh = scrollHeight;
-                                    let top = 200;
-                                    if (top > sh) top = sh;
-                                    el.scrollTop = top;
-                                }
-                            });
+        let bottomTimeSave = 0;
+        let topTimeSave = 0;
+        let scrollTopSave = elScroll.scrollTop;
+        function onScroll(e: any) {
+            let { onScroll: propsOnScroll, onScrollTop, onScrollBottom } = props;
+            if (propsOnScroll) propsOnScroll(e);
+
+            let el = (e.target as Document).scrollingElement as HTMLBaseElement;
+            const { scrollTop, offsetHeight, scrollHeight } = el;
+            if (scrollTop > scrollTopSave) {
+                scrollTopSave = scrollTop;
+            }
+            const urlCache = uqApp.getUrlCache(pathname);
+            if (urlCache !== undefined && scrollTop > 0) {
+                Object.assign(urlCache, { scrollTop });
+            }
+            let scroller = new Scroller(el);
+            if (onScrollTop !== undefined && scrollTop < scrollEdgeGap) {
+                let topTime = new Date().getTime();
+                if (topTime - topTimeSave > scrollTimeGap) {
+                    topTimeSave = topTime;
+                    onScrollTop(scroller).then(ret => {
+                        // has more
+                        if (ret === true) {
+                            let sh = scrollHeight;
+                            let top = 200;
+                            if (top > sh) top = sh;
+                            el.scrollTop = top;
                         }
-                    }
+                    });
                 }
-                if (scrollTop + offsetHeight > scrollHeight - scrollEdgeGap) {
-                    if (onScrollBottom !== undefined && scrollTop >= scrollTopSave) {
-                        ++scrollTopSave;
-                        let bottomTime = new Date().getTime();
-                        if (bottomTime - bottomTimeSave > scrollTimeGap) {
-                            bottomTimeSave = bottomTime;
-                            onScrollBottom(scroller);
-                        }
-                    }
+            }
+            if (onScrollBottom !== undefined
+                && scrollTop + offsetHeight > scrollHeight - scrollEdgeGap
+                && scrollTop >= scrollTopSave) {
+                ++scrollTopSave;
+                let bottomTime = new Date().getTime();
+                if (bottomTime - bottomTimeSave > scrollTimeGap) {
+                    bottomTimeSave = bottomTime;
+                    setTimeout(() => onScrollBottom(scroller), 50);
                 }
             }
         }
-        setScroll();
         return () => {
             onClosed?.();
         }

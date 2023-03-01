@@ -11,11 +11,13 @@ import { routeStock } from './StockInfo';
 import { routeSearch } from './Search';
 import { routePrivacy } from 'app/tool';
 import { routeAccount } from 'app/views/accounts';
+import { pathTrial, routeTrial, TabTrial } from './Trial';
 
 export function ViewsRoutes() {
     const homeLayout = <PageTabsLayout tabs={[
         { to: '/', caption: '首页', icon: 'home' },
         { to: '/find', caption: '发现', icon: 'search' },
+        { to: '/' + pathTrial, caption: '测试', icon: 'bug' },
         { to: '/' + pathMe, caption: '我的', icon: 'user' },
     ]} />;
 
@@ -25,12 +27,14 @@ export function ViewsRoutes() {
                 <Route path="/" element={homeLayout}>
                     <Route index element={<TabHome />} />
                     <Route path="find" element={<TabFind />} />
+                    <Route path={pathTrial + '/*'} element={<TabTrial />} />
                     <Route path={pathMe + '/*'} element={<TabMe />} />
                 </Route>
                 {routeMe}
                 {routeFind}
                 {routeStock}
                 {routeAccount}
+                {routeTrial}
                 <Route path="/test" element={<Page header="Test">test</Page>} />
                 {routeBlogs}
                 {routeSearch}

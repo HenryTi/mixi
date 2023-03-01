@@ -13,6 +13,7 @@ export interface BandInputProps {
     errors?: Partial<FieldErrorsImpl<{
         [x: string]: any;
     }>>;
+    defaultValue?: string;
 }
 
 function registerOptions(type: HTMLInputTypeAttribute, options: RegisterOptions): RegisterOptions {
@@ -24,13 +25,13 @@ function registerOptions(type: HTMLInputTypeAttribute, options: RegisterOptions)
 }
 
 export function BandInput(props: BandInputProps) {
-    const { label, inputProps, errors, type } = props;
+    const { label, inputProps, errors, type, defaultValue } = props;
     const { name } = inputProps;
     let error = errors[name];
     let cnInput = 'form-control ';
     if (error) cnInput += 'is-invalid';
     return <Band label={label}>
-        <input {...inputProps} className={cnInput} type={type} />
+        <input {...inputProps} className={cnInput} type={type} defaultValue={defaultValue} />
         {error && <div className="invalid-feedback mt-1">
             {error.message?.toString()}
         </div>}
@@ -191,11 +192,11 @@ export function FormRowsView({ rows, register, errors }: FormRowsViewProps) {
             default:
                 let newOptions = registerOptions(type, options);
                 return <BandInput label={label} type={type} errors={errors}
-                    inputProps={register(name, newOptions)} />;
+                    inputProps={register(name, newOptions)} defaultValue={options.value} />;
             case 'submit':
                 return <Band><input type="submit" className="btn btn-primary" value={label ?? '提交'} /></Band>;
         }
     }
-
+    console.log('FormRowsView', rows);
     return <>{rows.map((row, index) => <FormRowView key={index} row={row} />)}</>
 }

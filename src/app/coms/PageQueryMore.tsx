@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { List, Spinner, useEffectOnce } from "tonwa-com";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { getAtomValue, List, Spinner, useEffectOnce } from "tonwa-com";
 import { UqQuery } from "tonwa-uq";
 import { Page, PageProps, Scroller } from "tonwa-app";
 import { useNavigationType } from "react-router-dom";
@@ -21,57 +21,65 @@ export function PageQueryMore<P, R>(props: PageQueryMoreProps<P, R>) {
     let { query, param, sortField, pageStart: pageStartParam, pageSize, pageMoreSize, ItemView, onItemClick, children, tickReload } = props;
     const [items, setItems] = useState<R[]>(undefined);
     const [loading, setLoading] = useState(false);
-    const pageStart = useRef(pageStartParam);
     const navAction = useNavigationType();
-    const isPopFirst = useRef(navAction === 'POP');
+    const refValue = useRef({
+        pageStart: pageStartParam,
+        isPopFirst: navAction === 'POP',
+        querying: false,
+        items: undefined as any[],
+    });
+    const { current } = refValue;
     pageSize = pageSize ?? 20;
     pageMoreSize = pageMoreSize ?? 5;
     const uqApp = useUqApp();
     const { pathname } = document.location;
-    async function callQuery(more: boolean = false) {
-        let pageStartValue = pageStart.current;
-        let urlCache = uqApp.getUrlCache(pathname);
-        if (isPopFirst.current === true) {
+    let urlCache = uqApp.getUrlCache(pathname);
+    const callQuery = useCallback(async function callQuery(more: boolean = false) {
+        let { pageStart, querying, isPopFirst, items } = current;
+        if (isPopFirst === true) {
             if (urlCache) {
                 let { start } = urlCache.data;
-                if (start === pageStartValue) return;
+                if (start === pageStart && items !== undefined) return;
             }
         }
+        if (querying === true) return;
         if (loading === true) return;
         setLoading(true);
+        current.querying = true;
         let arrResult: any[];
-        if (isPopFirst.current === true) {
+        if (current.isPopFirst === true) {
             setTimeout(() => {
-                isPopFirst.current = false;
+                current.isPopFirst = false;
             }, 100);
-            if (pageStartValue === pageStartParam && urlCache) {
+            if (pageStart === pageStartParam && urlCache) {
                 let { result } = urlCache.data;
                 arrResult = result;
                 uqApp.setUrlCacheData(pathname, undefined);
             }
         }
         if (!arrResult) {
-            let ret = await query.page(param, pageStartValue, more === true ? pageMoreSize : pageSize);
+            let ret = await query.page(param, pageStart, more === true ? pageMoreSize : pageSize);
             let { $page } = ret as any;
             arrResult = $page;
         }
         let { length } = arrResult;
-        let newItems = pageStart.current === undefined || items === undefined ? arrResult : [...items, ...arrResult];
+        let newItems = pageStart === undefined || items === undefined ? arrResult : [...items, ...arrResult];
         setItems(newItems);
+        current.items = newItems;
         if (length > 0) {
-            pageStart.current = arrResult[length - 1][sortField];
+            current.pageStart = arrResult[length - 1][sortField];
         }
-        uqApp.setUrlCacheData(pathname, { result: newItems, start: pageStart.current });
+        uqApp.setUrlCacheData(pathname, { result: newItems, start: pageStart });
         setLoading(false);
-    }
+        current.querying = false;
+    }, []);
     useEffectOnce(() => {
         callQuery();
     });
     useEffect(() => {
-        if (isPopFirst.current === true) return;
-        pageStart.current = undefined;
+        if (current.isPopFirst === true) return;
+        current.pageStart = undefined;
         callQuery();
-        console.log('PageQueryMore useEffect ', pageStartParam);
     }, [tickReload]);
     let scrolling = false;
     function scrollIntoView(divId: string) {
@@ -82,7 +90,7 @@ export function PageQueryMore<P, R>(props: PageQueryMoreProps<P, R>) {
         }, 20);
     }
     async function onScrollBottom(scroller: Scroller) {
-        if (isPopFirst.current === true) return;
+        if (current.isPopFirst === true) return;
         if (scrolling === true) return;
         scrolling = true;
         scrollIntoView('$$bottom');

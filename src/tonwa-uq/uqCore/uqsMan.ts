@@ -1,13 +1,13 @@
 import { UqMan } from './uqMan';
 import { TuidImport, TuidInner } from './tuid';
 import { Net, UqData } from '../net';
-import { UqConfig, UqError } from '../tool';
+import { UqConfig } from '../tool';
 
 export class UQsMan {
     private readonly net: Net;
     private readonly uqsSchema: { [uq: string]: any; };
     private collection: { [uqLower: string]: UqMan };
-    proxy: any;
+    // proxy: any;
     uqMans: UqMan[] = [];
 
     constructor(net: Net, uqsSchema: { [uq: string]: any; }) {
@@ -45,7 +45,7 @@ export class UQsMan {
                 uq.config = uqConfig;
             }
         }
-        this.proxy = this.buildUQs();
+        // this.proxy = this.buildUQs();
     }
 
     uq(uqName: string): UqMan {
@@ -114,6 +114,7 @@ export class UQsMan {
         return retErrors;
     }
 
+    /*
     private buildUQs(): any {
         let uqs: any = {};
         function setUq(uqKey: string, proxy: any): void {
@@ -140,9 +141,10 @@ export class UQsMan {
     private errUndefinedUq(uq: string) {
         let message = `UQ ${uq} not defined`;
         let err = new Error(message);
-        err.name = UqError.undefined_uq;
+        err.name = UqError.unexist_uq;
         throw err;
     }
+*/
 
     getUqMans() {
         return this.uqMans;

@@ -6,7 +6,7 @@ export interface ContainerProps {
 }
 type ContainerType = (props: ContainerProps) => JSX.Element;
 
-const defualtLeftSize = 3;
+const defaultLeftSize = 3;
 const defaultLabelClassName = ' py-1 tonwa-bg-gray-1 fw-bold col-form-label border-end';
 const defaultMidClassName = ' ';
 function DefaultLabelContainer({ children }: ContainerProps) {
@@ -44,7 +44,7 @@ export interface LabelRowProps extends LabelRowPropsBase {
 }
 
 export function LabelRow({ className, labelSize, labelAlign, labelClassName, LabelContainer, midClassName, MidContainer, RightContainer, vAlign, to, children }: LabelRowProps) {
-    labelSize = labelSize ?? defualtLeftSize;
+    labelSize = labelSize ?? defaultLeftSize;
     let cnLabelAlign: string;
     if (LabelContainer) {
         cnLabelAlign = '';

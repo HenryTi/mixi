@@ -15,11 +15,13 @@ export class UqQuery<P, R> extends Entity {
     */
     //list:IObservableArray; 
     isPaged: boolean;
+    order: 'asc' | 'desc';
 
     setSchema(schema: any) {
         super.setSchema(schema);
-        let { returns } = schema;
+        let { returns, order } = schema;
         this.returns = returns;
+        this.order = order ?? 'asc';
         this.isPaged = returns && (returns as any[]).find(v => v.name === '$page') !== undefined;
     }
     /*

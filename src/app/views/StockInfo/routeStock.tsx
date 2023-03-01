@@ -3,7 +3,7 @@ import { StoreStockInfo } from "app/stores";
 import { PageBonusDetail } from "./PageBonusDetail";
 import { PageProfitDetail } from "./PageProfitDetail";
 import { PageStockInfo } from "./PageStockInfo";
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 
 export function pathStockInfo(id: string | number): string {
     return `/stock/${id}`;
@@ -23,3 +23,4 @@ function LayoutStockInfo() {
     let ssi = useMemo(() => new StoreStockInfo(Number(id)), [id]);
     return <Outlet context={ssi} />;
 }
+

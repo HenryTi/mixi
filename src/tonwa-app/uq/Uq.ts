@@ -1,6 +1,11 @@
 import {
-    UqMan, Uq as UqCore, UqError
+    UqMan, Uq as UqCore
 } from "tonwa-uq";
+
+enum UqError {
+    unexist_entity = 'UnexistEntity',
+    unexist_uq = 'UnexistUq'
+};
 
 export class Uq {
     private $_uqMan: UqMan;
@@ -49,7 +54,8 @@ export class Uq {
     private errUndefinedEntity(entity: string) {
         let message = `entity ${this.$_uqMan.name}.${entity} not defined`;
         let err = new Error(message);
-        err.name = UqError.undefined_entity;
+        err.name = UqError.unexist_entity;
+        this.$_uqMan.clearLocalEntites();
         throw err;
     }
     /*

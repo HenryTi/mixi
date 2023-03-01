@@ -1,0 +1,52 @@
+ID Product (
+    id,
+    KEY no,
+    name CHAR(50),
+);
+
+ACT SaveProduct ver 0.1 (
+    pNo CHAR(20),
+	name CHAR(50),
+)
+RETURNS ret (
+    id ID,
+) {
+    -- 判断是不是已经有同编号的输入了。比如，我正在输入的时候，别人也输入了。
+    VAR id ID;
+    SET id=a.id FROM Product as a WHERE a.no=pNo;
+    IF id IS NULL {
+        SET id = ID(Product new,pNo);
+        WITH Product as a ID=id SET a.name=name;
+    }
+    ELSE {
+        SET id=-id;
+    }
+    INTO ret SELECT id;
+};
+
+QUERY SearchProduct(
+    key CHAR(50),
+)
+PAGE (
+    id ID desc,
+    no CHAR(50),
+    name CHAR(50),
+) {
+	VAR sKey CHAR(50);
+	IF key IS NULL {
+		SET sKey = '%%';
+	}
+	ELSE {
+		SET sKey = concat('%', key, '%');
+	}
+    PAGE SELECT a.id, a.no, a.name
+        FROM Product as a
+        WHERE a.id<$pageStart AND (a.no like sKey OR a.name like sKey)
+        ORDER BY a.id desc
+        LIMIT $pageSize;
+};
+
+ACT Sp (
+) {
+    VAR a INT = 1;
+};

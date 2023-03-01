@@ -1,19 +1,18 @@
 /* eslint-disable */
 import { UqApi, UqData } from '../net';
 import { Tuid, TuidDiv, TuidImport, TuidInner, TuidBox, TuidsCache } from './tuid';
-import { Action, UqAction } from './action';
+import { Action } from './action';
 import { Sheet } from './sheet';
-import { Query, UqQuery } from './query';
+import { Query } from './query';
 import { Book } from './book';
 import { History } from './history';
 import { Map } from './map';
 import { Pending } from './pending';
-import { capitalCase, LocalCache, LocalMap, UqConfig, UqError } from '../tool';
+import { capitalCase, LocalCache, LocalMap, UqConfig } from '../tool';
 import { UqEnum } from './enum';
 import { Entity } from './entity';
 import { ID, IX, IDX } from './ID';
 import { Net } from '../net';
-import { UqUnit } from './uqUnit';
 
 export type FieldType = 'id' | 'tinyint' | 'smallint' | 'int' | 'bigint' | 'dec' | 'float' | 'double' | 'char' | 'text'
     | 'datetime' | 'date' | 'time' | 'timestamp' | 'enum';
@@ -344,6 +343,10 @@ export class UqMan {
     getID(name: string): ID { return this.ids[name.toLowerCase()]; };
     getIDX(name: string): IDX { return this.idxs[name.toLowerCase()]; };
     getIX(name: string): IX { return this.ixs[name.toLowerCase()]; };
+
+    clearLocalEntites() {
+        this.localMap.removeItem(this.name);
+    }
 
     private roles: string[];
     async getRoles(): Promise<string[]> {
@@ -706,45 +709,47 @@ export class UqMan {
         return this.entities[name] !== undefined
             || this.entities[name.toLowerCase()] !== undefined;
     }
-
-    createProxy(): any {
-        let ret = new Proxy(this.entities, {
-            get: (target, key, receiver) => {
-                let lk = (key as string).toLowerCase();
-                if (lk[0] === '$') {
-                    switch (lk) {
-                        default: throw new Error(`unknown ${lk} property in uq`);
-                        case '$': return this.$proxy;
-                        case '$name': return this.name;
+    /*
+        createProxy(): any {
+            let ret = new Proxy(this.entities, {
+                get: (target, key, receiver) => {
+                    let lk = (key as string).toLowerCase();
+                    if (lk[0] === '$') {
+                        switch (lk) {
+                            default: throw new Error(`unknown ${lk} property in uq`);
+                            case '$': return this.$proxy;
+                            case '$name': return this.name;
+                        }
                     }
+                    let ret = target[lk];
+                    if (ret !== undefined) return ret;
+                    let func: any = (this as any)[key];
+                    if (func !== undefined) return func;
+                    this.errUndefinedEntity(String(key));
                 }
-                let ret = target[lk];
-                if (ret !== undefined) return ret;
-                let func: any = (this as any)[key];
-                if (func !== undefined) return func;
-                this.errUndefinedEntity(String(key));
-            }
-        });
-        this.proxy = ret;
-        this.$proxy = new Proxy(this.entities, {
-            get: (target, key, receiver) => {
-                let lk = (key as string).toLowerCase();
-                let ret: any = target[lk];
-                if (ret !== undefined) return ret;
-                let func: any = (this as any)['$' + (key as string)];
-                if (func !== undefined) return func;
-                this.errUndefinedEntity(String(key));
-            }
-        });
-        //this.idCache = new IDCache(this);
-        return ret;
-    }
-
-    private errUndefinedEntity(entity: string) {
-        let err = new Error(`entity ${this.name}.${entity} not defined`);
-        err.name = UqError.undefined_entity;
-        throw err;
-    }
+            });
+            this.proxy = ret;
+            this.$proxy = new Proxy(this.entities, {
+                get: (target, key, receiver) => {
+                    let lk = (key as string).toLowerCase();
+                    let ret: any = target[lk];
+                    if (ret !== undefined) return ret;
+                    let func: any = (this as any)['$' + (key as string)];
+                    if (func !== undefined) return func;
+                    this.errUndefinedEntity(String(key));
+                }
+            });
+            //this.idCache = new IDCache(this);
+            return ret;
+        }
+    
+        private errUndefinedEntity(entity: string) {
+            let err = new Error(`entity ${this.name}.${entity} not defined`);
+            err.name = UqError.unexist_entity;
+            this.clearLocalEntities();
+            throw err;
+        }
+    */
 
     private async apiPost(api: string, resultType: EnumResultType, apiParam: any): Promise<any> {
         if (resultType === EnumResultType.sql) api = 'sql-' + api;
@@ -1011,14 +1016,15 @@ export class UqMan {
         return await this.apiIDTv(ids, EnumResultType.sql);
     }
 
-    private async apiIDNO(param: ParamIDNO, resultType: EnumResultType): Promise<string> {
+    private async apiIDNO(param: ParamIDNO, resultType: EnumResultType): Promise<{ no: string }[]> {
         let { ID, stamp } = param;
         let ret = await this.apiPost('id-no', resultType, { ID: entityName(ID), stamp });
         return ret;
     }
 
     protected IDNO = async (param: ParamIDNO): Promise<string> => {
-        return await this.apiIDNO(param, EnumResultType.data);
+        let ret = await this.apiIDNO(param, EnumResultType.data);
+        return (ret[0] as any)?.no;
     }
 
     protected IDEntity = (typeId: number): ID => {
@@ -1026,7 +1032,7 @@ export class UqMan {
     };
 
     protected $IDNO = async (param: ParamIDNO): Promise<string> => {
-        return await this.apiIDNO(param, EnumResultType.sql);
+        return await this.apiIDNO(param, EnumResultType.sql) as any as string;
     }
 
     private async apiIDDetailGet(param: ParamIDDetailGet, resultType: EnumResultType): Promise<any> {

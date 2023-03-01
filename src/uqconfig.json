@@ -7,6 +7,10 @@
         "br": {
             "name": "bruce",
             "alias": "br"
+        },
+        "jksoft": {
+            "name": "jksoft",
+            "alias": "js"
         }
     },
     "uqs": [
@@ -14,6 +18,11 @@
             "dev": "br",
             "name": "yumi",
             "alias": "Mi"
+        },
+        {
+            "dev": "jksoft",
+            "name": "ticket",
+            "alias": "Ticket"
         }
     ]
 }
