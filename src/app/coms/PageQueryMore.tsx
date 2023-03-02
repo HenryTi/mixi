@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { getAtomValue, List, Spinner, useEffectOnce } from "tonwa-com";
+import { List, Spinner, useEffectOnce } from "tonwa-com";
 import { UqQuery } from "tonwa-uq";
 import { Page, PageProps, Scroller } from "tonwa-app";
 import { useNavigationType } from "react-router-dom";

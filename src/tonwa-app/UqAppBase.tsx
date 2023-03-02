@@ -155,7 +155,7 @@ export abstract class UqAppBase<U = any> {
     setUrlCacheData(url: string, data: any) {
         let uc = this.map.get(url);
         if (uc) {
-            setAtomValue(uc.data, data);
+            uc.data = data;
             return;
         }
         this.map.set(url, { scrollTop: undefined, data });
