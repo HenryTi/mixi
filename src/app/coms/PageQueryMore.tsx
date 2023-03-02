@@ -17,6 +17,19 @@ interface PageQueryMoreProps<P, R> extends PageProps {
     tickReload?: number; // 改变这个值，会引发重新load数据
 }
 
+export class PageMoreCacheData {
+    start: any;
+    items: any[];
+    constructor(start: any, items: any[]) {
+        this.start = start;
+        this.items = items;
+    }
+
+    getItem<T>(predicate: (value: T, index: number, obj: T[]) => unknown, thisArg?: any): T | undefined {
+        return this.items.find(predicate);
+    }
+}
+
 export function PageQueryMore<P, R>(props: PageQueryMoreProps<P, R>) {
     let { query, param, sortField, pageStart: pageStartParam, pageSize, pageMoreSize, ItemView, onItemClick, children, tickReload } = props;
     const [items, setItems] = useState<R[]>(undefined);
@@ -33,7 +46,7 @@ export function PageQueryMore<P, R>(props: PageQueryMoreProps<P, R>) {
     pageMoreSize = pageMoreSize ?? 5;
     const uqApp = useUqApp();
     const { pathname } = document.location;
-    let urlCache = uqApp.getUrlCache(pathname);
+    let urlCache = uqApp.pageCache.get<PageMoreCacheData>(pathname);
     const callQuery = useCallback(async function callQuery(more: boolean = false) {
         let { pageStart, querying, isPopFirst, items } = current;
         if (isPopFirst === true) {
@@ -52,9 +65,9 @@ export function PageQueryMore<P, R>(props: PageQueryMoreProps<P, R>) {
                 current.isPopFirst = false;
             }, 100);
             if (pageStart === pageStartParam && urlCache) {
-                let { result } = urlCache.data;
+                let { items: result } = urlCache.data;
                 arrResult = result;
-                uqApp.setUrlCacheData(pathname, undefined);
+                uqApp.pageCache.setData(pathname, undefined);
             }
         }
         if (!arrResult) {
@@ -69,7 +82,7 @@ export function PageQueryMore<P, R>(props: PageQueryMoreProps<P, R>) {
         if (length > 0) {
             current.pageStart = arrResult[length - 1][sortField];
         }
-        uqApp.setUrlCacheData(pathname, { result: newItems, start: pageStart });
+        uqApp.pageCache.setData<PageMoreCacheData>(pathname, new PageMoreCacheData(pageStart, newItems));
         setLoading(false);
         current.querying = false;
     }, []);

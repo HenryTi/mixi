@@ -12,6 +12,7 @@ import { uqsProxy } from './uq';
 import { AutoRefresh } from './AutoRefresh';
 import { LocalData } from './tools';
 import { useNavigate } from 'react-router-dom';
+import { PageCache } from './PageCache';
 
 export interface AppConfig { //extends UqsConfig {
     center: string;
@@ -37,16 +38,10 @@ export interface RoleName {
     color?: string;
 }
 
-interface UrlCache {
-    scrollTop: number;
-    data: any;
-}
-
 export abstract class UqAppBase<U = any> {
     private readonly appConfig: AppConfig;
     private readonly uqConfigs: UqConfig[];
     private readonly uqsSchema: { [uq: string]: any; };
-    private map: Map<string, UrlCache> = new Map();
     //private readonly stores: Store[];          // 用于在同一个模块中传递
     private localData: LocalData;
     private roleNames: { [key: string]: RoleName };
@@ -62,6 +57,7 @@ export abstract class UqAppBase<U = any> {
     readonly modal = {
         stack: atom([] as [JSX.Element, (value: any | PromiseLike<any>) => void, (result: any) => void][]),
     }
+    readonly pageCache = new PageCache();
 
     uqsMan: UQsMan;
     store: any;
@@ -91,6 +87,7 @@ export abstract class UqAppBase<U = any> {
         this.userApi = this.net.userApi;
         let user = this.localData.user.get();
         setAtomValue(this.user, user);
+        this.pageCache = new PageCache();
     }
 
     abstract get pathLogin(): string;
@@ -137,37 +134,6 @@ export abstract class UqAppBase<U = any> {
     restart() {
         document.location.assign('/');
     }
-
-    createUrlCache(url: string) {
-        let uc = this.map.get(url);
-        if (!uc) {
-            this.map.set(url, { scrollTop: undefined, data: undefined });
-        }
-    }
-    setUrlCacheScrollTop(url: string, scrollTop: number) {
-        let uc = this.map.get(url);
-        if (uc) {
-            uc.scrollTop = scrollTop;
-            return;
-        }
-        this.map.set(url, { scrollTop, data: undefined });
-    }
-    setUrlCacheData(url: string, data: any) {
-        let uc = this.map.get(url);
-        if (uc) {
-            uc.data = data;
-            return;
-        }
-        this.map.set(url, { scrollTop: undefined, data });
-    }
-    getUrlCache(url: string): UrlCache {
-        return this.map.get(url);
-    }
-    /*
-    deleteUrlCache(url: string) {
-        this.map.delete(url);
-    }
-    */
 
     async setUserProp(propName: string, value: any) {
         await this.userApi.userSetProp(propName, value);
@@ -294,7 +260,7 @@ export function useModal() {
 export function useScrollRestoration() {
     const uqApp = useUqAppBase();
     const { pathname } = document.location;
-    uqApp.createUrlCache(pathname);
+    uqApp.pageCache.create(pathname);
 }
 
 export const UqAppContext = React.createContext(undefined);

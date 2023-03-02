@@ -37,7 +37,7 @@ export function PageBase(props: PageProps) {
             if (scrollTop > scrollTopSave) {
                 scrollTopSave = scrollTop;
             }
-            const urlCache = uqApp.getUrlCache(pathname);
+            const urlCache = uqApp.pageCache.get(pathname);
             if (urlCache !== undefined && scrollTop > 0) {
                 Object.assign(urlCache, { scrollTop });
             }
@@ -106,7 +106,7 @@ export function PagePublic(props: PageProps) {
     const { pathname } = document.location;
     useEffectOnce(() => {
         if (navAction !== 'POP') return;
-        const urlCache = uqApp.getUrlCache(pathname);
+        const urlCache = uqApp.pageCache.get(pathname);
         if (urlCache === undefined) return;
         const { scrollTop } = urlCache;
         if (scrollTop) {
