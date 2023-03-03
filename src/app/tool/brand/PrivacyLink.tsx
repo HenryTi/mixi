@@ -1,5 +1,5 @@
 import { Link, Route } from "react-router-dom";
-import { PagePublic } from "tonwa-app";
+import { Page } from "tonwa-app";
 
 export const pathPrivacy = '/privacy';
 export const routePrivacy = <>
@@ -15,11 +15,11 @@ export function PrivacyLink() {
 }
 
 export function PagePrivacy() {
-    return <PagePublic header="隐私政策">
+    return <Page auth={false} header="隐私政策">
         <div className="d-grid p-3">
             {privacy.split('\n').map((v, index) => <p key={index}>{v}</p>)}
         </div>
-    </PagePublic>
+    </Page>
 }
 
 const privacy = `

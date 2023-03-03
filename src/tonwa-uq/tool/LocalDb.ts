@@ -102,7 +102,7 @@ abstract class Local {
         this.localDb.setItem(k, value);
     }
     removeItem(key: string | number): void {
-        let k = this.keyForSet(key);
+        let k = this.keyForRemove(key);
         if (k === undefined) return;
         localStorage.removeItem(k);
     }

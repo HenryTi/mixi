@@ -50,7 +50,7 @@ export function ViewFindStock() {
         navigate(pathSearch(), { state: { header: '搜索', searchKey: key } });
     }
     async function onGroupClick(group: MGroup) {
-        return pathGroupStocks(group.id);
+        navigate(pathGroupStocks(group.id));
     }
     return <div className="bg-light">
         <div className="p-3">

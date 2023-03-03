@@ -7,11 +7,10 @@ import {
     Guest, LocalDb, NetProps, UqConfig, User, UserApi
     , createUQsMan, Net, UqUnit, UserUnit, UQsMan
 } from 'tonwa-uq';
-import { PageBase, PagePublic } from './coms';
+import { Page } from './coms';
 import { uqsProxy } from './uq';
 import { AutoRefresh } from './AutoRefresh';
 import { LocalData } from './tools';
-import { useNavigate } from 'react-router-dom';
 import { PageCache } from './PageCache';
 
 export interface AppConfig { //extends UqsConfig {
@@ -229,23 +228,29 @@ class LocalStorageDb extends LocalDb {
     }
 }
 
+export const ModalContext = React.createContext(undefined);
 export function useModal() {
     const { modal } = useUqAppBase();
     const { stack: modalStackAtom } = modal;
     const [modalStack, setModalStack] = useAtom(modalStackAtom);
-    async function openModal<T = any>(element: JSX.Element, caption?: string | JSX.Element, onClosed?: (result: any) => void): Promise<T> {
+    async function openModal<T = any>(element: JSX.Element, onClosed?: (result: any) => void): Promise<T> {
         return new Promise<T>((resolve, reject) => {
             if (React.isValidElement(element) !== true) {
                 alert('is not valid element');
                 return;
             }
+            /*
             function Modal() {
-                const { closeModal } = useModal();
-                return <PageBase header={caption}
+                // const { closeModal } = useModal();
+                return <Page header={caption}
                     onBack={() => closeModal(undefined)}
-                    back={'close'}>{element}</PageBase>;
+                    back={'close'}>{element}</Page>;
             }
-            setModalStack([...modalStack, [<Modal />, resolve, onClosed]]);
+            */
+            let modal = <ModalContext.Provider value={true}>
+                {element}
+            </ModalContext.Provider>;
+            setModalStack([...modalStack, [modal, resolve, onClosed]]);
         })
     }
     function closeModal(result?: any) {

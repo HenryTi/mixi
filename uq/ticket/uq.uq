@@ -1,2 +1,8 @@
 -- UQ2 only support ID, IDX, IX
 UQ2 [jksoft]/[ticket] version='0.01' author='jksoft';
+
+DataType (
+    Amount DEC(18, 4),
+    Quantity DEC(18, 4),
+    Value DEC(18,4),
+);

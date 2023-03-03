@@ -1,0 +1,37 @@
+
+QUERY SearchProduct(
+    key CHAR(50),
+)
+PAGE (
+    id ID desc,
+    no CHAR(50),
+    name CHAR(50),
+) {
+	VAR sKey CHAR(50) = concat('%', IFNULL(key,''), '%');
+    PAGE SELECT a.id, a.no, a.name
+        FROM Product as a
+        WHERE a.id<$pageStart AND (a.no like sKey OR a.name like sKey)
+        ORDER BY a.id desc
+        LIMIT $pageSize;
+};
+
+ACT Sp (
+) {
+    VAR a INT = 1;
+};
+
+QUERY SearchContact(
+    key CHAR(50),
+)
+PAGE (
+    id ID desc,
+    no CHAR(50),
+    name CHAR(50),
+) {
+	VAR sKey CHAR(50) = concat('%', IFNULL(key,''), '%');
+    PAGE SELECT a.id, a.no, a.name
+        FROM Contact as a
+        WHERE a.id<$pageStart AND (a.no like sKey OR a.name like sKey)
+        ORDER BY a.id desc
+        LIMIT $pageSize;
+};

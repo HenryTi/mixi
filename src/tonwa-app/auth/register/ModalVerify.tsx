@@ -2,6 +2,7 @@ import { BandInt, Form } from "tonwa-com";
 import { ruleIsRequired } from "tonwa-com";
 import { Band, BandContainerContext } from "tonwa-com";
 import { Submit } from "tonwa-com";
+import { Page } from "../../coms";
 import { AuthFormBandTemplate } from "../AuthFormBandTemplate";
 import { PasswordParams } from './PasswordParams';
 
@@ -10,9 +11,10 @@ type OnVerify = (verify: string) => Promise<number>;
 interface Props {
     passwordParams: PasswordParams;
     onVerify: OnVerify;
+    header: string;
 }
 
-export function ModalVerify({ passwordParams, onVerify }: Props) {
+export function ModalVerify({ passwordParams, onVerify, header }: Props) {
     let { type, account } = passwordParams;
 
     let onSubmit = async (values: any): Promise<any> => {
@@ -38,7 +40,7 @@ export function ModalVerify({ passwordParams, onVerify }: Props) {
             extra = <small><span className="text-danger">注意</span>: 有可能误为垃圾邮件，请检查<br /></small>;
             break;
     }
-    return <div className="w-min-20c my-5 py-5 mx-auto">
+    return <Page header={header}><div className="w-min-20c my-5 py-5 mx-auto">
         <div className="text-center mb-4">
             验证码已经发送到{typeText} <b>{account}</b><br />
             {extra}
@@ -52,5 +54,6 @@ export function ModalVerify({ passwordParams, onVerify }: Props) {
                 <Submit name="submit" onSubmit={onSubmit}>下一步 {'>'}</Submit>
             </Band>
         </Form>
-    </div>;
+    </div>
+    </Page>;
 }

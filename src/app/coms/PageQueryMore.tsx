@@ -31,13 +31,21 @@ export class PageMoreCacheData {
 }
 
 export function PageQueryMore<P, R>(props: PageQueryMoreProps<P, R>) {
-    let { query, param, sortField, pageStart: pageStartParam, pageSize, pageMoreSize, ItemView, onItemClick, children, tickReload } = props;
+    const navAction = useNavigationType();
+    return <PageQueryMoreBase {...props} isPopFirst={navAction === 'POP'} />;
+}
+
+export function PageQueryMoreModal<P, R>(props: PageQueryMoreProps<P, R>) {
+    return <PageQueryMoreBase {...props} isPopFirst={false} />;
+}
+
+export function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst: boolean }) {
+    let { query, param, sortField, pageStart: pageStartParam, pageSize, pageMoreSize, ItemView, onItemClick, children, tickReload, isPopFirst } = props;
     const [items, setItems] = useState<R[]>(undefined);
     const [loading, setLoading] = useState(false);
-    const navAction = useNavigationType();
     const refValue = useRef({
         pageStart: pageStartParam,
-        isPopFirst: navAction === 'POP',
+        isPopFirst,
         querying: false,
         items: undefined as any[],
     });
@@ -85,7 +93,7 @@ export function PageQueryMore<P, R>(props: PageQueryMoreProps<P, R>) {
         uqApp.pageCache.setData<PageMoreCacheData>(pathname, new PageMoreCacheData(pageStart, newItems));
         setLoading(false);
         current.querying = false;
-    }, []);
+    }, [param]);
     useEffectOnce(() => {
         callQuery();
     });
@@ -93,7 +101,7 @@ export function PageQueryMore<P, R>(props: PageQueryMoreProps<P, R>) {
         if (current.isPopFirst === true) return;
         current.pageStart = undefined;
         callQuery();
-    }, [tickReload]);
+    }, [tickReload, param]);
     let scrolling = false;
     function scrollIntoView(divId: string) {
         setTimeout(() => {

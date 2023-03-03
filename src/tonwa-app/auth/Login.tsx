@@ -5,13 +5,13 @@ import { Submit } from 'tonwa-com';
 import { BandPassword } from 'tonwa-com';
 import { Band } from 'tonwa-com';
 import { FormErrors } from 'tonwa-com';
-import { PagePublic } from '../coms';
 import { useUqAppBase } from '../UqAppBase';
 import { PageForget, PageRegister } from './register/PageRegister';
 import { getSender } from './tools';
 import { Link, Outlet, Route, Routes, useNavigate } from 'react-router-dom';
 import { pathForget, pathRegister } from './register/ModalPassword';
 import { AuthFormBandTemplate } from './AuthFormBandTemplate';
+import { Page } from '../coms';
 
 /*
 const schema: Schema = [
@@ -70,7 +70,7 @@ export function Login({ url, withBack, loginTop, privacy, callback }: Props) {
     */
     let header = withBack === true ? '登录' : false
     function PageIndex() {
-        return <PagePublic header={header} footer={privacy}>
+        return <Page auth={false} header={header} footer={privacy}>
             <div className="d-flex p-5 flex-column justify-content-center align-items-center">
                 <div className="flex-fill" />
                 <div className="w-30c">
@@ -100,7 +100,7 @@ export function Login({ url, withBack, loginTop, privacy, callback }: Props) {
                 <div className="flex-fill" />
                 <div className="flex-fill" />
             </div>
-        </PagePublic>;
+        </Page>;
     }
     function OutletLogin() {
         return <Outlet />;

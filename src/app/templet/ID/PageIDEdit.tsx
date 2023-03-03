@@ -1,9 +1,13 @@
 import { useParams } from "react-router-dom";
 import { Page } from "tonwa-app";
 
-export function PageProductEdit() {
+interface PageIDEditProps {
+    header: string;
+}
+
+export function PageIDEdit({ header }: PageIDEditProps) {
     const { id } = useParams();
-    return <Page header="编辑产品">
+    return <Page header={header}>
         id: {id}
     </Page>;
 }

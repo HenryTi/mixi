@@ -1,4 +1,4 @@
-//=== UqApp builder created on Wed Mar 01 2023 16:00:56 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Thu Mar 02 2023 17:27:42 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqQuery, UqAction, UqID } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -133,15 +133,17 @@ export interface Result$getUnitTime {
 	ret: Return$getUnitTimeRet[];
 }
 
-export interface Product extends ID {
-	no?: string;
-	name: string;
+export interface History extends ID {
+	project: number;
+	value: any;
+	ref: number;
 }
 
-export interface ProductInActs extends ID {
+export interface HistoryInActs extends ID {
 	ID?: UqID<any>;
-	no?: string;
-	name: string;
+	project: number | ID;
+	value: any;
+	ref: number | ID;
 }
 
 export interface ParamSaveProduct {
@@ -153,6 +155,17 @@ export interface ReturnSaveProductRet {
 }
 export interface ResultSaveProduct {
 	ret: ReturnSaveProductRet[];
+}
+
+export interface ParamSaveContact {
+	pNo: string;
+	name: string;
+}
+export interface ReturnSaveContactRet {
+	id: number;
+}
+export interface ResultSaveContact {
+	ret: ReturnSaveContactRet[];
 }
 
 export interface ParamSearchProduct {
@@ -172,8 +185,98 @@ export interface ParamSp {
 export interface ResultSp {
 }
 
+export interface ParamSearchContact {
+	key: string;
+}
+export interface ReturnSearchContact$page {
+	id: number;
+	no: string;
+	name: string;
+}
+export interface ResultSearchContact {
+	$page: ReturnSearchContact$page[];
+}
+
+export interface Product extends ID {
+	no?: string;
+	name: string;
+}
+
+export interface ProductInActs extends ID {
+	ID?: UqID<any>;
+	no?: string;
+	name: string;
+}
+
+export interface Contact extends ID {
+	no?: string;
+	name: string;
+}
+
+export interface ContactInActs extends ID {
+	ID?: UqID<any>;
+	no?: string;
+	name: string;
+}
+
+export interface Batch extends ID {
+	product: number;
+	no?: string;
+	date: any;
+	before: any;
+}
+
+export interface BatchInActs extends ID {
+	ID?: UqID<any>;
+	product: number | ID;
+	no?: string;
+	date: any;
+	before: any;
+}
+
+export interface PurchaseMain extends ID {
+	no?: string;
+	vendor: number;
+}
+
+export interface PurchaseMainInActs extends ID {
+	ID?: UqID<any>;
+	no?: string;
+	vendor: number | ID;
+}
+
+export interface SaleMain extends ID {
+	no?: string;
+	customer: number;
+}
+
+export interface SaleMainInActs extends ID {
+	ID?: UqID<any>;
+	no?: string;
+	customer: number | ID;
+}
+
+export interface Detail extends ID {
+	main?: number;
+	item: number;
+	value: any;
+}
+
+export interface DetailInActs extends ID {
+	ID?: UqID<any>;
+	main?: number | ID;
+	item: number | ID;
+	value: any;
+}
+
 export interface ParamActs {
+	history?: HistoryInActs[];
 	product?: ProductInActs[];
+	contact?: ContactInActs[];
+	batch?: BatchInActs[];
+	purchaseMain?: PurchaseMainInActs[];
+	saleMain?: SaleMainInActs[];
+	detail?: DetailInActs[];
 }
 
 
@@ -192,10 +295,18 @@ export interface UqExt extends Uq {
 	$poked: UqQuery<Param$poked, Result$poked>;
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
-	Product: UqID<any>;
+	History: UqID<any>;
 	SaveProduct: UqAction<ParamSaveProduct, ResultSaveProduct>;
+	SaveContact: UqAction<ParamSaveContact, ResultSaveContact>;
 	SearchProduct: UqQuery<ParamSearchProduct, ResultSearchProduct>;
 	Sp: UqAction<ParamSp, ResultSp>;
+	SearchContact: UqQuery<ParamSearchContact, ResultSearchContact>;
+	Product: UqID<any>;
+	Contact: UqID<any>;
+	Batch: UqID<any>;
+	PurchaseMain: UqID<any>;
+	SaleMain: UqID<any>;
+	Detail: UqID<any>;
 }
 
 
@@ -502,8 +613,8 @@ export const uqSchema={
             }
         ]
     },
-    "product": {
-        "name": "Product",
+    "history": {
+        "name": "History",
         "type": "id",
         "private": false,
         "sys": true,
@@ -514,7 +625,31 @@ export const uqSchema={
                 "null": false
             },
             {
-                "name": "no",
+                "name": "project",
+                "type": "id"
+            },
+            {
+                "name": "value",
+                "type": "datatype"
+            },
+            {
+                "name": "ref",
+                "type": "id"
+            }
+        ],
+        "keys": [] as any,
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "saveproduct": {
+        "name": "SaveProduct",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "pNo",
                 "type": "char",
                 "size": 20
             },
@@ -524,19 +659,20 @@ export const uqSchema={
                 "size": 50
             }
         ],
-        "keys": [
+        "returns": [
             {
-                "name": "no",
-                "type": "char",
-                "size": 20
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    }
+                ]
             }
-        ],
-        "global": false,
-        "idType": 3,
-        "isMinute": false
+        ]
     },
-    "saveproduct": {
-        "name": "SaveProduct",
+    "savecontact": {
+        "name": "SaveContact",
         "type": "action",
         "private": false,
         "sys": true,
@@ -606,5 +742,248 @@ export const uqSchema={
         "sys": true,
         "fields": [] as any,
         "returns": [] as any
+    },
+    "searchcontact": {
+        "name": "SearchContact",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "key",
+                "type": "char",
+                "size": 50
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "no",
+                        "type": "char",
+                        "size": 50
+                    },
+                    {
+                        "name": "name",
+                        "type": "char",
+                        "size": 50
+                    }
+                ],
+                "order": "desc"
+            }
+        ]
+    },
+    "product": {
+        "name": "Product",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            },
+            {
+                "name": "name",
+                "type": "char",
+                "size": 50
+            }
+        ],
+        "keys": [
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "contact": {
+        "name": "Contact",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            },
+            {
+                "name": "name",
+                "type": "char",
+                "size": 100
+            }
+        ],
+        "keys": [
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": false
+    },
+    "batch": {
+        "name": "Batch",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "product",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            },
+            {
+                "name": "date",
+                "type": "date"
+            },
+            {
+                "name": "before",
+                "type": "date"
+            }
+        ],
+        "keys": [
+            {
+                "name": "product",
+                "type": "id"
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "purchasemain": {
+        "name": "PurchaseMain",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            },
+            {
+                "name": "vendor",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "salemain": {
+        "name": "SaleMain",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            },
+            {
+                "name": "customer",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "detail": {
+        "name": "Detail",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "main",
+                "type": "id"
+            },
+            {
+                "name": "item",
+                "type": "id"
+            },
+            {
+                "name": "value",
+                "type": "datatype"
+            }
+        ],
+        "keys": [
+            {
+                "name": "main",
+                "type": "id"
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
     }
 }

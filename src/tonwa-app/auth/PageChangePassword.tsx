@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Band } from "tonwa-com";
 import { BandPassword } from "tonwa-com";
 import { Form, Submit, FormErrors } from "tonwa-com";
-import { PagePublic } from "../coms";
+import { Page } from "../coms";
 import { useModal, useUqAppBase } from "../UqAppBase";
 import { AuthFormBandTemplate } from "./AuthFormBandTemplate";
 
@@ -19,10 +19,10 @@ export function PageChangePassword() {
         if (ret === false) {
             return ['orgPassword', '原密码错误'];
         }
-        openModal(<ChangeSucceed />, '修改密码', () => navigate(-1));
+        openModal(<ChangeSucceed />, () => navigate(-1));
     }
 
-    return <PagePublic header="修改密码">
+    return <Page auth={false} header="修改密码">
         <Form className="m-3 w-30c mx-auto" BandTemplate={AuthFormBandTemplate}>
             <BandPassword name="orgPassword" label="原密码" placeholder="输入原来的密码" maxLength={60} />
             <BandPassword name="newPassword" label="新密码" placeholder="输入新设的密码" maxLength={60} />
@@ -34,11 +34,13 @@ export function PageChangePassword() {
                 <Submit onSubmit={onSubmit}>提交</Submit>
             </Band>
         </Form>
-    </PagePublic>;
+    </Page>;
 }
 
 function ChangeSucceed() {
-    return <div className="m-3  text-success">
-        密码修改成功！
-    </div>;
+    return <Page auth={false} header="密码修改">
+        <div className="m-3  text-success">
+            密码修改成功！
+        </div>
+    </Page>;
 }

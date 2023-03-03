@@ -4,26 +4,27 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { LabelRowEdit, Page } from "tonwa-app";
 import { Sep } from "tonwa-com";
-import { pathProductList, pathTrial } from "./routeTrial";
+import { UqID } from "tonwa-uq";
 
-interface RowProps {
+export interface RowProps {
     name: string;
     label: string;
     readonly?: boolean;
 }
 
-export function PageProductView() {
+interface PageIDViewProps {
+    header: string;
+    ID: UqID<any>;
+    rows: RowProps[];
+}
+
+export function PageIDView({ header, rows, ID }: PageIDViewProps) {
     const uqApp = useUqApp();
     const { id: idString } = useParams();
     const id = Number(idString);
-    const rows: RowProps[] = [
-        { name: 'id', label: 'id', readonly: true },
-        { name: 'no', label: '编号', readonly: true },
-        { name: 'name', label: '名称' },
-    ];
     const { JsTicket } = uqApp.uqs;
     const { data } = useQuery('PageProductView', async () => {
-        let ret = await JsTicket.ID({ IDX: JsTicket.Product, id });
+        let ret = await JsTicket.ID({ IDX: ID, id });
         return ret[0] ?? {};
     }, {
         refetchOnWindowFocus: false,
@@ -33,14 +34,15 @@ export function PageProductView() {
         let value = data[name];
         console.log(`prop value ${name}`, value);
         async function onValueChanged(value: string | number) {
-            await JsTicket.ActIDProp(JsTicket.Product, id, name, value);
+            await JsTicket.ActIDProp(ID, id, name, value);
             let { pageCache } = uqApp;
-            let moreData = pageCache.get<PageMoreCacheData>(`/${pathTrial}/${pathProductList}`);
-
-            if (moreData) {
-                let { data } = moreData;
-                let item = data.getItem<{ id: number }>(v => v.id === id) as any;
-                if (item) item[name] = value;
+            let latestItem = pageCache.getLatestItem<PageMoreCacheData>();
+            if (latestItem) {
+                let { data } = latestItem;
+                if (data) {
+                    let item = data.getItem<{ id: number }>(v => v.id === id) as any;
+                    if (item) item[name] = value;
+                }
             }
         }
         return <>
@@ -48,7 +50,7 @@ export function PageProductView() {
             <Sep />
         </>
     }
-    return <Page header="产品">
+    return <Page header={header}>
         {rows.map((v, index) => <Row key={index} {...v} />)}
     </Page>;
 }

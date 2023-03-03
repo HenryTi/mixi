@@ -6,11 +6,13 @@ import { useModal, useUqAppBase } from '../../UqAppBase';
 import { PasswordParams } from './PasswordParams';
 import { useRef } from 'react';
 import { AuthFormBandTemplate } from '../AuthFormBandTemplate';
+import { Page } from '../../coms';
 
 export const pathForget = 'forget';
 export const pathRegister = 'register';
 
 interface Props {
+    header: string;
     submitCaption: string;
     account: string;
     onPasswordSubmit: (pwd: string) => Promise<string>;
@@ -19,7 +21,7 @@ interface Props {
 interface PasswordContext {
     error?: string;
 }
-function ModalPasswordBase({ submitCaption, account, onPasswordSubmit }: Props) {
+function ModalPasswordBase({ header, submitCaption, account, onPasswordSubmit }: Props) {
     const { openModal } = useModal();
     const context = useRef<PasswordContext>({})
 
@@ -34,7 +36,9 @@ function ModalPasswordBase({ submitCaption, account, onPasswordSubmit }: Props) 
             error = await onPasswordSubmit(pwd);
             context.current.error = error;
             if (error !== undefined) {
-                openModal(<div className="p-5 text-danger">{context.current.error}</div>, '注册不成功');
+                openModal(<Page header="注册不成功">
+                    <div className="p-5 text-danger">{context.current.error}</div>
+                </Page>);
             }
         }
         return error;
@@ -46,17 +50,19 @@ function ModalPasswordBase({ submitCaption, account, onPasswordSubmit }: Props) 
         }
     }
     */
-    return <div className="w-min-30c my-5 py-5 mx-auto">
-        <div className="h-1c" />
-        <Form BandTemplate={AuthFormBandTemplate}>
-            <Band label="账号" contentContainerClassName='d-flex align-items-center'><b className='text-primary'>{account}</b></Band>
-            <BandPassword name="pwd" label="密码" placeholder="密码" maxLength={100} />
-            <BandPassword name="rePwd" label="重复密码" placeholder="重复密码" maxLength={100} />
-            <Band contentContainerClassName="mt-3">
-                <Submit onSubmit={onButtonSubmit}>{submitCaption}</Submit>
-            </Band>
-        </Form>
-    </div>;
+    return <Page header={header}>
+        <div className="w-min-30c my-5 py-5 mx-auto">
+            <div className="h-1c" />
+            <Form BandTemplate={AuthFormBandTemplate}>
+                <Band label="账号" contentContainerClassName='d-flex align-items-center'><b className='text-primary'>{account}</b></Band>
+                <BandPassword name="pwd" label="密码" placeholder="密码" maxLength={100} />
+                <BandPassword name="rePwd" label="重复密码" placeholder="重复密码" maxLength={100} />
+                <Band contentContainerClassName="mt-3">
+                    <Submit onSubmit={onButtonSubmit}>{submitCaption}</Submit>
+                </Band>
+            </Form>
+        </div>
+    </Page>;
 }
 
 interface RegisterParameter {
@@ -70,7 +76,7 @@ interface RegisterParameter {
     verify: string,
 };
 
-export function ModalRegisterPassword({ passwordParams }: { passwordParams: PasswordParams; }) {
+export function ModalRegisterPassword({ passwordParams, header }: { passwordParams: PasswordParams; header: string; }) {
     const { openModal } = useModal();
     let { userApi } = useUqAppBase();
     let { type, account, verify } = passwordParams;
@@ -117,7 +123,7 @@ export function ModalRegisterPassword({ passwordParams }: { passwordParams: Pass
         return msg + ' 已经被注册过了';
     }
 
-    return <ModalPasswordBase submitCaption="注册新账号" account={account} onPasswordSubmit={onPasswordSubmit} />;
+    return <ModalPasswordBase header={header} submitCaption="注册新账号" account={account} onPasswordSubmit={onPasswordSubmit} />;
     function RegisterSuccess() {
         let { account, toLogin } = passwordParams;
         return <div className="container w-min-30c mx-auto">
@@ -134,7 +140,7 @@ export function ModalRegisterPassword({ passwordParams }: { passwordParams: Pass
     }
 }
 
-export function ModalForgetPassword({ passwordParams }: { passwordParams: PasswordParams; }) {
+export function ModalForgetPassword({ header, passwordParams }: { passwordParams: PasswordParams; header: string; }) {
     const { openModal, closeModal } = useModal();
     let { userApi } = useUqAppBase();
     let { account, verify, type, toLogin } = passwordParams;
@@ -150,8 +156,7 @@ export function ModalForgetPassword({ passwordParams }: { passwordParams: Passwo
         openModal(<ForgetSuccess />)
         return;
     }
-
-    return <ModalPasswordBase submitCaption="改密码" account={account} onPasswordSubmit={onPasswordSubmit} />;
+    return <ModalPasswordBase header={header} submitCaption="改密码" account={account} onPasswordSubmit={onPasswordSubmit} />;
 
     function ForgetSuccess() {
         return <div className="container w-min-30c mx-auto">

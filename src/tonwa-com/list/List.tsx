@@ -23,7 +23,6 @@ export interface ListProps<T> extends ListPropsWithoutItems<T> {
 
 export function List<T>(props: ListProps<T>) {
     let [showLoading, setShowLoding] = useState(false);
-    let navigate = useNavigate();
     let { items, className, itemKey, ItemView, onItemClick, onItemSelect, sep, none, loading } = props;
     className = className ?? '';
     useEffect(() => {
@@ -53,7 +52,7 @@ export function List<T>(props: ListProps<T>) {
         onItemNav = async (item: T): Promise<void> => {
             let ret = await onItemClick(item);
             if (ret) {
-                navigate(ret);
+                // navigate(ret);
             }
         }
     }

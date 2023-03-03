@@ -1,0 +1,13 @@
+
+IDX Book (
+    id,
+    value Value,
+);
+
+ID History (
+    id MINUTE,
+    project ID,         -- 科目
+    value Value,
+    ref ID,             -- 相关凭证
+    INDEX project_id(project, id) UNIQUE,
+);

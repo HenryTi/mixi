@@ -5,6 +5,7 @@ interface CacheItem<T = any> {
 
 export class PageCache {
     private readonly map: Map<string, CacheItem> = new Map();
+    private latest: { url: string; cacheItem: CacheItem };
 
     create(url: string) {
         let uc = this.map.get(url);
@@ -13,22 +14,35 @@ export class PageCache {
         }
     }
     setScrollTop(url: string, scrollTop: number) {
-        let uc = this.map.get(url);
-        if (uc) {
-            uc.scrollTop = scrollTop;
-            return;
+        let cacheItem = this.map.get(url);
+        if (cacheItem) {
+            cacheItem.scrollTop = scrollTop;
         }
-        this.map.set(url, { scrollTop, data: undefined });
+        else {
+            cacheItem = { scrollTop, data: undefined };
+            this.map.set(url, cacheItem);
+        }
+        this.latest = { url, cacheItem };
     }
     setData<T = any>(url: string, data: T) {
-        let uc = this.map.get(url);
-        if (uc) {
-            uc.data = data;
-            return;
+        let cacheItem = this.map.get(url);
+        if (cacheItem) {
+            cacheItem.data = data;
         }
-        this.map.set(url, { scrollTop: undefined, data });
+        else {
+            cacheItem = { scrollTop: undefined, data };
+            this.map.set(url, cacheItem);
+        }
+        this.latest = { url, cacheItem };
     }
     get<T = any>(url: string): CacheItem<T> {
         return this.map.get(url);
+    }
+    getData<T = any>(url: string): T {
+        let ret = this.map.get(url);
+        return ret?.data;
+    }
+    getLatestItem<T>(): CacheItem<T> {
+        return this.latest?.cacheItem;
     }
 }

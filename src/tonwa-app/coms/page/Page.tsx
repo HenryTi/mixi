@@ -1,10 +1,10 @@
-import { Suspense, useEffect, useRef } from "react";
+import { Suspense, useContext, useEffect, useRef } from "react";
 import { useLocation, useNavigate, useNavigationType } from "react-router-dom";
 import { useAtomValue } from "jotai/react";
 import 'font-awesome/css/font-awesome.min.css';
 import '../../css/tonwa-page.css';
-import { useUqAppBase } from "../../UqAppBase";
-import { PageProps, Scroller } from "./PageProps";
+import { ModalContext, useModal, useUqAppBase } from "../../UqAppBase";
+import { PageBackProps, PageProps, Scroller } from "./PageProps";
 import { ButtonPageBack } from "./ButtonPageBack";
 import { PageSpinner } from "./PageSpinner";
 import { useEffectOnce } from "tonwa-com";
@@ -12,10 +12,10 @@ import { useEffectOnce } from "tonwa-com";
 const scrollTimeGap = 100;
 const scrollEdgeGap = 30;
 
-export function PageBase(props: PageProps) {
+function PageBase(props: PageProps) {
+    const uqApp = useUqAppBase();
     let { children, header, back, right, footer, onClosed } = props;
     const divRef = useRef<HTMLDivElement>();
-    const uqApp = useUqAppBase();
     const { pathname } = document.location;
     useEffectOnce(() => {
         let { current: div } = divRef;
@@ -82,7 +82,7 @@ export function PageBase(props: PageProps) {
     return <div ref={divRef} className="tonwa-page">
         <Suspense fallback={<PageSpinner />}>
             <div className='tonwa-page-header position-sticky top-0'>
-                <div className='container px-0 d-flex'>
+                <div className='container px-0'>
                     {header}
                 </div>
             </div>
@@ -100,10 +100,26 @@ export function PageBase(props: PageProps) {
     </div>;
 }
 
-export function PagePublic(props: PageProps) {
-    const navAction = useNavigationType();
+function PageModal(props: PageProps) {
+    const { closeModal } = useModal();
+    const modalProps = { ...props, back: 'close', onBack: () => closeModal(undefined) };
+    return <PageBase {...modalProps as any} />;
+}
+
+function PageNav(props: PageProps) {
     const uqApp = useUqAppBase();
-    const { pathname } = document.location;
+    const navAction = useNavigationType();
+    const navigate = useNavigate();
+    const { user: userAtom, mustLogin, pathLogin } = uqApp;
+    const user = useAtomValue(userAtom);
+    const { pathname } = useLocation();
+    useEffect(() => {
+        if (props.auth === false) return;
+        if (mustLogin && !user && pathLogin) {
+            navigate(pathLogin, { state: pathname });
+        }
+    }, [user, mustLogin, pathLogin]);
+    if (mustLogin && !user) return null;
     useEffectOnce(() => {
         if (navAction !== 'POP') return;
         const urlCache = uqApp.pageCache.get(pathname);
@@ -120,18 +136,13 @@ export function PagePublic(props: PageProps) {
 }
 
 export function Page(props: PageProps) {
-    const uqApp = useUqAppBase();
-    const navigate = useNavigate();
-    const { user: userAtom, mustLogin, pathLogin } = uqApp;
-    const user = useAtomValue(userAtom);
-    const { pathname } = useLocation();
-    useEffect(() => {
-        if (mustLogin && !user && pathLogin) {
-            navigate(pathLogin, { state: pathname });
-        }
-    }, [user, mustLogin, pathLogin]);
-    if (mustLogin && !user) return null;
-    return <PagePublic {...props} />;
+    const isModal = useContext<boolean>(ModalContext);
+    if (isModal === true) {
+        return <PageModal {...props} />;
+    }
+    else {
+        return <PageNav {...props} />;
+    }
 }
 
 function isScrollable(ele: HTMLElement) {

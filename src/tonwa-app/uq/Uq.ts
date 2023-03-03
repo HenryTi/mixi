@@ -34,7 +34,7 @@ export class Uq {
                 if (func !== undefined) return func;
                 func = (this as any)[key];
                 if (func !== undefined) return func;
-                this.errUndefinedEntity(String(key));
+                this.errUnexistEntity(String(key));
             }
         });
         return ret;
@@ -45,13 +45,13 @@ export class Uq {
             get: (target, key, receiver) => {
                 let ret = (target as any)['$' + (key as string)];
                 if (ret !== undefined) return ret;
-                this.errUndefinedEntity(String(key));
+                this.errUnexistEntity(String(key));
             }
         });
         return ret as unknown as UqCore;
     }
 
-    private errUndefinedEntity(entity: string) {
+    private errUnexistEntity(entity: string) {
         let message = `entity ${this.$_uqMan.name}.${entity} not defined`;
         let err = new Error(message);
         err.name = UqError.unexist_entity;

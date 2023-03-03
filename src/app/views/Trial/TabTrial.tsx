@@ -1,18 +1,22 @@
 import { Link } from "react-router-dom";
 import { Page } from "tonwa-app";
-import { FA, LMR } from "tonwa-com";
-import { pathProductList, pathProductNew } from "./routeTrial";
+import { FA, LMR, Sep } from "tonwa-com";
+import { pathContactList, pathContactNew } from "./Contact";
+import { pathProductList, pathProductNew } from "./Product";
+import { pathSheet } from "./Sheet/routeSheet";
 
 interface Cmd {
     to: string;
     caption: string;
 }
 export function TabTrial() {
-    const cmds: Cmd[] = [
+    const cmdProducts: Cmd[] = [
         { to: pathProductNew, caption: '新建产品' },
         { to: pathProductNew, caption: '新建产品2' },
-        { to: pathProductNew, caption: '新建产品3' },
-        { to: pathProductNew, caption: '新建产品4' },
+    ]
+    const cmdContacts: Cmd[] = [
+        { to: pathContactNew, caption: '新建往来单位' },
+        { to: pathContactNew, caption: '新建往来单位2' },
     ]
     function LinkCmd(cmd: Cmd, index: number) {
         const { to, caption } = cmd;
@@ -23,7 +27,7 @@ export function TabTrial() {
     }
     return <Page header="测试" back="none">
         <div className="px-3 py-2 border-bottom small tonwa-bg-gray-1">测试页面</div>
-        {cmds.map((v, index) => LinkCmd(v, index))}
+        {cmdProducts.map((v, index) => LinkCmd(v, index))}
         <Link to={pathProductList} className="px-3 py-2 border-bottom align-items-center">
             产品列表
         </Link>
@@ -37,8 +41,14 @@ export function TabTrial() {
                 </span>
             </LMR>
         </Link>
-        <Link to={pathProductNew} className="px-3 py-2 border-bottom ">新建产品</Link>
-        <Link to={pathProductNew} className="px-3 py-2 border-bottom ">新建产品</Link>
-        <Link to={pathProductNew} className="px-3 py-2 border-bottom ">新建产品</Link>
+        <Sep sep={3} />
+        {cmdContacts.map((v, index) => LinkCmd(v, index))}
+        <Link to={pathContactList} className="px-3 py-2 border-bottom align-items-center">
+            往来单位列表
+        </Link>
+        <Sep sep={3} />
+        <Link to={pathSheet} className="px-3 py-2 border-bottom align-items-center">
+            新建单据
+        </Link>
     </Page>;
 }

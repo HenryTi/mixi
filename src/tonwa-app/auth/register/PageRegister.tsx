@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { BandString } from 'tonwa-com';
 import { Band, BandContainerContext } from 'tonwa-com';
 import { Form, Submit } from 'tonwa-com';
-import { PagePublic } from '../../coms';
+import { Page } from '../../coms';
 import { getSender } from '../tools';
 import { ModalVerify } from './ModalVerify';
 import { PasswordParams } from './PasswordParams';
@@ -19,7 +19,7 @@ interface StartProps {
 interface Props extends StartProps {
     header: string;
     accountLable: string;
-    ModalPassword: FunctionComponent<{ passwordParams: PasswordParams; }>;
+    ModalPassword: FunctionComponent<{ passwordParams: PasswordParams; header: string; }>;
     accountError: (isExists: number) => string;
     sendVerifyOem: string;          // 发送短信或者邮件的时候的厂家标志
 }
@@ -71,9 +71,9 @@ function PageRegisterBase({ header, accountLable, privacy, loginTop, ModalPasswo
             passwordParams.verify = verify;
             let ret = await userApi.checkVerify(account, verify);
             if (ret === 0) return ret;
-            openModal(<ModalPassword passwordParams={passwordParams} />, header);
+            openModal(<ModalPassword header={header} passwordParams={passwordParams} />);
         }
-        openModal(<ModalVerify onVerify={onVerify} passwordParams={passwordParams} />, header);
+        openModal(<ModalVerify header={header} onVerify={onVerify} passwordParams={passwordParams} />);
     }
     /*
         let onEnter = async (name: string, context: Context): Promise<string> => {
@@ -83,7 +83,7 @@ function PageRegisterBase({ header, accountLable, privacy, loginTop, ModalPasswo
         }
     */
 
-    return <PagePublic header={header} footer={privacy}>
+    return <Page auth={false} header={header} footer={privacy}>
         <div className="d-grid">
             <div className="d-grid w-20c my-5 py-5"
                 style={{ marginLeft: 'auto', marginRight: 'auto' }}>
@@ -100,7 +100,7 @@ function PageRegisterBase({ header, accountLable, privacy, loginTop, ModalPasswo
                 </div>
             </div>
         </div>
-    </PagePublic>;
+    </Page>;
 }
 
 export function PageRegister(props: StartProps) {
