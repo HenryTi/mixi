@@ -23,7 +23,7 @@ const codeBV = codes.charCodeAt(4);
 const codeBR = codes.charCodeAt(5);
 
 export abstract class Entity {
-    private jName: string;
+    jName: string;
     schema: any;
     ver: number = 0;
     sys?: boolean;
@@ -33,14 +33,15 @@ export abstract class Entity {
     readonly schemaLocal: LocalCache;
     readonly uqApi: UqApi;
     abstract get typeName(): string;
-    get sName(): string { return this.jName || this.name }
+    // get sName(): string { return this.name || this.jname }
     fields: Field[];
     arrFields: ArrFields[];
     returns: ArrFields[];
 
     constructor(uq: UqMan, name: string, typeId: number) {
+        if (name === undefined) debugger;
         this.uq = uq;
-        this.name = name;
+        this.name = name.toLowerCase();
         this.typeId = typeId;
         this.sys = this.name.indexOf('$') >= 0;
         this.schemaLocal = this.uq.localMap.item(this.name); // new EntityCache(this);

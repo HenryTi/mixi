@@ -26,7 +26,7 @@ export function PageBlogs() {
                 <span>米投原则</span>
             </Link>
             <List items={blogs} className="border-bottom"
-                ItemView={BlogItemView}
+                ViewItem={BlogItemView}
                 onItemClick={blog => 'blog/' + blog.id} />
         </div>
     </Page>

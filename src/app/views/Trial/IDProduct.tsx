@@ -76,6 +76,7 @@ export function PageProductSelect({ onItemClick }: { onItemClick: (item: any) =>
         ItemView={ItemView}
         onItemClick={onItemClick}
         query={JsTicket.SearchProduct}
+        autoOnOpen={true}
     />;
 }
 

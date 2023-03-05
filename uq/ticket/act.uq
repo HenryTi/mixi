@@ -1,0 +1,9 @@
+ACT BookSheetPurchase (
+    id ID,
+) {
+    IF not exists(SELECT a.xi FROM IxMySheet as a WHERE a.ix=$user AND a.xi=id) {
+        RETURN;
+    }
+    WITH IxMySheet IX=$user XI=id DEL;
+    QUEUE QueueStoreIn ADD id;
+};

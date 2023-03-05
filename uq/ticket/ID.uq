@@ -22,13 +22,13 @@ ID Batch (
 QUEUE QueueStoreIn ONCE ONLY;
 QUEUE QueueDelivery ONCE ONLY;
 
-ID PurchaseMain (
+ID SheetPurchase (
     id MINUTE,
     KEY no,
     vendor ID,
 );
 
-ID SaleMain (
+ID SheetSale (
     id MINUTE,
     KEY no,
     customer ID,
@@ -37,14 +37,19 @@ ID SaleMain (
 -- 所有单据的明细
 ID Detail (
     id MINUTE,
-    KEY main ID,            -- PurchaseMain or SaleMain
+    sheet ID,            -- SheetPurchase or SheetSale
     item ID,                -- 商品不同包装或者批次，甚至不同的人或者单位
     value VALUE,
-    INDEX main_id(main, id) UNIQUE,
+    INDEX sheet_id(sheet, id) UNIQUE,
 );
 
 IDX DetailAmount (
     id,
     amount Amount,
     price Amount,
+);
+
+IX *IxMySheet (
+    ix USER,
+    xi
 );

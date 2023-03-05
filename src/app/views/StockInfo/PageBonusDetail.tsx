@@ -48,7 +48,7 @@ export function PageBonusDetail() {
                 <div className="px-3 c6 text-end">分红</div>
                 <div className="px-3 c6 text-end">除权日期</div>
             </div>
-            <List items={dividentOrg.slice().reverse()} ItemView={ItemView} />
+            <List items={dividentOrg.slice().reverse()} ViewItem={ItemView} />
         </>;
     }
 
@@ -67,7 +67,7 @@ export function PageBonusDetail() {
                 <div className="px-3 c8">日期</div>
                 <div className="px-3 c6 text-end">分红</div>
             </div>
-            <List items={bonus} ItemView={ItemView} />
+            <List items={bonus} ViewItem={ItemView} />
         </>
     }
 

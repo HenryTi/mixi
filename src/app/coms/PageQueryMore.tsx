@@ -1,12 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { List, Spinner, useEffectOnce } from "tonwa-com";
 import { UqQuery } from "tonwa-uq";
-import { Page, PageProps, Scroller } from "tonwa-app";
+import { ModalContext, Page, PageProps, Scroller, PageSpinner } from "tonwa-app";
 import { useNavigationType } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
 
 interface PageQueryMoreProps<P, R> extends PageProps {
-    query: UqQuery<P, R>;
+    query: UqQuery<P, R> | ((param: any, pageStart: any, pageSize: number) => Promise<any[]>);
     param: P;
     sortField: string;
     pageStart?: any;
@@ -28,19 +28,32 @@ export class PageMoreCacheData {
     getItem<T>(predicate: (value: T, index: number, obj: T[]) => unknown, thisArg?: any): T | undefined {
         return this.items.find(predicate);
     }
+    removeItem<T>(predicate: (value: T, index: number, obj: T[]) => unknown, thisArg?: any) {
+        let index = this.items.findIndex(predicate);
+        if (index >= 0) {
+            this.items.splice(index, 1);
+        }
+    }
 }
 
 export function PageQueryMore<P, R>(props: PageQueryMoreProps<P, R>) {
-    const navAction = useNavigationType();
-    return <PageQueryMoreBase {...props} isPopFirst={navAction === 'POP'} />;
+    const isModal = useContext<boolean>(ModalContext);
+    if (isModal === true) {
+        return <PageQueryMoreBase {...props} isPopFirst={false} />;
+    }
+    else {
+        return <PageQueryMoreNav {...props} />
+    }
+    function PageQueryMoreNav(props: PageQueryMoreProps<P, R>) {
+        const navAction = useNavigationType();
+        return <PageQueryMoreBase {...props} isPopFirst={navAction === 'POP'} />;
+    }
 }
 
-export function PageQueryMoreModal<P, R>(props: PageQueryMoreProps<P, R>) {
-    return <PageQueryMoreBase {...props} isPopFirst={false} />;
-}
-
-export function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst: boolean }) {
-    let { query, param, sortField, pageStart: pageStartParam, pageSize, pageMoreSize, ItemView, onItemClick, children, tickReload, isPopFirst } = props;
+function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst: boolean }) {
+    let { query, param, sortField, pageStart: pageStartParam, pageSize, pageMoreSize
+        , ItemView, onItemClick, children, tickReload
+        , isPopFirst } = props;
     const [items, setItems] = useState<R[]>(undefined);
     const [loading, setLoading] = useState(false);
     const refValue = useRef({
@@ -56,6 +69,11 @@ export function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPo
     const { pathname } = document.location;
     let urlCache = uqApp.pageCache.get<PageMoreCacheData>(pathname);
     const callQuery = useCallback(async function callQuery(more: boolean = false) {
+        if (param === undefined) {
+            setItems(null);
+            current.items = null;
+            return;
+        }
         let { pageStart, querying, isPopFirst, items } = current;
         if (isPopFirst === true) {
             if (urlCache) {
@@ -67,6 +85,7 @@ export function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPo
         if (loading === true) return;
         setLoading(true);
         current.querying = true;
+        let newItems: any[];
         let arrResult: any[];
         if (current.isPopFirst === true) {
             setTimeout(() => {
@@ -79,12 +98,19 @@ export function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPo
             }
         }
         if (!arrResult) {
-            let ret = await query.page(param, pageStart, more === true ? pageMoreSize : pageSize);
-            let { $page } = ret as any;
-            arrResult = $page;
+            let sz = more === true ? pageMoreSize : pageSize;
+            if (typeof query === 'function') {
+                let ret = await query(param, pageStart, sz);
+                arrResult = ret;
+            }
+            else {
+                let ret = await query.page(param, pageStart, sz);
+                let { $page } = ret as any;
+                arrResult = $page;
+            }
         }
         let { length } = arrResult;
-        let newItems = pageStart === undefined || items === undefined ? arrResult : [...items, ...arrResult];
+        newItems = pageStart === undefined || items === undefined ? arrResult : [...items, ...arrResult];
         setItems(newItems);
         current.items = newItems;
         if (length > 0) {
@@ -123,7 +149,7 @@ export function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPo
     return <Page {...props} onScrollBottom={onScrollBottom}>
         <div id="$$top" />
         {children}
-        <List items={items} ItemView={ItemView} onItemClick={onItemClick} />
+        <List items={items} ViewItem={ItemView} onItemClick={onItemClick} />
         {loading && items !== undefined && <div>
             <Spinner className="m-3 text-info" />
             <div id="$$bottom" />

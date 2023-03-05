@@ -58,7 +58,7 @@ export function ViewAccounts() {
 
     return <>
         <div className="small text-muted pt-2 pb-1 px-3">持仓</div>
-        <List items={miAccounts.accounts} ItemView={ItemViewAccount} onItemClick={onClickAccount} />
+        <List items={miAccounts.accounts} ViewItem={ItemViewAccount} onItemClick={onClickAccount} />
     </>;
 
 }

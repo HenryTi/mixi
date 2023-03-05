@@ -91,12 +91,12 @@ export function PageAccount() {
                 </div>
             </div>
             <List items={holdings}
-                ItemView={ItemViewHolding} />
+                ViewItem={ItemViewHolding} />
             {
                 holdings0 && holdings0.length > 0 && <>
                     <div className="small text-muted px-3 py-1 mt-3">空仓</div>
                     <List items={holdings0}
-                        ItemView={ItemViewHolding} />
+                        ViewItem={ItemViewHolding} />
                 </>
             }
         </div>

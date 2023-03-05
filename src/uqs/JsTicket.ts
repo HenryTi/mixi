@@ -1,6 +1,6 @@
-//=== UqApp builder created on Thu Mar 02 2023 17:27:42 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Sat Mar 04 2023 07:53:24 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { IDXValue, Uq, UqQuery, UqAction, UqID } from "tonwa-uq";
+import { IDXValue, Uq, UqQuery, UqAction, UqID, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 
@@ -133,17 +133,10 @@ export interface Result$getUnitTime {
 	ret: Return$getUnitTimeRet[];
 }
 
-export interface History extends ID {
-	project: number;
-	value: any;
-	ref: number;
+export interface ParamBookSheetPurchase {
+	id: number;
 }
-
-export interface HistoryInActs extends ID {
-	ID?: UqID<any>;
-	project: number | ID;
-	value: any;
-	ref: number | ID;
+export interface ResultBookSheetPurchase {
 }
 
 export interface ParamSaveProduct {
@@ -166,6 +159,32 @@ export interface ReturnSaveContactRet {
 }
 export interface ResultSaveContact {
 	ret: ReturnSaveContactRet[];
+}
+
+export interface History extends ID {
+	project: number;
+	value: any;
+	ref: number;
+}
+
+export interface HistoryInActs extends ID {
+	ID?: UqID<any>;
+	project: number | ID;
+	value: any;
+	ref: number | ID;
+}
+
+export interface ParamGetDetails {
+	id: number;
+}
+export interface ReturnGetDetailsRet {
+	id: number;
+	sheet: number;
+	item: number;
+	value: any;
+}
+export interface ResultGetDetails {
+	ret: ReturnGetDetailsRet[];
 }
 
 export interface ParamSearchProduct {
@@ -234,39 +253,42 @@ export interface BatchInActs extends ID {
 	before: any;
 }
 
-export interface PurchaseMain extends ID {
+export interface SheetPurchase extends ID {
 	no?: string;
 	vendor: number;
 }
 
-export interface PurchaseMainInActs extends ID {
+export interface SheetPurchaseInActs extends ID {
 	ID?: UqID<any>;
 	no?: string;
 	vendor: number | ID;
 }
 
-export interface SaleMain extends ID {
+export interface SheetSale extends ID {
 	no?: string;
 	customer: number;
 }
 
-export interface SaleMainInActs extends ID {
+export interface SheetSaleInActs extends ID {
 	ID?: UqID<any>;
 	no?: string;
 	customer: number | ID;
 }
 
 export interface Detail extends ID {
-	main?: number;
+	sheet: number;
 	item: number;
 	value: any;
 }
 
 export interface DetailInActs extends ID {
 	ID?: UqID<any>;
-	main?: number | ID;
+	sheet: number | ID;
 	item: number | ID;
 	value: any;
+}
+
+export interface IxMySheet extends IX {
 }
 
 export interface ParamActs {
@@ -274,9 +296,10 @@ export interface ParamActs {
 	product?: ProductInActs[];
 	contact?: ContactInActs[];
 	batch?: BatchInActs[];
-	purchaseMain?: PurchaseMainInActs[];
-	saleMain?: SaleMainInActs[];
+	sheetPurchase?: SheetPurchaseInActs[];
+	sheetSale?: SheetSaleInActs[];
 	detail?: DetailInActs[];
+	ixMySheet?: IxMySheet[];
 }
 
 
@@ -295,18 +318,21 @@ export interface UqExt extends Uq {
 	$poked: UqQuery<Param$poked, Result$poked>;
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
-	History: UqID<any>;
+	BookSheetPurchase: UqAction<ParamBookSheetPurchase, ResultBookSheetPurchase>;
 	SaveProduct: UqAction<ParamSaveProduct, ResultSaveProduct>;
 	SaveContact: UqAction<ParamSaveContact, ResultSaveContact>;
+	History: UqID<any>;
+	GetDetails: UqQuery<ParamGetDetails, ResultGetDetails>;
 	SearchProduct: UqQuery<ParamSearchProduct, ResultSearchProduct>;
 	Sp: UqAction<ParamSp, ResultSp>;
 	SearchContact: UqQuery<ParamSearchContact, ResultSearchContact>;
 	Product: UqID<any>;
 	Contact: UqID<any>;
 	Batch: UqID<any>;
-	PurchaseMain: UqID<any>;
-	SaleMain: UqID<any>;
+	SheetPurchase: UqID<any>;
+	SheetSale: UqID<any>;
 	Detail: UqID<any>;
+	IxMySheet: UqIX<any>;
 }
 
 
@@ -613,34 +639,18 @@ export const uqSchema={
             }
         ]
     },
-    "history": {
-        "name": "History",
-        "type": "id",
+    "booksheetpurchase": {
+        "name": "BookSheetPurchase",
+        "type": "action",
         "private": false,
         "sys": true,
         "fields": [
             {
                 "name": "id",
-                "type": "id",
-                "null": false
-            },
-            {
-                "name": "project",
-                "type": "id"
-            },
-            {
-                "name": "value",
-                "type": "datatype"
-            },
-            {
-                "name": "ref",
                 "type": "id"
             }
         ],
-        "keys": [] as any,
-        "global": false,
-        "idType": 3,
-        "isMinute": true
+        "returns": [] as any
     },
     "saveproduct": {
         "name": "SaveProduct",
@@ -695,6 +705,71 @@ export const uqSchema={
                     {
                         "name": "id",
                         "type": "id"
+                    }
+                ]
+            }
+        ]
+    },
+    "history": {
+        "name": "History",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "project",
+                "type": "id"
+            },
+            {
+                "name": "value",
+                "type": "datatype"
+            },
+            {
+                "name": "ref",
+                "type": "id"
+            }
+        ],
+        "keys": [] as any,
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "getdetails": {
+        "name": "GetDetails",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "id"
+                    },
+                    {
+                        "name": "item",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "datatype"
                     }
                 ]
             }
@@ -888,8 +963,8 @@ export const uqSchema={
         "idType": 3,
         "isMinute": true
     },
-    "purchasemain": {
-        "name": "PurchaseMain",
+    "sheetpurchase": {
+        "name": "SheetPurchase",
         "type": "id",
         "private": false,
         "sys": true,
@@ -920,8 +995,8 @@ export const uqSchema={
         "idType": 3,
         "isMinute": true
     },
-    "salemain": {
-        "name": "SaleMain",
+    "sheetsale": {
+        "name": "SheetSale",
         "type": "id",
         "private": false,
         "sys": true,
@@ -964,7 +1039,7 @@ export const uqSchema={
                 "null": false
             },
             {
-                "name": "main",
+                "name": "sheet",
                 "type": "id"
             },
             {
@@ -976,14 +1051,30 @@ export const uqSchema={
                 "type": "datatype"
             }
         ],
-        "keys": [
-            {
-                "name": "main",
-                "type": "id"
-            }
-        ],
+        "keys": [] as any,
         "global": false,
         "idType": 3,
         "isMinute": true
+    },
+    "ixmysheet": {
+        "name": "IxMySheet",
+        "type": "ix",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "ix",
+                "type": "id",
+                "ID": "$user",
+                "tuid": "$user"
+            },
+            {
+                "name": "xi",
+                "type": "id"
+            }
+        ],
+        "ixx": false,
+        "hasSort": false,
+        "xiType": 0
     }
 }

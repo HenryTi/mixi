@@ -389,6 +389,7 @@ export class UqMan {
     readonly historyArr: History[] = [];
     readonly pendingArr: Pending[] = [];
 
+    /*
     async loadEntities(): Promise<string> {
         try {
             let entities = this.localEntities.get();
@@ -403,18 +404,28 @@ export class UqMan {
             return err as any;
         }
     }
+    */
 
-    buildEntities(entities: any) {
-        if (entities === undefined) {
-            debugger;
-        }
-        this.localEntities.set(entities);
-        let { access, tuids, role, version, ids } = entities;
-        this.uqVersion = version;
+    buildEntities(/*entities: any*/) {
+        // this.localEntities.set(entities);
+        // let { access, tuids, role, version, ids } = entities;
+        // this.uqVersion = version;
+        /*
         this.Role = this.buildRole(role?.names);
         this.buildTuids(tuids);
         this.buildIds(ids);
         this.buildAccess(access);
+        */
+        this.buildEntityFromUqSchema();
+    }
+
+    private buildEntityFromUqSchema() {
+        for (let i in this.uqSchema) {
+            let schema = this.uqSchema[i];
+            let { name, type } = schema;
+            let entity = this.fromType(name, type);
+            entity.buildSchema(schema);
+        }
     }
 
     private buildRole(roleNames: { [key: string]: string[] }) {
@@ -614,7 +625,7 @@ export class UqMan {
         this.ixArr.push(ix);
         return ix;
     }
-    private fromType(name: string, type: string) {
+    private fromType(name: string, type: string): Entity {
         let parts = type.split('|');
         type = parts[0];
         let id = Number(parts[1]);
@@ -627,17 +638,17 @@ export class UqMan {
                 //let tuid = this.newTuid(name, id);
                 //tuid.sys = false;
                 break;
-            case 'id': this.newID(name, id); break;
-            case 'idx': this.newIDX(name, id); break;
-            case 'ix': this.newIX(name, id); break;
-            case 'action': this.newAction(name, id); break;
-            case 'query': this.newQuery(name, id); break;
-            case 'book': this.newBook(name, id); break;
-            case 'map': this.newMap(name, id); break;
-            case 'history': this.newHistory(name, id); break;
-            case 'sheet': this.newSheet(name, id); break;
-            case 'pending': this.newPending(name, id); break;
-            case 'enum': this.newEnum(name, id); break;
+            case 'id': return this.newID(name, id);
+            case 'idx': return this.newIDX(name, id);
+            case 'ix': return this.newIX(name, id);
+            case 'action': return this.newAction(name, id);
+            case 'query': return this.newQuery(name, id);
+            case 'book': return this.newBook(name, id);
+            case 'map': return this.newMap(name, id);
+            case 'history': return this.newHistory(name, id);
+            case 'sheet': return this.newSheet(name, id);
+            case 'pending': return this.newPending(name, id);
+            case 'enum': return this.newEnum(name, id);
         }
     }
     private fromObj(name: string, obj: any) {
@@ -854,8 +865,11 @@ export class UqMan {
     }
 
     protected ActIX = async (param: ParamActIX<any>): Promise<number[]> => {
-        let ret = await this.apiActIX(param, EnumResultType.data);
-        return (ret[0].ret as string).split('\t').map(v => Number(v));
+        let result = await this.apiActIX(param, EnumResultType.data);
+        let str: string = result[0].ret as string;
+        let arr = str.trim().split('\t');
+        let ret = arr.map(v => Number(v));
+        return ret;
     }
 
     protected $ActIX = async (param: ParamActIX<any>): Promise<string> => {

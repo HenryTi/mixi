@@ -11,7 +11,7 @@ interface ViewGroupsProps<T extends MGroup> {
 
 export function ViewGroups<T extends MGroup>({ miGroups, onGroupClick }: ViewGroupsProps<T>) {
     return <List items={miGroups.groups}
-        ItemView={ItemViewGroup}
+        ViewItem={ItemViewGroup}
         onItemClick={onGroupClick}
         className="d-flex flex-wrap bg-white p-1" />;
 

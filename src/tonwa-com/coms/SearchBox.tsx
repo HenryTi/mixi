@@ -29,7 +29,6 @@ export function SearchBox(props: SearchBoxProps) {
             key = key.trim();
             if (key === '') key = undefined;
         }
-        console.log('key = ' + key);
         if (props.allowEmptySearch === true) {
         }
         else {

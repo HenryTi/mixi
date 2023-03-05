@@ -45,7 +45,7 @@ export function PageProfitDetail() {
                 <div className="px-3 c8 text-end">营业利润</div>
                 <div className="px-3 c8 text-end">净利润</div>
             </div>
-            <List items={items} ItemView={ItemView} />
+            <List items={items} ViewItem={ItemView} />
         </>
     }
 

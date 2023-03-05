@@ -6,3 +6,4 @@ export * from './None';
 export * from './LabelRowEdit';
 export * from './page';
 export * from './PropEdit';
+export * from './IDView';

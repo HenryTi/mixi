@@ -31,10 +31,10 @@ export class UQsLoader {
     }
 
     // 返回 errors, 每个uq一行
-    async loadUqs(): Promise<string[]> {
+    async loadUqs(): Promise<void> {
         this.uqsMan = new UQsMan(this.net, this.uqsSchema);
         let uqs = await this.loadUqData(this.uqConfigs);
-        return await this.uqsMan.buildUqs(uqs, this.uqConfigVersion, this.uqConfigs, this.isBuildingUQ);
+        this.uqsMan.buildUqs(uqs, this.uqConfigVersion, this.uqConfigs, this.isBuildingUQ);
     }
 
     private async loadUqData(uqConfigs: UqConfig[]): Promise<UqData[]> {

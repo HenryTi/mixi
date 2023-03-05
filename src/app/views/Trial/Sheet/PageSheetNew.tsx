@@ -3,14 +3,14 @@ import { useUqApp } from "app/UqApp";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FA, LMR, SearchBox } from "tonwa-com";
-import { pathSheetMain } from "./routeSheet";
+import { pathSheetEdit } from "./routeSheet";
 
-export function PageSheetStart() {
+export function PageSheetNew() {
     const uqApp = useUqApp();
     const { JsTicket } = uqApp.uqs;
     const navigate = useNavigate();
     const [searchParam, setSearchParam] = useState({ key: undefined as string });
-    const right = <SearchBox onSearch={onSearch} placeholder="往来单位" />;
+    const right = <SearchBox className="px-3 py-2" onSearch={onSearch} placeholder="往来单位" />;
     async function onSearch(key: string) {
         setSearchParam({
             key
@@ -25,9 +25,20 @@ export function PageSheetStart() {
     }
     const query = JsTicket.SearchContact;
     async function onItemClick(item: any) {
-        navigate(`../${pathSheetMain}`, { state: item, replace: true });
+        let no = await JsTicket.IDNO({ ID: JsTicket.SheetPurchase });
+        let [id] = await JsTicket.ActIX({
+            IX: JsTicket.IxMySheet,
+            ID: JsTicket.SheetPurchase,
+            values: [{
+                ix: undefined,
+                xi: {
+                    no, vendor: item.id
+                }
+            }]
+        });
+        navigate(`../${pathSheetEdit}/${id}`, { replace: true });
     }
-    return <PageQueryMore header="开始" right={right}
+    return <PageQueryMore header="开始"
         query={query}
         param={searchParam}
         sortField="id"
@@ -36,5 +47,6 @@ export function PageSheetStart() {
         pageSize={4}
         pageMoreSize={1}
     >
+        {right}
     </PageQueryMore>;
 }

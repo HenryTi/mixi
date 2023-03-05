@@ -1,4 +1,13 @@
 
+Query GetDetails (
+    id ID,
+)
+RETURNS ret (
+    * of Detail,
+) {
+    INTO ret SELECT * a FROM Detail as a WHERE a.sheet=id;
+};
+
 QUERY SearchProduct(
     key CHAR(50),
 )

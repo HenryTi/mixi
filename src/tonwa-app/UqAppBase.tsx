@@ -41,16 +41,13 @@ export abstract class UqAppBase<U = any> {
     private readonly appConfig: AppConfig;
     private readonly uqConfigs: UqConfig[];
     private readonly uqsSchema: { [uq: string]: any; };
-    //private readonly stores: Store[];          // 用于在同一个模块中传递
+    private readonly cache = new Map<string, any>();
     private localData: LocalData;
     private roleNames: { [key: string]: RoleName };
     readonly net: Net;
     readonly userApi: UserApi;
     readonly version: string;    // version in appConfig;
     readonly mustLogin: boolean;
-    //readonly responsive: {
-    //    user: User;
-    //}
     readonly refreshTime = atom(Date.now() / 1000);
     readonly user = atom(undefined as User);
     readonly modal = {
@@ -90,6 +87,14 @@ export abstract class UqAppBase<U = any> {
     }
 
     abstract get pathLogin(): string;
+    fromCache(key: string, constructor: new (uqApp: UqAppBase) => any) {
+        let ret = this.cache.get(key);
+        if (ret === undefined) {
+            ret = new constructor(this);
+            this.cache.set(key, ret);
+        }
+        return ret;
+    }
 
     protected get defaultUqRoleNames(): { [lang: string]: any } { return undefined }
     loginUnit(userUnit: UserUnit) {
@@ -102,7 +107,6 @@ export abstract class UqAppBase<U = any> {
         setAtomValue(this.modal.stack, []);
     }
     get userUnit() { return this.uqUnit.userUnit; }
-    // get me() { return this.user.read().user.read() return this.responsive.user?.id; }
     hasRole(role: string[] | string): boolean {
         if (this.uqUnit === undefined) return false;
         return this.uqUnit.hasRole(role);
@@ -232,30 +236,23 @@ export const ModalContext = React.createContext(undefined);
 export function useModal() {
     const { modal } = useUqAppBase();
     const { stack: modalStackAtom } = modal;
-    const [modalStack, setModalStack] = useAtom(modalStackAtom);
     async function openModal<T = any>(element: JSX.Element, onClosed?: (result: any) => void): Promise<T> {
         return new Promise<T>((resolve, reject) => {
             if (React.isValidElement(element) !== true) {
                 alert('is not valid element');
                 return;
             }
-            /*
-            function Modal() {
-                // const { closeModal } = useModal();
-                return <Page header={caption}
-                    onBack={() => closeModal(undefined)}
-                    back={'close'}>{element}</Page>;
-            }
-            */
             let modal = <ModalContext.Provider value={true}>
                 {element}
             </ModalContext.Provider>;
-            setModalStack([...modalStack, [modal, resolve, onClosed]]);
+            let modalStack = getAtomValue(modalStackAtom);
+            setAtomValue(modalStackAtom, [...modalStack, [modal, resolve, onClosed]]);
         })
     }
     function closeModal(result?: any) {
+        let modalStack = getAtomValue(modalStackAtom);
         let [, resolve, onClosed] = modalStack.pop();
-        setModalStack([...modalStack]);
+        setAtomValue(modalStackAtom, [...modalStack]);
         resolve(result);
         onClosed?.(result);
     }

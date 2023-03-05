@@ -7,7 +7,6 @@ export class UQsMan {
     private readonly net: Net;
     private readonly uqsSchema: { [uq: string]: any; };
     private collection: { [uqLower: string]: UqMan };
-    // proxy: any;
     uqMans: UqMan[] = [];
 
     constructor(net: Net, uqsSchema: { [uq: string]: any; }) {
@@ -17,8 +16,8 @@ export class UQsMan {
         this.collection = {};
     }
 
-    async buildUqs(uqDataArr: UqData[], version: string, uqConfigs: UqConfig[], isBuildingUQ: boolean): Promise<string[]> {
-        await this.init(uqDataArr);
+    buildUqs(uqDataArr: UqData[], version: string, uqConfigs: UqConfig[], isBuildingUQ: boolean) {
+        this.init(uqDataArr);
 
         let localMap = this.net.createLocalMap('$app');
         let localCacheVersion = localMap.child('version');
@@ -30,12 +29,15 @@ export class UQsMan {
             localCacheVersion.set(version);
         }
 
-        let retErrors = await this.load();
+        // let retErrors = await 
+        this.buildUqEntities();
+        /*
         if (retErrors.length > 0) return retErrors;
         if (isBuildingUQ === false) {
             this.setTuidImportsLocal();
         }
         if (retErrors.length > 0) return retErrors;
+        */
         if (uqConfigs) {
             for (let uqConfig of uqConfigs) {
                 let { dev, name, alias } = uqConfig;
@@ -59,8 +61,7 @@ export class UQsMan {
         return roles;
     }
 
-    async init(uqsData: UqData[]): Promise<void> {
-        //let promiseInits: PromiseLike<void>[] = [];
+    init(uqsData: UqData[]) {
         for (let uqData of uqsData) {
             let { uqOwner, ownerAlias, uqName, uqAlias } = uqData;
 
@@ -75,7 +76,6 @@ export class UQsMan {
                 let uqSchema = this.uqsSchema[uqFullName];
                 uq = new UqMan(this.net, uqData, uqSchema);
                 this.collection[uqFullName] = uq;
-                //promiseInits.push(uq.init());
             }
             this.uqMans.push(uq);
             let lower = uqFullName.toLowerCase();
@@ -88,12 +88,11 @@ export class UQsMan {
             lower = uqFullName.toLowerCase();
             this.collection[lower] = uq;
         }
-        //await Promise.all(promiseInits);
     }
 
-    async load(): Promise<string[]> {
-        let retErrors: string[] = [];
-        let promises: PromiseLike<string>[] = [];
+    buildUqEntities(): void {
+        //let retErrors: string[] = [];
+        //let promises: PromiseLike<string>[] = [];
         //let lowerUqNames:string[] = [];
         // collection有小写名字，还有正常名字
         //for (let i in this.collection) {
@@ -102,8 +101,10 @@ export class UQsMan {
             //if (lowerUqNames.indexOf(lower) >= 0) continue;
             //lowerUqNames.push(lower);
             //let uq = this.collection[i];
-            promises.push(uqMan.loadEntities());
+            // promises.push(uqMan.loadEntities());
+            uqMan.buildEntities();
         }
+        /*
         let results = await Promise.all(promises);
         for (let result of results) {
             let retError = result; // await cUq.loadSchema();
@@ -112,6 +113,7 @@ export class UQsMan {
             }
         }
         return retErrors;
+        */
     }
 
     /*

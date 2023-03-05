@@ -1,5 +1,4 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Sep, Spinner } from "../coms";
 
 interface ItemProps<T> {
@@ -9,7 +8,7 @@ interface ItemProps<T> {
 export interface ListPropsWithoutItems<T> {
     className?: string;
     itemKey?: string | ((item: T) => string | number);
-    ItemView?: (props: ItemProps<T>) => JSX.Element;
+    ViewItem?: (props: ItemProps<T>) => JSX.Element;
     sep?: JSX.Element;
     none?: JSX.Element;
     loading?: JSX.Element;
@@ -23,7 +22,7 @@ export interface ListProps<T> extends ListPropsWithoutItems<T> {
 
 export function List<T>(props: ListProps<T>) {
     let [showLoading, setShowLoding] = useState(false);
-    let { items, className, itemKey, ItemView, onItemClick, onItemSelect, sep, none, loading } = props;
+    let { items, className, itemKey, ViewItem: ItemView, onItemClick, onItemSelect, sep, none, loading } = props;
     className = className ?? '';
     useEffect(() => {
         // loading超过200ms，显示spinner
@@ -31,7 +30,8 @@ export function List<T>(props: ListProps<T>) {
             setShowLoding(true);
         }, 200);
     }, []);
-    if (!items) {
+    if (items === null) return null;
+    if (items === undefined) {
         if (showLoading === false) return null;
         if (loading) return loading;
         return <Spinner className="mx-3 my-2 text-primary" />;
@@ -42,7 +42,7 @@ export function List<T>(props: ListProps<T>) {
         return <div className="mx-3 my-2 text-muted">-</div>;
     }
 
-    ItemView = ItemView ?? DefaultItemView;
+    ItemView = ItemView ?? DefaultViewItem;
     let renderItem: (item: T, index: number) => JSX.Element;
     function onCheckChange(item: T, evt: ChangeEvent<HTMLInputElement>): void {
         onItemSelect(item, evt.currentTarget.checked);
@@ -120,7 +120,7 @@ export function List<T>(props: ListProps<T>) {
     })}</ul>;
 }
 
-function DefaultItemView<T>(itemProps: ItemProps<T>) {
+function DefaultViewItem<T>(itemProps: ItemProps<T>) {
     let { value } = itemProps;
     let cn = 'px-3 py-2';
     return <div className={cn}>{JSON.stringify(value)}</div>;

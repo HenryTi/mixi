@@ -1,11 +1,11 @@
 import { Route } from "react-router-dom";
-import { routeContact } from "./Contact";
-import { routeProduct, } from "./Product";
-import { routeSheet } from "./Sheet";
+import { routeContact } from "./IDContact";
+import { routeProduct, } from "./IDProduct";
+import { routeSheetPurchase } from "./SheetPurchase";
 
 export const pathTrial = 'trial';
 export const routeTrial = <Route path={pathTrial + '/*'}>
     {routeProduct}
     {routeContact}
-    {routeSheet}
+    {routeSheetPurchase}
 </Route>;

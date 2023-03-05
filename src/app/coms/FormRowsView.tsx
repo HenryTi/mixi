@@ -192,7 +192,7 @@ export function FormRowsView({ rows, register, errors }: FormRowsViewProps) {
             default:
                 let newOptions = registerOptions(type, options);
                 return <BandInput label={label} type={type} errors={errors}
-                    inputProps={register(name, newOptions)} defaultValue={options.value} />;
+                    inputProps={register(name, newOptions)} defaultValue={options?.value} />;
             case 'submit':
                 return <Band><input type="submit" className="btn btn-primary" value={label ?? '提交'} /></Band>;
         }

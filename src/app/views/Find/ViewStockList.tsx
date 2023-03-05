@@ -31,5 +31,5 @@ export function ViewStockList({ stocks, renderRowRight, onClickName }: ViewStock
     renderRowRight = renderRowRight ?? function (stock: Stock & StockValue) {
         return <>right</>;
     };
-    return <List items={stocks} ItemView={ItemViewStock} />;
+    return <List items={stocks} ViewItem={ItemViewStock} />;
 }
