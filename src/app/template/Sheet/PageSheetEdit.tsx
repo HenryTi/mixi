@@ -14,8 +14,6 @@ export function PageSheetEdit({ id, Parts }: PartsProps<SheetParts> & { id: numb
     const uqApp = useUqApp();
     const parts = uqApp.fromCache(Parts);
     const { uq, IDDetail, QueryGetDetails, ActBookSheet, caption, PageDetailItemSelect, PageSheetDetail, ViewItemSheet } = parts;
-    // const { id } = useParams();
-    //const navigate = useNavigate();
     const refItemsAtom = useRef(atom([] as any[]));
     const [visible, setVisible] = useState(true);
     const [sheet, setSheet] = useState({} as SheetPurchase);
