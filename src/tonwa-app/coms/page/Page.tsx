@@ -13,6 +13,7 @@ const scrollTimeGap = 100;
 const scrollEdgeGap = 30;
 
 function PageBase(props: PageProps) {
+    console.error('PageBase');
     const uqApp = useUqAppBase();
     let { children, header, back, right, footer, onClosed } = props;
     const divRef = useRef<HTMLDivElement>();
@@ -119,7 +120,7 @@ function PageNav(props: PageProps) {
             navigate(pathLogin, { state: pathname });
         }
     }, [user, mustLogin, pathLogin]);
-    if (mustLogin && !user) return null;
+    if (props.auth !== false && mustLogin && !user) return null;
     useEffectOnce(() => {
         if (navAction !== 'POP') return;
         const urlCache = uqApp.pageCache.get(pathname);

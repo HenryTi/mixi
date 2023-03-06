@@ -1,9 +1,7 @@
 import { PageMoreCacheData } from "app/coms";
 import { useRef, useState } from "react";
-//import { useNavigate, useParams } from "react-router-dom";
 import { IDView, Page, useModal } from "tonwa-app";
-import { ButtonAsync, FA, getAtomValue, List, LMR, Sep, setAtomValue, useEffectOnce, wait } from "tonwa-com";
-// import { PageProductSelect } from "../Product";
+import { ButtonAsync, getAtomValue, List, LMR, Sep, setAtomValue, useEffectOnce } from "tonwa-com";
 import { atom, useAtomValue } from "jotai";
 import { Product, SheetPurchase } from "uqs/JsTicket";
 import { SheetParts } from "./SheetParts";

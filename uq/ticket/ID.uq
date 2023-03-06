@@ -11,6 +11,13 @@ ID Contact (
     name CHAR(100),
 );
 
+
+ENUM ContactType (vendor = 1, customer = 2);
+IX IxContactType (
+    ix Contact,
+    xi ENUM ContactType Index,
+);
+
 ID Batch (
     id MINUTE,
     KEY product ID,

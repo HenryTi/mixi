@@ -1,5 +1,5 @@
 import { PageQueryMore } from "app/coms";
-import { UqApp, useUqApp } from "app/UqApp";
+import { useUqApp } from "app/UqApp";
 import { IDView, LinkModal } from "tonwa-app";
 import { PartsProps } from "../Parts";
 import { SheetParts } from "./SheetParts";
