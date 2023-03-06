@@ -34,12 +34,22 @@ ID SheetSale (
     customer ID,
 );
 
--- 所有单据的明细
+-- 所有单据的明细，单值
 ID Detail (
     id MINUTE,
     sheet ID,            -- SheetPurchase or SheetSale
     item ID,                -- 商品不同包装或者批次，甚至不同的人或者单位
     value VALUE,
+    INDEX sheet_id(sheet, id) UNIQUE,
+);
+
+ID DetailQPA (
+    id MINUTE,
+    sheet ID,            -- SheetPurchase or SheetSale
+    item ID,                -- 商品不同包装或者批次，甚至不同的人或者单位
+    quantity Quantity,
+    price Price,
+    amount Amount,
     INDEX sheet_id(sheet, id) UNIQUE,
 );
 

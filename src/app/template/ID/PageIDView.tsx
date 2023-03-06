@@ -1,11 +1,13 @@
 import { PageMoreCacheData } from "app/coms";
-import { useUqApp } from "app/UqApp";
+import { UqApp, useUqApp } from "app/UqApp";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import { LabelRowEdit, Page } from "tonwa-app";
 import { Sep } from "tonwa-com";
-import { UqID } from "tonwa-uq";
+import { PartsProps } from "../Parts";
+import { IDParts, IDViewRowProps } from "./IDParts";
 
+/*
 export interface RowProps {
     name: string;
     label: string;
@@ -17,9 +19,10 @@ interface PageIDViewProps {
     ID: UqID<any>;
     rows: RowProps[];
 }
-
-export function PageIDView({ header, rows, ID }: PageIDViewProps) {
+*/
+export function PageIDView({ Parts }: PartsProps<IDParts>) {
     const uqApp = useUqApp();
+    const { caption, viewRows, ID } = uqApp.fromCache(Parts);
     const { id: idString } = useParams();
     const id = Number(idString);
     const { JsTicket } = uqApp.uqs;
@@ -30,7 +33,7 @@ export function PageIDView({ header, rows, ID }: PageIDViewProps) {
         refetchOnWindowFocus: false,
         cacheTime: 0,
     });
-    function Row({ label, name, readonly }: RowProps) {
+    function Row({ label, name, readonly }: IDViewRowProps) {
         let value = data[name];
         console.log(`prop value ${name}`, value);
         async function onValueChanged(value: string | number) {
@@ -50,7 +53,7 @@ export function PageIDView({ header, rows, ID }: PageIDViewProps) {
             <Sep />
         </>
     }
-    return <Page header={header}>
-        {rows.map((v, index) => <Row key={index} {...v} />)}
+    return <Page header={caption}>
+        {viewRows.map((v, index) => <Row key={index} {...v} />)}
     </Page>;
 }

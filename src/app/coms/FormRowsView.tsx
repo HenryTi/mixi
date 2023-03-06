@@ -2,7 +2,8 @@ import { HTMLInputTypeAttribute, ReactNode } from "react";
 import { UseFormRegisterReturn, FieldErrorsImpl, RegisterOptions, UseFormRegister } from "react-hook-form";
 
 export interface BandProps {
-    label?: string;
+    label?: string | JSX.Element;
+    labelClassName?: string;
     children: ReactNode;
 }
 
@@ -38,9 +39,9 @@ export function BandInput(props: BandInputProps) {
     </Band>
 }
 
-export function Band({ label, children }: BandProps) {
+export function Band({ label, labelClassName, children }: BandProps) {
     return <div className={'mb-3 row'}>
-        <label className="form-label col-2">{label}</label>
+        <label className={(labelClassName ?? '') + ' form-label col-2'}>{label}</label>
         <div className="col-10" >
             {children}
         </div>
@@ -197,6 +198,5 @@ export function FormRowsView({ rows, register, errors }: FormRowsViewProps) {
                 return <Band><input type="submit" className="btn btn-primary" value={label ?? '提交'} /></Band>;
         }
     }
-    console.log('FormRowsView', rows);
     return <>{rows.map((row, index) => <FormRowView key={index} row={row} />)}</>
 }

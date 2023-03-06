@@ -8,6 +8,15 @@ RETURNS ret (
     INTO ret SELECT * a FROM Detail as a WHERE a.sheet=id;
 };
 
+Query GetDetailQPAs (
+    id ID,
+)
+RETURNS ret (
+    * of DetailQPA,
+) {
+    INTO ret SELECT * a FROM DetailQPA as a WHERE a.sheet=id;
+};
+
 QUERY SearchProduct(
     key CHAR(50),
 )

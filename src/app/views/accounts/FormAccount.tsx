@@ -125,7 +125,7 @@ export class VBuyNew extends VBuy {
             label: '股票',
             pickId: this.controller.createPickStockId(),
             placeholder: '请选择股票',
-            Templet: this.renderStockPick,
+            Template: this.renderStockPick,
         } as UiIdItem;
     }
 

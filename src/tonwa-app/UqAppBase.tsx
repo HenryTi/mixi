@@ -7,7 +7,6 @@ import {
     Guest, LocalDb, NetProps, UqConfig, User, UserApi
     , createUQsMan, Net, UqUnit, UserUnit, UQsMan
 } from 'tonwa-uq';
-import { Page } from './coms';
 import { uqsProxy } from './uq';
 import { AutoRefresh } from './AutoRefresh';
 import { LocalData } from './tools';
@@ -41,7 +40,6 @@ export abstract class UqAppBase<U = any> {
     private readonly appConfig: AppConfig;
     private readonly uqConfigs: UqConfig[];
     private readonly uqsSchema: { [uq: string]: any; };
-    private readonly cache = new Map<string, any>();
     private localData: LocalData;
     private roleNames: { [key: string]: RoleName };
     readonly net: Net;
@@ -87,14 +85,6 @@ export abstract class UqAppBase<U = any> {
     }
 
     abstract get pathLogin(): string;
-    fromCache(key: string, constructor: new (uqApp: UqAppBase) => any) {
-        let ret = this.cache.get(key);
-        if (ret === undefined) {
-            ret = new constructor(this);
-            this.cache.set(key, ret);
-        }
-        return ret;
-    }
 
     protected get defaultUqRoleNames(): { [lang: string]: any } { return undefined }
     loginUnit(userUnit: UserUnit) {

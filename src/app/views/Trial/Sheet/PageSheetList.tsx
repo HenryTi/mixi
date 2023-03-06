@@ -51,7 +51,7 @@ export function PageSheetList() {
         query={query}
         pageSize={15}
         pageMoreSize={5}
-        ItemView={ItemView}
+        ViewItem={ItemView}
     >
         <div className="px-3 py-2 border-bottom">
             <Link className="btn btn-primary" to={`../${pathSheetNew}`}>新建订单</Link>

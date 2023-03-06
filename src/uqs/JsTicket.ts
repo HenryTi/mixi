@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sat Mar 04 2023 07:53:24 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Sun Mar 05 2023 20:27:35 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqQuery, UqAction, UqID, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -163,14 +163,14 @@ export interface ResultSaveContact {
 
 export interface History extends ID {
 	project: number;
-	value: any;
+	value: number;
 	ref: number;
 }
 
 export interface HistoryInActs extends ID {
 	ID?: UqID<any>;
 	project: number | ID;
-	value: any;
+	value: number;
 	ref: number | ID;
 }
 
@@ -181,10 +181,25 @@ export interface ReturnGetDetailsRet {
 	id: number;
 	sheet: number;
 	item: number;
-	value: any;
+	value: number;
 }
 export interface ResultGetDetails {
 	ret: ReturnGetDetailsRet[];
+}
+
+export interface ParamGetDetailQPAs {
+	id: number;
+}
+export interface ReturnGetDetailQPAsRet {
+	id: number;
+	sheet: number;
+	item: number;
+	quantity: number;
+	price: number;
+	amount: number;
+}
+export interface ResultGetDetailQPAs {
+	ret: ReturnGetDetailQPAsRet[];
 }
 
 export interface ParamSearchProduct {
@@ -278,14 +293,31 @@ export interface SheetSaleInActs extends ID {
 export interface Detail extends ID {
 	sheet: number;
 	item: number;
-	value: any;
+	value: number;
 }
 
 export interface DetailInActs extends ID {
 	ID?: UqID<any>;
 	sheet: number | ID;
 	item: number | ID;
-	value: any;
+	value: number;
+}
+
+export interface DetailQPA extends ID {
+	sheet: number;
+	item: number;
+	quantity: number;
+	price: number;
+	amount: number;
+}
+
+export interface DetailQPAInActs extends ID {
+	ID?: UqID<any>;
+	sheet: number | ID;
+	item: number | ID;
+	quantity: number;
+	price: number;
+	amount: number;
 }
 
 export interface IxMySheet extends IX {
@@ -299,6 +331,7 @@ export interface ParamActs {
 	sheetPurchase?: SheetPurchaseInActs[];
 	sheetSale?: SheetSaleInActs[];
 	detail?: DetailInActs[];
+	detailQPA?: DetailQPAInActs[];
 	ixMySheet?: IxMySheet[];
 }
 
@@ -323,6 +356,7 @@ export interface UqExt extends Uq {
 	SaveContact: UqAction<ParamSaveContact, ResultSaveContact>;
 	History: UqID<any>;
 	GetDetails: UqQuery<ParamGetDetails, ResultGetDetails>;
+	GetDetailQPAs: UqQuery<ParamGetDetailQPAs, ResultGetDetailQPAs>;
 	SearchProduct: UqQuery<ParamSearchProduct, ResultSearchProduct>;
 	Sp: UqAction<ParamSp, ResultSp>;
 	SearchContact: UqQuery<ParamSearchContact, ResultSearchContact>;
@@ -332,6 +366,7 @@ export interface UqExt extends Uq {
 	SheetPurchase: UqID<any>;
 	SheetSale: UqID<any>;
 	Detail: UqID<any>;
+	DetailQPA: UqID<any>;
 	IxMySheet: UqIX<any>;
 }
 
@@ -727,7 +762,9 @@ export const uqSchema={
             },
             {
                 "name": "value",
-                "type": "datatype"
+                "type": "dec",
+                "scale": 4,
+                "precision": 18
             },
             {
                 "name": "ref",
@@ -769,7 +806,59 @@ export const uqSchema={
                     },
                     {
                         "name": "value",
-                        "type": "datatype"
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    }
+                ]
+            }
+        ]
+    },
+    "getdetailqpas": {
+        "name": "GetDetailQPAs",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "id"
+                    },
+                    {
+                        "name": "item",
+                        "type": "id"
+                    },
+                    {
+                        "name": "quantity",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "price",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "amount",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
                     }
                 ]
             }
@@ -1048,7 +1137,52 @@ export const uqSchema={
             },
             {
                 "name": "value",
-                "type": "datatype"
+                "type": "dec",
+                "scale": 4,
+                "precision": 18
+            }
+        ],
+        "keys": [] as any,
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "detailqpa": {
+        "name": "DetailQPA",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "sheet",
+                "type": "id"
+            },
+            {
+                "name": "item",
+                "type": "id"
+            },
+            {
+                "name": "quantity",
+                "type": "dec",
+                "scale": 4,
+                "precision": 18
+            },
+            {
+                "name": "price",
+                "type": "dec",
+                "scale": 4,
+                "precision": 18
+            },
+            {
+                "name": "amount",
+                "type": "dec",
+                "scale": 4,
+                "precision": 18
             }
         ],
         "keys": [] as any,

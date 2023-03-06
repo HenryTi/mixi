@@ -20,7 +20,7 @@ export function ButtonCashActs({ miAccount }: { miAccount: MiAccount }) {
             actions={actions} icon="money" content="资金" />
     }
     function showCashIn(item: DropdownAction) {
-        openModal(<ModalCashIn miAccount={miAccount} />, item.caption);
+        openModal(<ModalCashIn miAccount={miAccount} />); //, item.caption);
     }
     return <Link className="btn btn-outline-info ms-auto" to={pathCashInit}>
         <FA name="cog" className="small text-info" /> 初始资金

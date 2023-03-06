@@ -82,6 +82,16 @@ export class UqApp extends UqAppBase<UQs> {
             this.loadUnitTime(BrMi.$getUnitTime),
         ]);
     }
+
+    private readonly cache = new Map<new (uqApp: UqApp) => any, any>();
+    fromCache<T>(constructor: new (uqApp: UqApp) => T) {
+        let ret = this.cache.get(constructor) as T;
+        if (ret === undefined) {
+            ret = new constructor(this);
+            this.cache.set(constructor, ret);
+        }
+        return ret;
+    }
 }
 
 const uqConfigs = uqConfigsFromJson(uqconfigJson);

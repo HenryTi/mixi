@@ -42,7 +42,7 @@ export function PageSheetNew() {
         query={query}
         param={searchParam}
         sortField="id"
-        ItemView={ItemView}
+        ViewItem={ItemView}
         onItemClick={onItemClick}
         pageSize={4}
         pageMoreSize={1}

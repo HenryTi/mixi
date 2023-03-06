@@ -7,3 +7,4 @@ export * from './LabelRowEdit';
 export * from './page';
 export * from './PropEdit';
 export * from './IDView';
+export * from './LinkModal';

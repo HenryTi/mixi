@@ -12,7 +12,7 @@ interface PageQueryMoreProps<P, R> extends PageProps {
     pageStart?: any;
     pageSize?: number;
     pageMoreSize?: number;
-    ItemView?: ({ value }: { value: any; }) => JSX.Element;
+    ViewItem?: ({ value }: { value: any; }) => JSX.Element;
     onItemClick?: (item: any) => Promise<void>;
     tickReload?: number; // 改变这个值，会引发重新load数据
 }
@@ -52,7 +52,7 @@ export function PageQueryMore<P, R>(props: PageQueryMoreProps<P, R>) {
 
 function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst: boolean }) {
     let { query, param, sortField, pageStart: pageStartParam, pageSize, pageMoreSize
-        , ItemView, onItemClick, children, tickReload
+        , ViewItem: ItemView, onItemClick, children, tickReload
         , isPopFirst } = props;
     const [items, setItems] = useState<R[]>(undefined);
     const [loading, setLoading] = useState(false);

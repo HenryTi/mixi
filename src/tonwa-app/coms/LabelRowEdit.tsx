@@ -17,7 +17,7 @@ export function LabelRowEdit(props: LabelRowPropsBase & EditProps) {
     const atomValue = useMemo(() => atom(initValue), [initValue]);
     const [value, setValue] = useAtom(atomValue);
     async function onClick() {
-        let ret = await openModal(<OneModal />, '修改' + label);
+        let ret = await openModal(<OneModal />); //, '修改' + label);
         if (ret !== undefined) {
             setValue(ret);
         }

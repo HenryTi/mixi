@@ -61,7 +61,7 @@ export function PageSearch() {
         query={uqs.BrMi.SearchStock}
         param={searchParam}
         sortField="$order"
-        ItemView={ItemViewStock}
+        ViewItem={ItemViewStock}
         tickReload={tickReload.current}
     >
         <ViewStars />

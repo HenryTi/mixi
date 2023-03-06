@@ -1,12 +1,18 @@
 import { PageQueryMore } from "app/coms";
+import { UqApp, useUqApp } from "app/UqApp";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
+import { useModal } from "tonwa-app";
 import { FA, LMR, SearchBox } from "tonwa-com";
+import { PartsProps } from "../Parts";
 import { SheetParts } from "./SheetParts";
 
-export function PageSheetNew({ parts }: { parts: SheetParts }) {
-    const { uq, pathSheetEdit, IDSheet, IxMySheet, QuerySearchSheetItem } = parts;
-    const navigate = useNavigate();
+export function PageSheetNew({ Parts }: PartsProps<SheetParts>) {
+    const uqApp = useUqApp();
+    const parts = uqApp.fromCache(Parts);
+    const { uq, PageSheetEdit, IDSheet, IxMySheet, QuerySearchSheetItem } = parts;
+    const { openModal, closeModal } = useModal();
+    // const navigate = useNavigate();
     const [searchParam, setSearchParam] = useState({ key: undefined as string });
     const right = <SearchBox className="px-3 py-2" onSearch={onSearch} placeholder="往来单位" />;
     async function onSearch(key: string) {
@@ -34,13 +40,15 @@ export function PageSheetNew({ parts }: { parts: SheetParts }) {
                 }
             }]
         });
-        navigate(`../${pathSheetEdit}/${id}`, { replace: true });
+        closeModal();
+        openModal(<PageSheetEdit id={id} />);
+        // navigate(`../${pathSheetEdit}/${id}`, { replace: true });
     }
     return <PageQueryMore header="开始"
         query={query}
         param={searchParam}
         sortField="id"
-        ItemView={ItemView}
+        ViewItem={ItemView}
         onItemClick={onItemClick}
         pageSize={4}
         pageMoreSize={1}
