@@ -4,7 +4,7 @@ import { useAtomValue } from "jotai/react";
 import 'font-awesome/css/font-awesome.min.css';
 import '../../css/tonwa-page.css';
 import { ModalContext, useModal, useUqAppBase } from "../../UqAppBase";
-import { PageBackProps, PageProps, Scroller } from "./PageProps";
+import { PageProps, Scroller } from "./PageProps";
 import { ButtonPageBack } from "./ButtonPageBack";
 import { PageSpinner } from "./PageSpinner";
 import { useEffectOnce } from "tonwa-com";
@@ -13,7 +13,6 @@ const scrollTimeGap = 100;
 const scrollEdgeGap = 30;
 
 function PageBase(props: PageProps) {
-    console.error('PageBase');
     const uqApp = useUqAppBase();
     let { children, header, back, right, footer, onClosed } = props;
     const divRef = useRef<HTMLDivElement>();
