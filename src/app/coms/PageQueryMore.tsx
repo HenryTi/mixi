@@ -34,26 +34,29 @@ export class PageMoreCacheData {
             this.items.splice(index, 1);
         }
     }
+    addItem(item: any) {
+        this.items.unshift(item);
+    }
 }
 
 export function PageQueryMore<P, R>(props: PageQueryMoreProps<P, R>) {
     const isModal = useContext<boolean>(ModalContext);
     if (isModal === true) {
-        return <PageQueryMoreBase {...props} isPopFirst={false} />;
+        return <PageQueryMoreBase {...props} isPopFirst={false} isModal={true} />;
     }
     else {
         return <PageQueryMoreNav {...props} />
     }
     function PageQueryMoreNav(props: PageQueryMoreProps<P, R>) {
         const navAction = useNavigationType();
-        return <PageQueryMoreBase {...props} isPopFirst={navAction === 'POP'} />;
+        return <PageQueryMoreBase {...props} isPopFirst={navAction === 'POP'} isModal={false} />;
     }
 }
 
-function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst: boolean }) {
+function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst: boolean; isModal: boolean }) {
     let { query, param, sortField, pageStart: pageStartParam, pageSize, pageMoreSize
         , ViewItem: ItemView, onItemClick, children, tickReload
-        , isPopFirst } = props;
+        , isPopFirst, isModal } = props;
     const [items, setItems] = useState<R[]>(undefined);
     const [loading, setLoading] = useState(false);
     const refValue = useRef({
@@ -76,7 +79,7 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
         }
         let { pageStart, querying, isPopFirst, items } = current;
         if (isPopFirst === true) {
-            if (urlCache) {
+            if (urlCache && isModal === false) {
                 let { start } = urlCache.data;
                 if (start === pageStart && items !== undefined) return;
             }
@@ -91,7 +94,7 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
             setTimeout(() => {
                 current.isPopFirst = false;
             }, 100);
-            if (pageStart === pageStartParam && urlCache) {
+            if (pageStart === pageStartParam && urlCache && isModal === false) {
                 let { items: result } = urlCache.data;
                 arrResult = result;
                 uqApp.pageCache.setData(pathname, undefined);
@@ -116,7 +119,9 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
         if (length > 0) {
             current.pageStart = arrResult[length - 1][sortField];
         }
-        uqApp.pageCache.setData<PageMoreCacheData>(pathname, new PageMoreCacheData(pageStart, newItems));
+        if (isModal === false) {
+            uqApp.pageCache.setData<PageMoreCacheData>(pathname, new PageMoreCacheData(pageStart, newItems));
+        }
         setLoading(false);
         current.querying = false;
     }, [param]);
@@ -128,6 +133,14 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
         current.pageStart = undefined;
         callQuery();
     }, [tickReload, param]);
+    if (isModal === false) {
+        uqApp.onCloseModal = () => {
+            let { items } = urlCache.data
+            let newItems = [...items];
+            setItems(newItems);
+            current.items = newItems;
+        }
+    }
     let scrolling = false;
     function scrollIntoView(divId: string) {
         setTimeout(() => {

@@ -4,6 +4,7 @@ import { UseFormRegisterReturn, FieldErrorsImpl, RegisterOptions, UseFormRegiste
 export interface BandProps {
     label?: string | JSX.Element;
     labelClassName?: string;
+    labelSize?: number;
     children: ReactNode;
 }
 
@@ -39,13 +40,14 @@ export function BandInput(props: BandInputProps) {
     </Band>
 }
 
-export function Band({ label, labelClassName, children }: BandProps) {
+export function Band({ label, labelClassName, labelSize, children }: BandProps) {
+    labelSize = labelSize ?? 3;
     return <div className={'mb-3 row'}>
-        <label className={(labelClassName ?? '') + ' form-label col-2'}>{label}</label>
-        <div className="col-10" >
+        <label className={(labelClassName ?? '') + ' form-label col-' + labelSize}>{label}</label>
+        <div className={'col-' + (12 - labelSize)} >
             {children}
         </div>
-    </div>;
+    </ div>;
 }
 
 export interface BandInputsProps {
@@ -72,6 +74,7 @@ interface FormLabel {
 interface FormLabelName extends FormLabel {
     name: string;
     placeHolder?: string;
+    readOnly?: boolean;
 }
 
 export interface FormInput extends FormLabelName {
@@ -102,101 +105,111 @@ export interface FormSubmit extends FormLabel {
 
 export type FormRow = FormInput | FormBand | FormSubmit | FormRadios | FormSelect;
 
-export interface FormRowsViewProps {
-    rows: (FormRow)[];
+interface FormProps {
     register: UseFormRegister<any>;
     errors?: Partial<FieldErrorsImpl<{
         [x: string]: any;
     }>>;
 }
+
+export interface FormRowsViewProps extends FormProps {
+    rows: (FormRow)[];
+}
+
+export interface FormRowViewProps extends FormProps {
+    row: FormRow;
+}
+
 export function FormRowsView({ rows, register, errors }: FormRowsViewProps) {
-    function FormRowView({ row }: { row: FormRow; }) {
-        const { label, inputs } = row as FormBand;
-        if (inputs !== undefined) {
-            return <Band label={label}>{
-                inputs.map((v, index) => {
-                    const { label, name, type, options } = v;
-                    if (type === 'checkbox') {
-                        return <label key={index} className="form-check-label me-3">
-                            <input className="form-check-input me-1"
-                                type="checkbox" {...register(name)} />
-                            {label ?? name}
-                        </label>;
-                    }
-                    else {
-                        let newOptions = registerOptions(type, options);
-                        <input className="form-check-input me-1" type={type} {...register(name, newOptions)} />
-                        { label ?? name }
-                    }
-                })
-            }</Band>
-        }
+    return <>{rows.map((row, index) => <FormRowView key={index} row={row} register={register} errors={errors} />)}</>
+}
 
-        const { radios } = row as FormRadios;
-        if (radios !== undefined) {
-            const { name, default: defaultValue } = row as FormRadios;
-            return <Band label={label}>
-                {
-                    radios.map((v, index) => {
-                        const { label, value } = v;
-                        return <label key={index} className="form-check-label me-3">
-                            <input className="form-check-input me-1"
-                                defaultChecked={value === defaultValue}
-                                value={value}
-                                type="radio" {...register(name)} />
-                            {label ?? name}
-                        </label>
-                    })
+function FormRowView({ row, register, errors }: FormRowViewProps) {
+    const { label, inputs } = row as FormBand;
+    if (inputs !== undefined) {
+        return <Band label={label}>{
+            inputs.map((v, index) => {
+                const { label, name, type, options, readOnly } = v;
+                if (type === 'checkbox') {
+                    return <label key={index} className="form-check-label me-3">
+                        <input className="form-check-input me-1"
+                            type="checkbox" readOnly={readOnly} {...register(name)} />
+                        {label ?? name}
+                    </label>;
                 }
-            </Band>
-        }
+                else {
+                    let newOptions = registerOptions(type, options);
+                    <input className="form-check-input me-1" type={type} readOnly={readOnly} {...register(name, newOptions)} />
+                    { label ?? name }
+                }
+            })
+        }</Band>
+    }
 
-        const { items } = row as FormSelect;
-        if (items !== undefined) {
-            const { name, multiple, default: defaultValue, placeHolder, options } = row as FormSelect;
-            let error = errors[name];
-            let cnInput = 'form-select ';
-            if (error) cnInput += 'is-invalid';
-            const n = '\n';
-            if (options !== undefined) {
-                if (options.required === true) {
-                    options.validate = v => {
-                        let ret = v !== n;
-                        console.error('select ' + v + ' ret ' + ret);
-                        return ret;
-                    }
+    const { radios } = row as FormRadios;
+    if (radios !== undefined) {
+        const { name, default: defaultValue, readOnly } = row as FormRadios;
+        return <Band label={label}>
+            {
+                radios.map((v, index) => {
+                    const { label, value } = v;
+                    return <label key={index} className="form-check-label me-3">
+                        <input className="form-check-input me-1"
+                            defaultChecked={value === defaultValue}
+                            readOnly={readOnly}
+                            value={value}
+                            type="radio" {...register(name)} />
+                        {label ?? name}
+                    </label>
+                })
+            }
+        </Band>
+    }
+
+    const { items } = row as FormSelect;
+    if (items !== undefined) {
+        const { name, multiple, default: defaultValue, placeHolder, options, readOnly } = row as FormSelect;
+        let error = errors[name];
+        let cnInput = 'form-select ';
+        if (error) cnInput += 'is-invalid';
+        const n = '\n';
+        if (options !== undefined) {
+            if (options.required === true) {
+                options.validate = v => {
+                    let ret = v !== n;
+                    console.error('select ' + v + ' ret ' + ret);
+                    return ret;
                 }
             }
-            return <Band label={label}>
-                <select multiple={multiple} className={cnInput} {...register(name, options)}>
-                    {
-                        defaultValue === undefined &&
-                        <option selected={true} disabled={true} value={n}>
-                            {placeHolder ?? '请选择' + label}
-                        </option>
-                    }
-                    {items.map((v, index) => {
-                        const { label, value } = v;
-                        return <option key={index} value={value} selected={defaultValue === value}>{label}</option>
-                    })}
-                </select>
+        }
+        return <Band label={label}>
+            <select multiple={multiple} className={cnInput} {...register(name, options)}>
                 {
-                    error && <div className="invalid-feedback mt-1">
-                        {error.message?.toString()}
-                    </div>
+                    defaultValue === undefined &&
+                    <option selected={true} disabled={true} value={n}>
+                        {placeHolder ?? '请选择' + label}
+                    </option>
                 }
-            </Band>
-        }
-
-        const { name, type, options } = row as FormInput;
-        switch (type) {
-            default:
-                let newOptions = registerOptions(type, options);
-                return <BandInput label={label} type={type} errors={errors}
-                    inputProps={register(name, newOptions)} defaultValue={options?.value} />;
-            case 'submit':
-                return <Band><input type="submit" className="btn btn-primary" value={label ?? '提交'} /></Band>;
-        }
+                {items.map((v, index) => {
+                    const { label, value } = v;
+                    return <option key={index} value={value} selected={defaultValue === value}>{label}</option>
+                })}
+            </select>
+            {
+                error && <div className="invalid-feedback mt-1">
+                    {error.message?.toString()}
+                </div>
+            }
+        </Band>
     }
-    return <>{rows.map((row, index) => <FormRowView key={index} row={row} />)}</>
+
+    const { name, type, options, readOnly } = row as FormInput;
+    switch (type) {
+        default:
+            let newOptions = registerOptions(type, options);
+            return <BandInput label={label} type={type} errors={errors}
+                inputProps={register(name, newOptions)} defaultValue={options?.value} />;
+        case 'submit':
+            return <Band><input type="submit" readOnly={readOnly} className="btn btn-primary" value={label ?? '提交'} /></Band>;
+    }
 }

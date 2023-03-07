@@ -4,12 +4,13 @@ import { IDView, Page, useModal } from "tonwa-app";
 import { UqAction, UqID, UqQuery } from "tonwa-uq";
 import { PartsProps } from "app/template/Parts";
 import { UqApp, useUqApp } from "app/UqApp";
-import { DetailQPA, Product } from "uqs/JsTicket";
+import { DetailQPA } from "uqs/JsTicket";
 import { PageSheetEdit, PageSheetList, PageSheetNew, SheetParts } from "../../template/Sheet";
-import { PageProductSelect, ViewItemProduct } from "./IDProduct";
+import { PageProductSelect, ViewProduct } from "./IDProduct";
 import { ChangeEvent, useState } from "react";
 import { Band, FormRow, FormRowsView } from "app/coms";
 import { FA, LMR } from "tonwa-com";
+import { ViewContact } from "./IDContact";
 
 export const purchaseCaption = '采购单';
 export const pathPurchase = 'purchase';
@@ -30,16 +31,18 @@ class SheetPartsPurchase extends SheetParts {
     readonly PageSheetEdit: (props: { id: number; }) => JSX.Element;
     readonly PageSheetNew: () => JSX.Element;
     readonly PageSheetDetail: <T extends DetailQPA>(props: PartsProps<SheetParts> & { detail: Partial<T>; }) => JSX.Element;
+    readonly ViewNO: (props: { no: string }) => JSX.Element;
+    readonly ViewTarget: (props: { target: number }) => JSX.Element;
     readonly ViewItemSheet: ({ value }: { value: any }) => JSX.Element;
 
     constructor(uqApp: UqApp) {
         super(uqApp);
-        const { JsTicket } = uqApp.uqs;
-        this.IDSheet = JsTicket.SheetPurchase;
-        this.IDDetail = JsTicket.DetailQPA;
-        this.QueryGetDetails = JsTicket.GetDetailQPAs;
-        this.ActBookSheet = JsTicket.BookSheetPurchase;
-        this.QuerySearchSheetItem = JsTicket.SearchContact;
+        const { JsTicket: uq } = uqApp.uqs;
+        this.IDSheet = uq.SheetPurchase;
+        this.IDDetail = uq.DetailQPA;
+        this.QueryGetDetails = uq.GetDetailQPAs;
+        this.ActBookSheet = uq.BookSheetPurchase;
+        this.QuerySearchSheetItem = uq.SearchContact;
 
         this.PageDetailItemSelect = PageProductSelect;
         this.pathSheet = pathPurchase;
@@ -54,7 +57,7 @@ class SheetPartsPurchase extends SheetParts {
         function ViewItemSheet({ value }: { value: DetailQPA }) {
             let { item, quantity, price, amount } = value;
             return <LMR className="px-3 py-2">
-                <IDView uq={JsTicket} id={item} Template={ViewProduct} />
+                <IDView uq={uq} id={item} Template={ViewProduct} />
                 <div className="align-self-end text-end d-flex align-items-end">
                     <div>
                         <span><small>单价:</small> {price} <small>金额:</small> {amount}</span>
@@ -65,12 +68,19 @@ class SheetPartsPurchase extends SheetParts {
                 </div>
             </LMR>;
         }
-        function ViewProduct({ value }: { value: Product }) {
-            let { no, name } = value;
-            return <div>
-                <small>{no}</small>
-                <div><b>{name}</b></div>
-            </div>;
+
+        this.ViewNO = ViewNO;
+        function ViewNO({ no }: { no: string }) {
+            return <Band label={'编号'} labelClassName="text-end">
+                {no}
+            </Band>
+        }
+
+        this.ViewTarget = ViewTarget;
+        function ViewTarget({ target }: { target: number }) {
+            return <Band label={'往来单位'} labelClassName="text-end">
+                <IDView id={target} uq={uq} Template={ViewContact} />
+            </Band>
         }
     }
 }
@@ -103,15 +113,16 @@ function PageSheetDetail({ detail, Parts }: (PartsProps<SheetParts> & { detail: 
         }
         setHasValue(!Number.isNaN(v));
     }
-    function onQuantityChange(value: number) {
-        let amount = value * getValues('price');
+    function setAmountValue(amount: number) {
         detail.amount = amount;
         setValue('amount', amount);
+        setValue('a', amount);
+    }
+    function onQuantityChange(value: number) {
+        setAmountValue(value * getValues('price'));
     }
     function onPriceChange(value: number) {
-        let amount = value * getValues('quantity');
-        detail.amount = amount;
-        setValue('amount', amount);
+        setAmountValue(value * getValues('quantity'));
     }
     const options = { onChange, valueAsNumber: true };
     let formRows: FormRow[] = [
@@ -122,16 +133,20 @@ function PageSheetDetail({ detail, Parts }: (PartsProps<SheetParts> & { detail: 
     ];
 
     async function onSubmit(data: any) {
-        closeModal(data);
+        // closeModal(data);
+        // amount 字段disabled。setValue('amount'), 改变了input显示，但是取值没有改变。
+        // 只能用下面变通
+        closeModal({ ...data, amount: detail.amount });
     }
     return <Page header="明细">
         <div className="container">
             <Band label={'产品'} labelClassName="py-2 fw-bold">
-                <IDView uq={uq} id={item} Template={ViewItemProduct} />
+                <IDView uq={uq} id={item} Template={ViewProduct} />
             </Band>
         </div>
         <form className="container" onSubmit={handleSubmit(onSubmit)}>
             <FormRowsView rows={formRows} register={register} errors={errors} />
+            <input {...register('a', { disabled: true })} type={"number"} />
         </form>
     </Page>;
 }

@@ -62,4 +62,3 @@ export function PageSheetList({ Parts }: PartsProps<SheetParts>) {
         </div>
     </PageQueryMore>;
 }
-// ={`../${pathSheetNew}`}>新建{caption}

@@ -11,3 +11,8 @@ ID History (
     ref ID,             -- 相关凭证
     INDEX project_id(project, id) UNIQUE,
 );
+
+IDX Done (
+    id,
+    done Quantity,
+);

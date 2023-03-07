@@ -1,4 +1,4 @@
-import { PageQueryMore } from "app/coms";
+import { PageMoreCacheData, PageQueryMore } from "app/coms";
 import { UqApp, useUqApp } from "app/UqApp";
 import { useState } from "react";
 // import { useNavigate } from "react-router-dom";
@@ -40,6 +40,14 @@ export function PageSheetNew({ Parts }: PartsProps<SheetParts>) {
                 }
             }]
         });
+        let { pageCache } = uqApp;
+        let latestItem = pageCache.getLatestItem<PageMoreCacheData>();
+        if (latestItem) {
+            let { data } = latestItem;
+            if (data) {
+                data.addItem({ ix: undefined, xi: id });
+            }
+        }
         closeModal();
         openModal(<PageSheetEdit id={id} />);
         // navigate(`../${pathSheetEdit}/${id}`, { replace: true });

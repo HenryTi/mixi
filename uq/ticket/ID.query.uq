@@ -53,3 +53,19 @@ PAGE (
         ORDER BY a.id desc
         LIMIT $pageSize;
 };
+
+QUERY SearchStoreIn ver 0.1 (
+    key CHAR(50),
+)
+PAGE (
+    id ID asc,
+    no NO,
+    vendor ID,
+) {
+	VAR sKey CHAR(50) = concat('%', IFNULL(key,''), '%');
+    PAGE SELECT a.id, a.no, a.vendor
+        FROM QueueStoreIn QUEUE OF 1 JOIN SheetPurchase as a
+        WHERE a.id>$pageStart AND (a.no like sKey)
+        ORDER BY a.id asc
+        LIMIT $pageSize;
+};

@@ -14,15 +14,6 @@ interface PageIDListProps {
 export function PageIDList({ Parts }: PartsProps<IDParts>) {
     const uqApp = useUqApp();
     const { caption, ViewItem, query, listTop } = uqApp.fromCache(Parts);
-    //const { JsTicket } = uqApp.uqs;
-    /*
-    function ItemViewProduct({ value: { id, no, name } }: { value: Product }) {
-        return <Link className="d-block px-3 py-2" to={`../${pathView}/${id}`}>
-            <div className='small text-secondary'>{id}</div>
-            <div>{no} {name}</div>
-        </Link>;
-    }
-    */
     let searchParam = {
         key: undefined as string,
     };

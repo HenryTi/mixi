@@ -1,6 +1,6 @@
 import { PageMoreCacheData } from "app/coms";
 import { useRef, useState } from "react";
-import { IDView, Page, useModal } from "tonwa-app";
+import { Page, PageConfirm, useModal } from "tonwa-app";
 import { ButtonAsync, getAtomValue, List, LMR, Sep, setAtomValue, useEffectOnce } from "tonwa-com";
 import { atom, useAtomValue } from "jotai";
 import { Product, SheetPurchase } from "uqs/JsTicket";
@@ -11,7 +11,9 @@ import { PartsProps } from "../Parts";
 export function PageSheetEdit({ id, Parts }: PartsProps<SheetParts> & { id: number; }) {
     const uqApp = useUqApp();
     const parts = uqApp.fromCache(Parts);
-    const { uq, IDDetail, QueryGetDetails, ActBookSheet, caption, PageDetailItemSelect, PageSheetDetail, ViewItemSheet } = parts;
+    const { uq, IDDetail, QueryGetDetails, ActBookSheet
+        , caption, PageDetailItemSelect, PageSheetDetail, ViewItemSheet, IxMySheet
+        , ViewNO, ViewTarget } = parts;
     const refItemsAtom = useRef(atom([] as any[]));
     const [visible, setVisible] = useState(true);
     const [sheet, setSheet] = useState({} as SheetPurchase);
@@ -29,20 +31,21 @@ export function PageSheetEdit({ id, Parts }: PartsProps<SheetParts> & { id: numb
     });
     let btnSubmit: any, cnAdd: string;
     if (items.length === 0) {
-        cnAdd = 'btn btn-primary';
+        cnAdd = 'btn btn-primary me-3';
     }
     else {
         btnSubmit = <ButtonAsync className="btn btn-primary" onClick={onSubmit}>提交</ButtonAsync>;
-        cnAdd = 'btn btn-outline-primary';
+        cnAdd = 'btn btn-outline-primary me-3';
     }
     const button = <LMR className="px-3 py-2">
         {btnSubmit}
-        {visible === true && <button className={cnAdd} onClick={onAddDetail}>增加明细</button>}
+        {visible === true && <>
+            <button className={cnAdd} onClick={onAddDetail}>增加明细</button>
+            <button className={'btn btn-outline-primary'} onClick={onRemoveSheet}>作废</button>
+        </>}
     </LMR>;
     const { openModal, closeModal } = useModal();
-    async function onSubmit() {
-        setVisible(false);
-        await ActBookSheet.submit({ id: sheetId });
+    function removeSheetFromCache() {
         let { pageCache } = uqApp;
         let latestItem = pageCache.getLatestItem<PageMoreCacheData>();
         if (latestItem) {
@@ -51,6 +54,11 @@ export function PageSheetEdit({ id, Parts }: PartsProps<SheetParts> & { id: numb
                 data.removeItem<{ ix: number, xi: number }>(v => v.xi === sheetId) as any;
             }
         }
+    }
+    async function onSubmit() {
+        setVisible(false);
+        await ActBookSheet.submit({ id: sheetId });
+        removeSheetFromCache();
         function addDetailOnOk() {
             closeModal();
             onAddDetail();
@@ -70,28 +78,37 @@ export function PageSheetEdit({ id, Parts }: PartsProps<SheetParts> & { id: numb
     async function onAddDetail() {
         openModal(<PageDetailItemSelect onItemClick={onItemSelect} />);
     }
-    async function onItemSelect(item: Product) {
-        let row = { sheet: sheetId, item: item.id };
-        let ret = await openModal(<PageSheetDetail detail={row} Parts={Parts} />);
-        let { quantity } = ret;
-        if (Number.isNaN(quantity) === false) {
-            let value = { ...row, ...ret };
-            let id = await uq.ActID({
-                ID: IDDetail,
-                value,
-            });
-            const items = getAtomValue(refItemsAtom.current);
-            value.id = id;
-            setAtomValue(refItemsAtom.current, [...items, value]);
-            closeModal();
-            onAddDetail();
-        }
-        else {
+    async function onRemoveSheet() {
+        let message = `真的要删除单据 ${sheet.no} 吗？`;
+        let ret = await openModal(<PageConfirm header="确认" message={message} yes="删除单据" no="不删除" />);
+        if (ret === true) {
+            await uq.ActIX({ IX: IxMySheet, values: [{ ix: undefined, xi: -id }] });
+            removeSheetFromCache();
             closeModal();
         }
     }
-    function ViewVendor({ value }: { value: any; }) {
-        return <>{JSON.stringify(value)}</>;
+    async function onItemSelect(item: Product) {
+        let row = { sheet: sheetId, item: item.id };
+        let ret = await openModal(<PageSheetDetail detail={row} Parts={Parts} />);
+        if (!ret) {
+            closeModal();
+            return;
+        }
+        let { quantity } = ret;
+        if (Number.isNaN(quantity) === true) {
+            closeModal();
+            return;
+        }
+        let value = { ...row, ...ret };
+        let id = await uq.ActID({
+            ID: IDDetail,
+            value,
+        });
+        const items = getAtomValue(refItemsAtom.current);
+        value.id = id;
+        setAtomValue(refItemsAtom.current, [...items, value]);
+        closeModal();
+        onAddDetail();
     }
     function None() {
         return <div className="small text-muted px-3 py-3">[ 无明细 ]</div>;
@@ -109,13 +126,9 @@ export function PageSheetEdit({ id, Parts }: PartsProps<SheetParts> & { id: numb
         setAtomValue(refItemsAtom.current, [...items]);
     }
     return <Page header="单据">
-        <div className="py-2 tonwa-bg-gray-3">
-            <div className="px-3 py-2">
-                <b>编号：</b>{sheet.no}
-            </div>
-            <div className="px-3 py-2">
-                <b>往来单位：</b><IDView id={sheet.vendor} uq={uq} Template={ViewVendor} />
-            </div>
+        <div className="py-2 tonwa-bg-gray-3 container">
+            <ViewNO no={sheet.no} />
+            <ViewTarget target={sheet.vendor} />
         </div>
         {items.length > 6 ? <>{button}<Sep /></> : <Sep />}
         <List items={items} ViewItem={ViewItemSheet} none={<None />} onItemClick={onEditDetail} />

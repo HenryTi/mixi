@@ -1,21 +1,9 @@
 import { useNavigate } from "react-router-dom";
+import { ViewMessage } from "../coms";
 import { Page } from "../coms";
 import { useModal, useUqAppBase } from "../UqAppBase";
 
 const waitingTime = '一小时';
-
-interface MessageBoxProps {
-    note: JSX.Element;
-    children: React.ReactNode;
-}
-function MessageBox({ note, children }: MessageBoxProps) {
-    return <div className="border border-danger rounded mx-auto m-3 w-max-30c bg-white ">
-        <div className="p-4 border-bottom">{note}</div>
-        <div className="p-3 text-center">
-            {children}
-        </div>
-    </div>
-}
 
 export function UserQuit() {
     const navigate = useNavigate();
@@ -29,14 +17,14 @@ export function UserQuit() {
         navigate(-1);
     }
     return <Page auth={false} header={quitCaption}>
-        <MessageBox note={note}>
+        <ViewMessage message={note}>
             <button className="btn btn-primary" onClick={() => navigate(-1)}>
                 不注销
             </button>
             <button className="btn btn-outline-info ms-3" onClick={() => openModal(<QuitConfirm header={quitCaption} />, closePage)}>
                 我已了解，仍然注销
             </button>
-        </MessageBox>
+        </ViewMessage>
     </Page>;
 }
 
@@ -53,14 +41,15 @@ function QuitConfirm({ header }: { header: string; }) {
         closeModal();
         await openModal(<QuitDone />, () => uqApp.restart());
     }
-    return <Page header={header}><MessageBox note={note}>
-        <button className="btn btn-primary" onClick={() => closeModal()}>
-            不注销
-        </button>
-        <button className="btn btn-outline-info ms-3" onClick={onClickButton2}>
-            确认注销
-        </button>
-    </MessageBox>
+    return <Page header={header}>
+        <ViewMessage message={note}>
+            <button className="btn btn-primary" onClick={() => closeModal()}>
+                不注销
+            </button>
+            <button className="btn btn-outline-info ms-3" onClick={onClickButton2}>
+                确认注销
+            </button>
+        </ViewMessage>
     </Page>;
 }
 
@@ -76,11 +65,11 @@ function QuitDone() {
         openModal(<QuitCancel />, () => uqApp.restart());
     }
     return <Page header="注销已账号">
-        <MessageBox note={note}>
+        <ViewMessage message={note}>
             <button className="btn btn-primary" onClick={onClickButton1}>
                 反悔了，不要注销
             </button>
-        </MessageBox>
+        </ViewMessage>
     </Page>;
 }
 
@@ -94,10 +83,10 @@ function QuitCancel() {
         uqApp.restart();
     }
     return <Page header="恢复账号">
-        <MessageBox note={note}>
+        <ViewMessage message={note}>
             <button className="btn btn-primary" onClick={restore}>
                 重新登录
             </button>
-        </MessageBox>
+        </ViewMessage>
     </Page>;
 }

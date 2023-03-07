@@ -39,13 +39,7 @@ class IDPartsContact extends IDParts {
         this.uq = uq;
 
         this.caption = '往来单位';
-        this.ViewItem = function ({ value: { id, no, name } }: { value: Contact }) {
-            // to={`../${pathContactView}/${id}`}
-            return <div className="d-block px-3 py-2">
-                <div className='small text-secondary'>{id}</div>
-                <div>{no} {name}</div>
-            </div>;
-        }
+        this.ViewItem = ViewContact;
         this.query = uq.SearchContact;
         this.listTop = <ListTop />;
 
@@ -75,6 +69,13 @@ class IDPartsContact extends IDParts {
             { name: 'name', label: '名称' },
         ];
     }
+}
+
+export function ViewContact({ value: { no, name } }: { value: Contact }) {
+    return <div className="d-block">
+        <div className='small text-muted'>{no}</div>
+        <div><b>{name}</b></div>
+    </div>;
 }
 
 function PageContactNew() {

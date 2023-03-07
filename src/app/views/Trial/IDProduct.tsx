@@ -39,7 +39,7 @@ class IDPartsProduct extends IDParts {
         this.uq = uq;
 
         this.caption = '产品';
-        this.ViewItem = ViewItemProduct;
+        this.ViewItem = ViewProduct;
         this.query = uq.SearchProduct;
         this.listTop = <ListTop />;
 
@@ -71,11 +71,10 @@ class IDPartsProduct extends IDParts {
     }
 }
 
-export function ViewItemProduct({ value: { id, no, name } }: { value: Product }) {
-    // to={`../${pathProductView}/${id}`}
-    return <div className="d-block px-3 py-2">
-        <div className='small text-secondary'>{id}</div>
-        <div>{no} {name}</div>
+export function ViewProduct({ value: { no, name } }: { value: Product }) {
+    return <div className="d-block">
+        <div className='small text-muted'>{no}</div>
+        <div><b>{name}</b></div>
     </div>;
 }
 

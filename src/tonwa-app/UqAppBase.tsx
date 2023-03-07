@@ -96,6 +96,7 @@ export abstract class UqAppBase<U = any> {
     closeAllModal() {
         setAtomValue(this.modal.stack, []);
     }
+    onCloseModal: () => void;
     get userUnit() { return this.uqUnit.userUnit; }
     hasRole(role: string[] | string): boolean {
         if (this.uqUnit === undefined) return false;
@@ -224,7 +225,8 @@ class LocalStorageDb extends LocalDb {
 
 export const ModalContext = React.createContext(undefined);
 export function useModal() {
-    const { modal } = useUqAppBase();
+    const uqApp = useUqAppBase();
+    const { modal } = uqApp;
     const { stack: modalStackAtom } = modal;
     async function openModal<T = any>(element: JSX.Element, onClosed?: (result: any) => void): Promise<T> {
         return new Promise<T>((resolve, reject) => {
@@ -245,6 +247,7 @@ export function useModal() {
         setAtomValue(modalStackAtom, [...modalStack]);
         resolve(result);
         onClosed?.(result);
+        uqApp.onCloseModal?.();
     }
     return { openModal, closeModal }
 }

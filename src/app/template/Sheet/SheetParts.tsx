@@ -18,9 +18,9 @@ export abstract class SheetParts extends Parts {
     abstract PageSheetEdit: (props: { id: number }) => JSX.Element;
     abstract PageSheetNew: () => JSX.Element;
     abstract PageSheetDetail: <T extends DetailQPA>(props: (PartsProps<SheetParts> & { detail: Partial<T>; })) => JSX.Element;
+    abstract ViewNO: (props: { no: string }) => JSX.Element;
+    abstract ViewTarget: (props: { target: number }) => JSX.Element;
     abstract ViewItemSheet: ({ value }: { value: any }) => JSX.Element;
-    //abstract get pathSheetEdit(): string;
-    //abstract get pathSheetNew(): string;
 
     constructor(uqApp: UqApp) {
         super(uqApp);

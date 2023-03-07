@@ -28,9 +28,10 @@ export class FormContext extends BandContainerContext<FormProps> {
                 errors = [...(err as string[])];
                 hasError = true;
             }
-            return;
         }
-        hasError = super.setError(name, err as string[]);
+        else {
+            hasError = super.setError(name, err as string[]);
+        }
         setAtomValue(this.errorResponse, { hasError, errors });
         return hasError;
     }
