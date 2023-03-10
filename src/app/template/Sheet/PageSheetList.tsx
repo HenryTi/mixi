@@ -1,13 +1,13 @@
 import { PageQueryMore } from "app/coms";
 import { useUqApp } from "app/UqApp";
-import { IDView, LinkModal } from "tonwa-app";
+import { LinkModal } from "tonwa-app";
 import { PartsProps } from "../Parts";
 import { SheetParts } from "./SheetParts";
 
 export function PageSheetList({ Parts }: PartsProps<SheetParts>) {
     const uqApp = useUqApp();
     const parts = uqApp.fromCache(Parts);
-    const { uq, PageSheetEdit, PageSheetNew, caption, IDSheet, IxMySheet } = parts;
+    const { uq, ModalSheetEdit, PageSheetNew, caption, ViewItemSheet, IxMySheet } = parts;
     async function query(param: any, pageStart: any, pageSize: number): Promise<any[]> {
         let ret = await uq.IX({
             IX: IxMySheet,
@@ -19,15 +19,12 @@ export function PageSheetList({ Parts }: PartsProps<SheetParts>) {
     }
     function ViewItem({ value }: { value: any }) {
         const { xi } = value;
-        function ContactView({ value }: { value: any }) {
-            const { no, name } = value;
-            return <>{name} <small className="text-muted">({no})</small></>
-        }
+        /*
         function ViewSheetPurchase({ value }: { value: any }) {
             const { no, vendor } = value;
             return <div>
                 <small className="text-muted">{caption}</small> <b>{no}</b> &nbsp;
-                <IDView id={vendor} uq={uq} Template={ContactView} />
+                <IDView id={vendor} uq={uq} Template={ViewContact} />
             </div>
         }
 
@@ -41,9 +38,10 @@ export function PageSheetList({ Parts }: PartsProps<SheetParts>) {
             }
         }
         // ={`../${pathSheetEdit}/${xi}`}>
-        return <LinkModal modal={<PageSheetEdit id={xi} />}>
+        */
+        return <LinkModal modal={<ModalSheetEdit id={xi} />}>
             <div className="px-3 py-2">
-                <IDView id={xi} uq={uq} Template={ViewSheet} />
+                <ViewItemSheet id={xi} />
             </div>
         </LinkModal>
     }

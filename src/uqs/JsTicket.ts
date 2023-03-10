@@ -1,11 +1,11 @@
-//=== UqApp builder created on Sun Mar 05 2023 20:27:35 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Thu Mar 09 2023 15:38:28 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqQuery, UqAction, UqID, UqIX } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
 
 //===============================;
-//======= UQ jksoft/ticket ========;
+//======= UQ jksoft/jksoft-mini-jxc-trial ========;
 //===============================';
 
 export interface ID {
@@ -139,6 +139,12 @@ export interface ParamBookSheetPurchase {
 export interface ResultBookSheetPurchase {
 }
 
+export interface ParamBookSheetStoreIn {
+	id: number;
+}
+export interface ResultBookSheetStoreIn {
+}
+
 export interface ParamSaveProduct {
 	pNo: string;
 	name: string;
@@ -202,6 +208,42 @@ export interface ResultGetDetailQPAs {
 	ret: ReturnGetDetailQPAsRet[];
 }
 
+export interface ParamGetDetailSource {
+	id: number;
+}
+export interface ReturnGetDetailSourceRet {
+	id: number;
+	sheet: number;
+	source: number;
+	value: number;
+	sourceSheet: number;
+	sourceItem: number;
+	sourceValue: number;
+	sourceRowCount: number;
+}
+export interface ResultGetDetailSource {
+	ret: ReturnGetDetailSourceRet[];
+}
+
+export interface ParamGetDetailSourceQPAs {
+	id: number;
+}
+export interface ReturnGetDetailSourceQPAsRet {
+	id: number;
+	sheet: number;
+	source: number;
+	value: number;
+	sourceSheet: number;
+	sourceItem: number;
+	sourceQuantity: number;
+	sourcePrice: number;
+	sourceAmount: number;
+	sourceRowCount: number;
+}
+export interface ResultGetDetailSourceQPAs {
+	ret: ReturnGetDetailSourceQPAsRet[];
+}
+
 export interface ParamSearchProduct {
 	key: string;
 }
@@ -231,6 +273,17 @@ export interface ResultSearchContact {
 	$page: ReturnSearchContact$page[];
 }
 
+export interface ParamSearchStoreIn {
+	key: string;
+}
+export interface ReturnSearchStoreIn$page {
+	id: number;
+	target: number;
+}
+export interface ResultSearchStoreIn {
+	$page: ReturnSearchStoreIn$page[];
+}
+
 export interface Product extends ID {
 	no?: string;
 	name: string;
@@ -251,6 +304,11 @@ export interface ContactInActs extends ID {
 	ID?: UqID<any>;
 	no?: string;
 	name: string;
+}
+
+export enum ContactType {
+	vendor = 1,
+	customer = 2
 }
 
 export interface Batch extends ID {
@@ -290,6 +348,28 @@ export interface SheetSaleInActs extends ID {
 	customer: number | ID;
 }
 
+export interface SheetStoreIn extends ID {
+	no?: string;
+	operator: number;
+}
+
+export interface SheetStoreInInActs extends ID {
+	ID?: UqID<any>;
+	no?: string;
+	operator: number | ID;
+}
+
+export interface SheetStoreOut extends ID {
+	no?: string;
+	operator: number;
+}
+
+export interface SheetStoreOutInActs extends ID {
+	ID?: UqID<any>;
+	no?: string;
+	operator: number | ID;
+}
+
 export interface Detail extends ID {
 	sheet: number;
 	item: number;
@@ -320,6 +400,19 @@ export interface DetailQPAInActs extends ID {
 	amount: number;
 }
 
+export interface DetailSource extends ID {
+	sheet: number;
+	source: number;
+	value: number;
+}
+
+export interface DetailSourceInActs extends ID {
+	ID?: UqID<any>;
+	sheet: number | ID;
+	source: number | ID;
+	value: number;
+}
+
 export interface IxMySheet extends IX {
 }
 
@@ -330,8 +423,11 @@ export interface ParamActs {
 	batch?: BatchInActs[];
 	sheetPurchase?: SheetPurchaseInActs[];
 	sheetSale?: SheetSaleInActs[];
+	sheetStoreIn?: SheetStoreInInActs[];
+	sheetStoreOut?: SheetStoreOutInActs[];
 	detail?: DetailInActs[];
 	detailQPA?: DetailQPAInActs[];
+	detailSource?: DetailSourceInActs[];
 	ixMySheet?: IxMySheet[];
 }
 
@@ -352,21 +448,28 @@ export interface UqExt extends Uq {
 	$setMyTimezone: UqAction<Param$setMyTimezone, Result$setMyTimezone>;
 	$getUnitTime: UqQuery<Param$getUnitTime, Result$getUnitTime>;
 	BookSheetPurchase: UqAction<ParamBookSheetPurchase, ResultBookSheetPurchase>;
+	BookSheetStoreIn: UqAction<ParamBookSheetStoreIn, ResultBookSheetStoreIn>;
 	SaveProduct: UqAction<ParamSaveProduct, ResultSaveProduct>;
 	SaveContact: UqAction<ParamSaveContact, ResultSaveContact>;
 	History: UqID<any>;
 	GetDetails: UqQuery<ParamGetDetails, ResultGetDetails>;
 	GetDetailQPAs: UqQuery<ParamGetDetailQPAs, ResultGetDetailQPAs>;
+	GetDetailSource: UqQuery<ParamGetDetailSource, ResultGetDetailSource>;
+	GetDetailSourceQPAs: UqQuery<ParamGetDetailSourceQPAs, ResultGetDetailSourceQPAs>;
 	SearchProduct: UqQuery<ParamSearchProduct, ResultSearchProduct>;
 	Sp: UqAction<ParamSp, ResultSp>;
 	SearchContact: UqQuery<ParamSearchContact, ResultSearchContact>;
+	SearchStoreIn: UqQuery<ParamSearchStoreIn, ResultSearchStoreIn>;
 	Product: UqID<any>;
 	Contact: UqID<any>;
 	Batch: UqID<any>;
 	SheetPurchase: UqID<any>;
 	SheetSale: UqID<any>;
+	SheetStoreIn: UqID<any>;
+	SheetStoreOut: UqID<any>;
 	Detail: UqID<any>;
 	DetailQPA: UqID<any>;
+	DetailSource: UqID<any>;
 	IxMySheet: UqIX<any>;
 }
 
@@ -687,6 +790,19 @@ export const uqSchema={
         ],
         "returns": [] as any
     },
+    "booksheetstorein": {
+        "name": "BookSheetStoreIn",
+        "type": "action",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "returns": [] as any
+    },
     "saveproduct": {
         "name": "SaveProduct",
         "type": "action",
@@ -864,6 +980,130 @@ export const uqSchema={
             }
         ]
     },
+    "getdetailsource": {
+        "name": "GetDetailSource",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "id"
+                    },
+                    {
+                        "name": "source",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "sourceSheet",
+                        "type": "id"
+                    },
+                    {
+                        "name": "sourceItem",
+                        "type": "id"
+                    },
+                    {
+                        "name": "sourceValue",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "sourceRowCount",
+                        "type": "int"
+                    }
+                ]
+            }
+        ]
+    },
+    "getdetailsourceqpas": {
+        "name": "GetDetailSourceQPAs",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id"
+            }
+        ],
+        "returns": [
+            {
+                "name": "ret",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id",
+                        "null": false
+                    },
+                    {
+                        "name": "sheet",
+                        "type": "id"
+                    },
+                    {
+                        "name": "source",
+                        "type": "id"
+                    },
+                    {
+                        "name": "value",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "sourceSheet",
+                        "type": "id"
+                    },
+                    {
+                        "name": "sourceItem",
+                        "type": "id"
+                    },
+                    {
+                        "name": "sourceQuantity",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "sourcePrice",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "sourceAmount",
+                        "type": "dec",
+                        "scale": 4,
+                        "precision": 18
+                    },
+                    {
+                        "name": "sourceRowCount",
+                        "type": "int"
+                    }
+                ]
+            }
+        ]
+    },
     "searchproduct": {
         "name": "SearchProduct",
         "type": "query",
@@ -942,6 +1182,35 @@ export const uqSchema={
             }
         ]
     },
+    "searchstorein": {
+        "name": "SearchStoreIn",
+        "type": "query",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "key",
+                "type": "char",
+                "size": 50
+            }
+        ],
+        "returns": [
+            {
+                "name": "$page",
+                "fields": [
+                    {
+                        "name": "id",
+                        "type": "id"
+                    },
+                    {
+                        "name": "target",
+                        "type": "id"
+                    }
+                ],
+                "order": "asc"
+            }
+        ]
+    },
     "product": {
         "name": "Product",
         "type": "id",
@@ -1007,6 +1276,16 @@ export const uqSchema={
         "global": false,
         "idType": 3,
         "isMinute": false
+    },
+    "contacttype": {
+        "name": "ContactType",
+        "type": "enum",
+        "private": false,
+        "sys": true,
+        "values": {
+            "vendor": 1,
+            "customer": 2
+        }
     },
     "batch": {
         "name": "Batch",
@@ -1116,6 +1395,70 @@ export const uqSchema={
         "idType": 3,
         "isMinute": true
     },
+    "sheetstorein": {
+        "name": "SheetStoreIn",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            },
+            {
+                "name": "operator",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
+    "sheetstoreout": {
+        "name": "SheetStoreOut",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            },
+            {
+                "name": "operator",
+                "type": "id"
+            }
+        ],
+        "keys": [
+            {
+                "name": "no",
+                "type": "char",
+                "size": 20
+            }
+        ],
+        "global": false,
+        "idType": 3,
+        "isMinute": true
+    },
     "detail": {
         "name": "Detail",
         "type": "id",
@@ -1189,6 +1532,37 @@ export const uqSchema={
         "global": false,
         "idType": 3,
         "isMinute": true
+    },
+    "detailsource": {
+        "name": "DetailSource",
+        "type": "id",
+        "private": false,
+        "sys": true,
+        "fields": [
+            {
+                "name": "id",
+                "type": "id",
+                "null": false
+            },
+            {
+                "name": "sheet",
+                "type": "id"
+            },
+            {
+                "name": "source",
+                "type": "id"
+            },
+            {
+                "name": "value",
+                "type": "dec",
+                "scale": 4,
+                "precision": 18
+            }
+        ],
+        "keys": [] as any,
+        "global": false,
+        "idType": 3,
+        "isMinute": false
     },
     "ixmysheet": {
         "name": "IxMySheet",

@@ -1,4 +1,4 @@
-//=== UqApp builder created on Sun Mar 05 2023 20:27:35 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Thu Mar 09 2023 15:38:28 GMT-0500 (Eastern Standard Time) ===//
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { IDXValue, Uq, UqQuery, UqAction, UqID, UqIX, UqIDX, UqMap } from "tonwa-uq";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -446,28 +446,82 @@ export interface ResultSearchStock {
 }
 
 export interface ParamWriteStock {
+	stocks: {
+		market: string;
+		no: string;
+		name: string;
+		rawId: number;
+		incValue: number;
+		earning: number;
+		divident: number;
+		roe: number;
+		inc1: number;
+		inc2: number;
+		inc3: number;
+		inc4: number;
+		preInc: number;
+		volumn: number;
+		smoothness: number;
+	}[];
+
 }
 export interface ResultWriteStock {
 }
 
 export interface ParamWriteGrossAndRevenue {
+	stocks: {
+		rawId: number;
+		gIncValue: number;
+		gInc1: number;
+		gInc2: number;
+		gInc3: number;
+		gInc4: number;
+		gPreInc: number;
+		gSmoothness: number;
+		rIncValue: number;
+		rInc1: number;
+		rInc2: number;
+		rInc3: number;
+		rInc4: number;
+		rPreInc: number;
+		rSmoothness: number;
+	}[];
+
 }
 export interface ResultWriteGrossAndRevenue {
 }
 
 export interface ParamWritePrice {
+	prices: {
+		market: string;
+		no: string;
+		name: string;
+		rawId: number;
+		price: number;
+		pvolumn: number;
+		date: number;
+	}[];
+
 }
 export interface ResultWritePrice {
 }
 
 export interface ParamWriteIndustryStock {
 	industry: string;
+	stocks: {
+		rawId: number;
+	}[];
+
 }
 export interface ResultWriteIndustryStock {
 }
 
 export interface ParamWriteStockIndustry {
 	rawId: number;
+	industries: {
+		industry: string;
+	}[];
+
 }
 export interface ResultWriteStockIndustry {
 }

@@ -30,11 +30,6 @@ export function PageIDNew({ Parts }: PartsProps<IDParts>) {
     async function onSubmit(data: any) {
         alert(JSON.stringify(data));
         let ret = await actSave(retNo, data);
-        /*
-        data.no = retNo;
-        const { no, name } = data;
-        let ret = await JsTicket.SaveProduct.submit({ pNo: no, name });
-        */
         alert(JSON.stringify(ret));
         navigate(-1);
     }

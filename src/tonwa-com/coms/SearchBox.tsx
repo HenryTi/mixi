@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { env } from '../tools';
+import { ComAsync } from './ComAsync';
 
 export interface SearchBoxProps {
     className?: string;
@@ -19,6 +20,7 @@ export function SearchBox(props: SearchBoxProps) {
     let { className, inputClassName, onFocus,
         label, placeholder, buttonText, maxLength, size } = props;
 
+    const [isWaiting, setIsWaiting] = React.useState(false);
     let input = React.useRef(null as HTMLInputElement);
     let button = React.useRef(null as HTMLButtonElement);
     let key: string = null;
@@ -43,9 +45,11 @@ export function SearchBox(props: SearchBoxProps) {
             if (input.current) input.current.disabled = true;
             if (button.current) button.current.disabled = true;
         }
+        setIsWaiting(true);
         await props.onSearch(key);
         if (input.current) input.current.disabled = false;
         if (button.current) button.current.disabled = false;
+        setIsWaiting(false);
     }
 
     let inputSize: string;
@@ -69,12 +73,12 @@ export function SearchBox(props: SearchBoxProps) {
                 defaultValue={props.initKey}
                 maxLength={maxLength} />
             <div className="input-group-append">
-                <button ref={button} className="btn btn-primary"
+                <button ref={button} className="btn btn-primary position-relative"
                     type="submit"
                     disabled={props.allowEmptySearch !== true}>
                     <i className='fa fa-search' />
-                    <i className="fa" />
                     {buttonText}
+                    <ComAsync isWaiting={isWaiting} />
                 </button>
             </div>
         </div>

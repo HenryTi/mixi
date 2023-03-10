@@ -1,8 +1,7 @@
 import { PageMoreCacheData, PageQueryMore } from "app/coms";
-import { UqApp, useUqApp } from "app/UqApp";
+import { useUqApp } from "app/UqApp";
 import { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-import { useModal } from "tonwa-app";
+import { useNavigate } from "react-router-dom";
 import { FA, LMR, SearchBox } from "tonwa-com";
 import { PartsProps } from "../Parts";
 import { SheetParts } from "./SheetParts";
@@ -10,9 +9,8 @@ import { SheetParts } from "./SheetParts";
 export function PageSheetNew({ Parts }: PartsProps<SheetParts>) {
     const uqApp = useUqApp();
     const parts = uqApp.fromCache(Parts);
-    const { uq, PageSheetEdit, IDSheet, IxMySheet, QuerySearchSheetItem } = parts;
-    const { openModal, closeModal } = useModal();
-    // const navigate = useNavigate();
+    const { uq, caption, pathEdit, IDSheet, IxMySheet, QuerySearchSheetItem } = parts;
+    const navigate = useNavigate();
     const [searchParam, setSearchParam] = useState({ key: undefined as string });
     const right = <SearchBox className="px-3 py-2" onSearch={onSearch} placeholder="往来单位" />;
     async function onSearch(key: string) {
@@ -40,19 +38,15 @@ export function PageSheetNew({ Parts }: PartsProps<SheetParts>) {
                 }
             }]
         });
-        let { pageCache } = uqApp;
-        let latestItem = pageCache.getLatestItem<PageMoreCacheData>();
-        if (latestItem) {
-            let { data } = latestItem;
-            if (data) {
-                data.addItem({ ix: undefined, xi: id });
-            }
+        let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
+        if (data) {
+            data.addItem({ ix: undefined, xi: id });
         }
-        closeModal();
-        openModal(<PageSheetEdit id={id} />);
-        // navigate(`../${pathSheetEdit}/${id}`, { replace: true });
+        // closeModal();
+        // openModal(<ModalSheetEdit id={id} />);
+        navigate(`../${pathEdit}/${id}`, { replace: true });
     }
-    return <PageQueryMore header="开始"
+    return <PageQueryMore header={`新建${caption}`}
         query={query}
         param={searchParam}
         sortField="id"

@@ -9,6 +9,8 @@ export interface IDViewRowProps {
 }
 
 export abstract class IDParts extends Parts {
+    get name(): string { return this.ID.name; }
+
     // IDList
     readonly abstract caption: string;
     readonly abstract ViewItem: (value: any) => JSX.Element;

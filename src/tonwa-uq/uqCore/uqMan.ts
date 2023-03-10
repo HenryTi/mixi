@@ -252,6 +252,7 @@ export interface Uq {
     $name: string;
     Role: { [key: string]: string[] };
     idObj<T = any>(id: number): Promise<T>;
+    idCache<T = any>(id: number): T;
     IDValue<T>(type: string, value: string): T;
     Acts(param: any): Promise<any>;
     ActIX<T>(param: ParamActIX<T>): Promise<number[]>;
@@ -1085,6 +1086,10 @@ export class UqMan {
 
     private cache: { [id: number]: object } = {};
     private cachePromise: { [id: number]: Promise<any> } = {};
+    protected idCache = (id: number) => {
+        let ret = this.cache[id];
+        return ret;
+    }
     protected idObj = async (id: number) => {
         let obj = this.cache[id];
         if (obj === undefined) {

@@ -41,11 +41,23 @@ ID SheetSale (
     customer ID,
 );
 
+ID SheetStoreIn ver 0.1 (
+    id MINUTE,
+    KEY no,
+    operator ID,            -- user
+);
+
+ID SheetStoreOut ver 0.1 (
+    id MINUTE,
+    KEY no,
+    operator ID,            -- user
+);
+
 -- 所有单据的明细，单值
 ID Detail (
     id MINUTE,
     sheet ID,            -- SheetPurchase or SheetSale
-    item ID,                -- 商品不同包装或者批次，甚至不同的人或者单位
+    item ID,                -- 商品不同包装或者批次，甚至不同的人或者单位, 也可以指向源单明细
     value VALUE,
     INDEX sheet_id(sheet, id) UNIQUE,
 );
@@ -60,10 +72,12 @@ ID DetailQPA (
     INDEX sheet_id(sheet, id) UNIQUE,
 );
 
-IDX DetailAmount (
+ID DetailSource ver 0.1 (
     id,
-    amount Amount,
-    price Amount,
+    sheet ID,            -- Sheet main
+    source ID,
+    value VALUE,
+    INDEX sheet_id(sheet, id) UNIQUE,
 );
 
 IX *IxMySheet (

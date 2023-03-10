@@ -12,10 +12,10 @@ const cnStar = 'small border rounded py-1 px-2 me-3 ';
 export function PageSearch() {
     const { storeApp, uqs } = useUqApp();
     const { state: { header, searchKey, markets } } = useLocation();
-    const tickReload = useRef(1);
+    const refParam = useRef<any>(undefined);
     let [smooth, setSmooth] = useAtom(storeApp.smooth);
     function changeSmooth(v: number) {
-        ++tickReload.current;
+        refParam.current = { ...refParam.current };
         setSmooth(v);
         storeApp.setSmooth(v);
     }
@@ -51,7 +51,7 @@ export function PageSearch() {
         </LMR>;
     }
     let searchOrder: SearchOrder = 'miRateDesc';
-    let searchParam = {
+    refParam.current = {
         key: searchKey,
         market: markets?.join('\n'),
         $orderSwitch: searchOrder,
@@ -59,10 +59,9 @@ export function PageSearch() {
     };
     return <PageQueryMore header={header ?? '搜索'}
         query={uqs.BrMi.SearchStock}
-        param={searchParam}
+        param={refParam.current}
         sortField="$order"
         ViewItem={ItemViewStock}
-        tickReload={tickReload.current}
     >
         <ViewStars />
     </PageQueryMore>

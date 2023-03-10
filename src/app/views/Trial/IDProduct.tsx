@@ -11,7 +11,6 @@ export const pathProductView = 'product-view';
 export const pathProductEdit = 'product-edit';
 
 class IDPartsProduct extends IDParts {
-    readonly uq: Uq;
     readonly caption: string;
 
     // IDList
@@ -35,8 +34,7 @@ class IDPartsProduct extends IDParts {
 
     constructor(uqApp: UqApp) {
         super(uqApp);
-        let uq = uqApp.uqs.JsTicket;
-        this.uq = uq;
+        let uq = this.uq;
 
         this.caption = '产品';
         this.ViewItem = ViewProduct;
@@ -72,7 +70,7 @@ class IDPartsProduct extends IDParts {
 }
 
 export function ViewProduct({ value: { no, name } }: { value: Product }) {
-    return <div className="d-block">
+    return <div className="d-block px-3 py-2">
         <div className='small text-muted'>{no}</div>
         <div><b>{name}</b></div>
     </div>;

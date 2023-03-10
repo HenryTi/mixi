@@ -38,14 +38,10 @@ export function PageIDView({ Parts }: PartsProps<IDParts>) {
         console.log(`prop value ${name}`, value);
         async function onValueChanged(value: string | number) {
             await JsTicket.ActIDProp(ID, id, name, value);
-            let { pageCache } = uqApp;
-            let latestItem = pageCache.getLatestItem<PageMoreCacheData>();
-            if (latestItem) {
-                let { data } = latestItem;
-                if (data) {
-                    let item = data.getItem<{ id: number }>(v => v.id === id) as any;
-                    if (item) item[name] = value;
-                }
+            let data = uqApp.pageCache.getData<PageMoreCacheData>();
+            if (data) {
+                let item = data.getItem<{ id: number }>(v => v.id === id) as any;
+                if (item) item[name] = value;
             }
         }
         return <>

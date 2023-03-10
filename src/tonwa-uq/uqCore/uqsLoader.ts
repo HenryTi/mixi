@@ -46,6 +46,7 @@ export class UQsLoader {
             }
         );
 
+        /*
         let ret: UqData[] = this.loadLocal(uqs);
         if (!ret) {
             let centerAppApi = new CenterAppApi(this.net, 'tv/');
@@ -68,6 +69,22 @@ export class UQsLoader {
             ret[i].ownerAlias = ownerAlias;
             ret[i].uqAlias = alias;
         }
+        return ret;
+        */
+        let ret = uqs.map(v => {
+            let { name, alias, owner, ownerAlias } = v;
+            let uqData: UqData;
+            uqData = {
+                id: undefined,
+                uqName: name,
+                uqAlias: alias,
+                uqOwner: owner,
+                ownerAlias,
+                access: undefined,
+                newVersion: undefined,
+            };
+            return uqData;
+        });
         return ret;
     }
 

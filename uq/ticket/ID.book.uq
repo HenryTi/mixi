@@ -4,6 +4,16 @@ IDX Book (
     value Value,
 );
 
+ENUM ProjectType (
+    Storage = 201,
+);
+
+ID Project (
+    id,
+    KEY type ENUM ProjectType,
+    KEY item ID,
+);
+
 ID History (
     id MINUTE,
     project ID,         -- 科目

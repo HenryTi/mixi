@@ -3,7 +3,9 @@ import { Page } from "tonwa-app";
 import { FA, LMR, Sep } from "tonwa-com";
 import { pathContactList, pathContactNew } from "./IDContact";
 import { pathProductList, pathProductNew } from "./IDProduct";
-import { pathPurchase, purchaseCaption } from "./SheetPurchase";
+import { pathPurchase, captionPurchase } from "./SheetPurchase";
+import { pathSheetCenter } from "./SheetCenter";
+import { captionStoreIn, pathStoreIn } from "./SheetStoreIn";
 
 interface Cmd {
     to: string;
@@ -27,8 +29,14 @@ export function TabTrial() {
     }
     return <Page header="测试" back="none">
         <div className="px-3 py-2 border-bottom small tonwa-bg-gray-1">测试页面</div>
+        <Link to={pathSheetCenter} className="px-3 py-2 border-bottom align-items-center">
+            单据中心
+        </Link>
         <Link to={pathPurchase} className="px-3 py-2 border-bottom align-items-center">
-            {purchaseCaption}
+            {captionPurchase}
+        </Link>
+        <Link to={pathStoreIn} className="px-3 py-2 border-bottom align-items-center">
+            {'新建' + captionStoreIn}
         </Link>
         <Sep sep={3} />
         {cmdProducts.map((v, index) => LinkCmd(v, index))}

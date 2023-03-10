@@ -11,7 +11,6 @@ export const pathContactView = 'Contact-view';
 export const pathContactEdit = 'Contact-edit';
 
 class IDPartsContact extends IDParts {
-    readonly uq: Uq;
     readonly caption: string;
 
     // IDList
@@ -35,8 +34,7 @@ class IDPartsContact extends IDParts {
 
     constructor(uqApp: UqApp) {
         super(uqApp);
-        let uq = uqApp.uqs.JsTicket;
-        this.uq = uq;
+        let uq = this.uq
 
         this.caption = '往来单位';
         this.ViewItem = ViewContact;
@@ -72,7 +70,7 @@ class IDPartsContact extends IDParts {
 }
 
 export function ViewContact({ value: { no, name } }: { value: Contact }) {
-    return <div className="d-block">
+    return <div className="d-block px-3 py-2">
         <div className='small text-muted'>{no}</div>
         <div><b>{name}</b></div>
     </div>;

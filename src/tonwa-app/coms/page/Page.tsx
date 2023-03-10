@@ -1,5 +1,5 @@
 import { Suspense, useContext, useEffect, useRef } from "react";
-import { useLocation, useNavigate, useNavigationType } from "react-router-dom";
+import { NavigationType, useLocation, useNavigate, useNavigationType } from "react-router-dom";
 import { useAtomValue } from "jotai/react";
 import 'font-awesome/css/font-awesome.min.css';
 import '../../css/tonwa-page.css';
@@ -37,9 +37,9 @@ function PageBase(props: PageProps) {
             if (scrollTop > scrollTopSave) {
                 scrollTopSave = scrollTop;
             }
-            const urlCache = uqApp.pageCache.get(pathname);
-            if (urlCache !== undefined && scrollTop > 0) {
-                Object.assign(urlCache, { scrollTop });
+            const pageCache = uqApp.pageCache.getCache();
+            if (pageCache !== undefined && scrollTop > 0) {
+                Object.assign(pageCache, { scrollTop });
             }
             let scroller = new Scroller(el);
             if (onScrollTop !== undefined && scrollTop < scrollEdgeGap) {
@@ -121,10 +121,11 @@ function PageNav(props: PageProps) {
     }, [user, mustLogin, pathLogin]);
     if (props.auth !== false && mustLogin && !user) return null;
     useEffectOnce(() => {
-        if (navAction !== 'POP') return;
-        const urlCache = uqApp.pageCache.get(pathname);
-        if (urlCache === undefined) return;
-        const { scrollTop } = urlCache;
+        uqApp.pageCache.onNav(navAction, pathname);
+        if (navAction !== NavigationType.Pop) return;
+        const pageCache = uqApp.pageCache.getCache();
+        if (pageCache === undefined) return;
+        const { scrollTop } = pageCache;
         if (scrollTop) {
             setTimeout(() => {
                 const scrollOptions = { top: scrollTop };

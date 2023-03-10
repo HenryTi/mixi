@@ -1,7 +1,7 @@
-import { Suspense, useCallback, useContext, useEffect, useRef, useState } from "react";
-import { List, Spinner, useEffectOnce } from "tonwa-com";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { List, Sep, Spinner, useEffectOnce } from "tonwa-com";
 import { UqQuery } from "tonwa-uq";
-import { ModalContext, Page, PageProps, Scroller, PageSpinner } from "tonwa-app";
+import { ModalContext, Page, PageProps, Scroller } from "tonwa-app";
 import { useNavigationType } from "react-router-dom";
 import { useUqApp } from "app/UqApp";
 
@@ -14,7 +14,7 @@ interface PageQueryMoreProps<P, R> extends PageProps {
     pageMoreSize?: number;
     ViewItem?: ({ value }: { value: any; }) => JSX.Element;
     onItemClick?: (item: any) => Promise<void>;
-    tickReload?: number; // 改变这个值，会引发重新load数据
+    Top?: (props: { items: any[] }) => JSX.Element; // 根据内容显示Top
 }
 
 export class PageMoreCacheData {
@@ -55,8 +55,8 @@ export function PageQueryMore<P, R>(props: PageQueryMoreProps<P, R>) {
 
 function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst: boolean; isModal: boolean }) {
     let { query, param, sortField, pageStart: pageStartParam, pageSize, pageMoreSize
-        , ViewItem: ItemView, onItemClick, children, tickReload
-        , isPopFirst, isModal } = props;
+        , ViewItem: ItemView, onItemClick, children
+        , isPopFirst, isModal, Top } = props;
     const [items, setItems] = useState<R[]>(undefined);
     const [loading, setLoading] = useState(false);
     const refValue = useRef({
@@ -69,8 +69,6 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
     pageSize = pageSize ?? 20;
     pageMoreSize = pageMoreSize ?? 5;
     const uqApp = useUqApp();
-    const { pathname } = document.location;
-    let urlCache = uqApp.pageCache.get<PageMoreCacheData>(pathname);
     const callQuery = useCallback(async function callQuery(more: boolean = false) {
         if (param === undefined) {
             setItems(null);
@@ -79,9 +77,9 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
         }
         let { pageStart, querying, isPopFirst, items } = current;
         if (isPopFirst === true) {
-            if (urlCache && isModal === false) {
-                let { start } = urlCache.data;
-                if (start === pageStart && items !== undefined) return;
+            let pageCache = uqApp.pageCache.getCache<PageMoreCacheData>();
+            if (pageCache && isModal === false) {
+                if (pageCache.data?.start === pageStart && items !== undefined) return;
             }
         }
         if (querying === true) return;
@@ -94,10 +92,12 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
             setTimeout(() => {
                 current.isPopFirst = false;
             }, 100);
-            if (pageStart === pageStartParam && urlCache && isModal === false) {
-                let { items: result } = urlCache.data;
+            let pageCache = uqApp.pageCache.getCache<PageMoreCacheData>();
+            let data = pageCache?.data;
+            if (pageStart === pageStartParam && data && isModal === false) {
+                let { items: result } = data;
                 arrResult = result;
-                uqApp.pageCache.setData(pathname, undefined);
+                pageCache.data = undefined;
             }
         }
         if (!arrResult) {
@@ -120,7 +120,10 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
             current.pageStart = arrResult[length - 1][sortField];
         }
         if (isModal === false) {
-            uqApp.pageCache.setData<PageMoreCacheData>(pathname, new PageMoreCacheData(pageStart, newItems));
+            let pageCache = uqApp.pageCache.getCache<PageMoreCacheData>();
+            if (pageCache !== undefined) {
+                pageCache.data = new PageMoreCacheData(pageStart, newItems);
+            }
         }
         setLoading(false);
         current.querying = false;
@@ -132,10 +135,14 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
         if (current.isPopFirst === true) return;
         current.pageStart = undefined;
         callQuery();
-    }, [tickReload, param]);
+    }, [param]);
     if (isModal === false) {
         uqApp.onCloseModal = () => {
-            let { items } = urlCache.data
+            let pageCache = uqApp.pageCache.getCache<PageMoreCacheData>();
+            if (pageCache === undefined) return;
+            let { data } = pageCache;
+            if (data === undefined) return;
+            let { items } = data
             let newItems = [...items];
             setItems(newItems);
             current.items = newItems;
@@ -159,10 +166,18 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
     ItemView = ItemView ?? function ({ value }: { value: R; }) {
         return <>{JSON.stringify(value)}</>;
     }
+    let top: any;
+    if (Top) top = <Top items={items} />;
     return <Page {...props} onScrollBottom={onScrollBottom}>
         <div id="$$top" />
         {children}
-        <List items={items} ViewItem={ItemView} onItemClick={onItemClick} />
+        {top}
+        {
+            items && items.length > 0 && <>
+                <List items={items} ViewItem={ItemView} onItemClick={onItemClick} />
+                <Sep />
+            </>
+        }
         {loading && items !== undefined && <div>
             <Spinner className="m-3 text-info" />
             <div id="$$bottom" />

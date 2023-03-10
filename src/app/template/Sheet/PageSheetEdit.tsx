@@ -1,18 +1,18 @@
-import { PageMoreCacheData } from "app/coms";
 import { useRef, useState } from "react";
+import { atom, useAtomValue } from "jotai";
 import { Page, PageConfirm, useModal } from "tonwa-app";
 import { ButtonAsync, getAtomValue, List, LMR, Sep, setAtomValue, useEffectOnce } from "tonwa-com";
-import { atom, useAtomValue } from "jotai";
 import { Product, SheetPurchase } from "uqs/JsTicket";
-import { SheetParts } from "./SheetParts";
 import { useUqApp } from "app/UqApp";
+import { PageMoreCacheData } from "app/coms";
 import { PartsProps } from "../Parts";
+import { SheetParts } from "./SheetParts";
 
-export function PageSheetEdit({ id, Parts }: PartsProps<SheetParts> & { id: number; }) {
+export function PageSheetEdit({ id, Parts, close }: PartsProps<SheetParts> & { id: number; close: () => void }) {
     const uqApp = useUqApp();
     const parts = uqApp.fromCache(Parts);
     const { uq, IDDetail, QueryGetDetails, ActBookSheet
-        , caption, PageDetailItemSelect, PageSheetDetail, ViewItemSheet, IxMySheet
+        , caption, PageDetailItemSelect, PageSheetDetail, ViewItemDetail, IxMySheet
         , ViewNO, ViewTarget } = parts;
     const refItemsAtom = useRef(atom([] as any[]));
     const [visible, setVisible] = useState(true);
@@ -46,13 +46,9 @@ export function PageSheetEdit({ id, Parts }: PartsProps<SheetParts> & { id: numb
     </LMR>;
     const { openModal, closeModal } = useModal();
     function removeSheetFromCache() {
-        let { pageCache } = uqApp;
-        let latestItem = pageCache.getLatestItem<PageMoreCacheData>();
-        if (latestItem) {
-            let { data } = latestItem;
-            if (data) {
-                data.removeItem<{ ix: number, xi: number }>(v => v.xi === sheetId) as any;
-            }
+        let data = uqApp.pageCache.getPrevData<PageMoreCacheData>();
+        if (data) {
+            data.removeItem<{ ix: number, xi: number }>(v => v.xi === sheetId) as any;
         }
     }
     async function onSubmit() {
@@ -72,19 +68,21 @@ export function PageSheetEdit({ id, Parts }: PartsProps<SheetParts> & { id: numb
                 <button className="ms-3 btn btn-outline-secondary" onClick={addDetailOnOk}>新建{caption}</button>
             </div>
         </Page>);
+        close();
         // navigate(-1);
-        closeModal();
+        //closeModal();
     }
     async function onAddDetail() {
         openModal(<PageDetailItemSelect onItemClick={onItemSelect} />);
     }
     async function onRemoveSheet() {
-        let message = `真的要删除单据 ${sheet.no} 吗？`;
-        let ret = await openModal(<PageConfirm header="确认" message={message} yes="删除单据" no="不删除" />);
+        let message = `单据 ${sheet.no} 真的要作废吗？`;
+        let ret = await openModal(<PageConfirm header="确认" message={message} yes="单据作废" no="不作废" />);
         if (ret === true) {
             await uq.ActIX({ IX: IxMySheet, values: [{ ix: undefined, xi: -id }] });
             removeSheetFromCache();
-            closeModal();
+            // closeModal();
+            close();
         }
     }
     async function onItemSelect(item: Product) {
@@ -131,7 +129,7 @@ export function PageSheetEdit({ id, Parts }: PartsProps<SheetParts> & { id: numb
             <ViewTarget target={sheet.vendor} />
         </div>
         {items.length > 6 ? <>{button}<Sep /></> : <Sep />}
-        <List items={items} ViewItem={ViewItemSheet} none={<None />} onItemClick={onEditDetail} />
+        <List items={items} ViewItem={ViewItemDetail} none={<None />} onItemClick={onEditDetail} />
         <Sep />
         {button}
     </Page>;

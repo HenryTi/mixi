@@ -21,8 +21,13 @@
         },
         {
             "dev": "jksoft",
-            "name": "ticket",
+            "name": "jksoft-mini-jxc-trial",
             "alias": "Ticket"
         }
-    ]
+    ],
+    "a": {
+        "dev": "jksoft",
+        "name": "ticket",
+        "alias": "Ticket"
+    }
 }

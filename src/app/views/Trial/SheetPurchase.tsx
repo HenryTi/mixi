@@ -1,4 +1,4 @@
-import { Route } from "react-router-dom";
+import { Route, useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { IDView, Page, useModal } from "tonwa-app";
 import { UqAction, UqID, UqQuery } from "tonwa-uq";
@@ -12,49 +12,74 @@ import { Band, FormRow, FormRowsView } from "app/coms";
 import { FA, LMR } from "tonwa-com";
 import { ViewContact } from "./IDContact";
 
-export const purchaseCaption = '采购单';
+export const captionPurchase = '采购单';
 export const pathPurchase = 'purchase';
-// const pathPurchaseNew = 'purchase-new';
-// const pathPurchaseEdit = 'purchase-edit';
+const pathPurchaseNew = 'purchase-new';
+const pathPurchaseEdit = 'purchase-edit';
 
-class SheetPartsPurchase extends SheetParts {
+export class SheetPartsPurchase extends SheetParts {
+    readonly pathSheet: string;
+    readonly pathNew: string;
+    readonly pathEdit: string;
+
     readonly IDSheet: UqID<any>;
     readonly IDDetail: UqID<any>;
     readonly QueryGetDetails: UqQuery<{ id: number }, { ret: any[] }>;
     readonly ActBookSheet: UqAction<any, any>;
     readonly QuerySearchSheetItem: UqQuery<any, any>;
+    readonly QuerySource: UqQuery<any, any>;
 
     readonly caption: string;
 
-    PageDetailItemSelect: (props: { onItemClick: (item: any) => Promise<void>; }) => JSX.Element;
-    readonly pathSheet: string;
-    readonly PageSheetEdit: (props: { id: number; }) => JSX.Element;
+    readonly PageDetailItemSelect: (props: { onItemClick: (item: any) => Promise<void>; }) => JSX.Element;
+    readonly ModalSheetEdit: (props: { id: number; }) => JSX.Element;
+    readonly PageSheetEdit: () => JSX.Element;
     readonly PageSheetNew: () => JSX.Element;
     readonly PageSheetDetail: <T extends DetailQPA>(props: PartsProps<SheetParts> & { detail: Partial<T>; }) => JSX.Element;
     readonly ViewNO: (props: { no: string }) => JSX.Element;
     readonly ViewTarget: (props: { target: number }) => JSX.Element;
-    readonly ViewItemSheet: ({ value }: { value: any }) => JSX.Element;
+    readonly ViewItemDetail: ({ value }: { value: any }) => JSX.Element;
+    readonly ViewItemSheet: ({ id }: { id: number; }) => JSX.Element;
+    readonly ViewItemSource: ({ id }: { id: number; }) => JSX.Element;
+    readonly sourceSearchPlaceholder: string;
+
 
     constructor(uqApp: UqApp) {
         super(uqApp);
         const { JsTicket: uq } = uqApp.uqs;
+
+        this.pathSheet = pathPurchase;
+        this.pathNew = pathPurchaseNew;
+        this.pathEdit = pathPurchaseEdit;
+
         this.IDSheet = uq.SheetPurchase;
         this.IDDetail = uq.DetailQPA;
         this.QueryGetDetails = uq.GetDetailQPAs;
         this.ActBookSheet = uq.BookSheetPurchase;
         this.QuerySearchSheetItem = uq.SearchContact;
+        this.QuerySource = undefined;
 
         this.PageDetailItemSelect = PageProductSelect;
-        this.pathSheet = pathPurchase;
-        //this.pathSheetEdit = pathPurchaseEdit;
-        //this.pathSheetNew = pathPurchaseNew;
-        this.caption = purchaseCaption;
+        this.caption = captionPurchase;
+        this.ModalSheetEdit = ModalPurchaseEdit;
         this.PageSheetEdit = PagePurchaseEdit;
         this.PageSheetNew = PagePurchaseNew;
         this.PageSheetDetail = PageSheetDetail;
-        this.ViewItemSheet = ViewItemSheet;
 
-        function ViewItemSheet({ value }: { value: DetailQPA }) {
+        this.ViewItemSheet = ({ id }: { id: number; }) => {
+            const ViewSheet = ({ value }: { value: any }) => {
+                const { no, vendor } = value;
+                return <div>
+                    <small className="text-muted">{this.caption}</small> <b>{no}</b> &nbsp;
+                    <IDView id={vendor} uq={uq} Template={ViewContact} />
+                </div>
+            }
+            return <IDView id={id} uq={uq} Template={ViewSheet} />;
+        }
+
+        this.ViewItemSource = undefined;
+
+        this.ViewItemDetail = function ({ value }: { value: DetailQPA }) {
             let { item, quantity, price, amount } = value;
             return <LMR className="px-3 py-2">
                 <IDView uq={uq} id={item} Template={ViewProduct} />
@@ -69,15 +94,13 @@ class SheetPartsPurchase extends SheetParts {
             </LMR>;
         }
 
-        this.ViewNO = ViewNO;
-        function ViewNO({ no }: { no: string }) {
+        this.ViewNO = function ({ no }: { no: string }) {
             return <Band label={'编号'} labelClassName="text-end">
                 {no}
             </Band>
         }
 
-        this.ViewTarget = ViewTarget;
-        function ViewTarget({ target }: { target: number }) {
+        this.ViewTarget = function ({ target }: { target: number }) {
             return <Band label={'往来单位'} labelClassName="text-end">
                 <IDView id={target} uq={uq} Template={ViewContact} />
             </Band>
@@ -85,12 +108,20 @@ class SheetPartsPurchase extends SheetParts {
     }
 }
 
-function PagePurchaseEdit({ id }: { id: number; }) {
-    return <PageSheetEdit Parts={SheetPartsPurchase} id={id} />;
-}
-
 function PagePurchaseNew() {
     return <PageSheetNew Parts={SheetPartsPurchase} />;
+}
+
+function PagePurchaseEdit() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    function close() { navigate(-1); }
+    return <PageSheetEdit Parts={SheetPartsPurchase} id={Number(id)} close={close} />;
+}
+
+function ModalPurchaseEdit({ id }: { id: number; }) {
+    const { closeModal } = useModal();
+    return <PageSheetEdit Parts={SheetPartsPurchase} id={id} close={closeModal} />;
 }
 
 function PagePurchaseList() {
@@ -116,7 +147,6 @@ function PageSheetDetail({ detail, Parts }: (PartsProps<SheetParts> & { detail: 
     function setAmountValue(amount: number) {
         detail.amount = amount;
         setValue('amount', amount);
-        setValue('a', amount);
     }
     function onQuantityChange(value: number) {
         setAmountValue(value * getValues('price'));
@@ -146,14 +176,13 @@ function PageSheetDetail({ detail, Parts }: (PartsProps<SheetParts> & { detail: 
         </div>
         <form className="container" onSubmit={handleSubmit(onSubmit)}>
             <FormRowsView rows={formRows} register={register} errors={errors} />
-            <input {...register('a', { disabled: true })} type={"number"} />
         </form>
     </Page>;
 }
 
-export const routeSheetPurchase = <Route path={pathPurchase} element={<PagePurchaseList />} />;
-/*
+export const routeSheetPurchase = <>
+    <Route path={pathPurchase} element={<PagePurchaseList />} />
     <Route path={pathPurchaseNew} element={<PagePurchaseNew />} />
     <Route path={`${pathPurchaseEdit}/:id`} element={<PagePurchaseEdit />} />
     <Route path={pathPurchaseEdit} element={<PagePurchaseEdit />} />
-*/
+</>;

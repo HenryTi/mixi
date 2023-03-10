@@ -13,10 +13,12 @@ export function IDView<T>({ id, uq, Template }: Props<T>) {
         return await uq.idObj(id);
     }, { cacheTime: 0, refetchOnWindowFocus: false });
     */
-    const [value, setValue] = useState(undefined);
+    let obj = uq.idCache<any>(id);
+    const [value, setValue] = useState(obj);
     useEffect(() => {
         (async function () {
             if (id === undefined || id === null) return;
+            if (value !== undefined) return;
             let ret = await uq.idObj(id);
             setValue(ret);
         })();
