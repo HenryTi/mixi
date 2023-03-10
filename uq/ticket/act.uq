@@ -25,6 +25,7 @@ ACT BookSheetStoreIn ver 0.6 (
     ) {
         INTO sourceSheets IGNORE SELECT sourceSheet as id;
         WITH Done ID=source SET done+=value;
+        WITH Book ID=item SET value+=value;
         VAR project ID = ID(Project new KEY type=ProjectType.Storage, item=item);
         VAR history ID;
         WITH History as a ID to history SET a.project=project, a.value=value, a.ref=id;

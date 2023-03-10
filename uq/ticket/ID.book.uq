@@ -1,6 +1,7 @@
 
 IDX Book (
     id,
+    init VALUE DEFAULT 0,
     value Value,
 );
 
