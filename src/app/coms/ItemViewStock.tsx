@@ -78,7 +78,7 @@ export function ViewStockRow({ order, stock, onClickName, right }: ViewStockRowP
     </div>;
     let rows: [string, number, 'p0' | 'p1' | 'n1' | 'n2' | 'yi'][] = [
         // ['米息分', Math.log2(miRate), 'n1'],
-        // ['米息率', miRate, 'n1'],
+        ['米息率', miRate, 'n1'],
         ['TTM', ttm, 'n1'],
         ['年息', dvRate / 100, 'p1'],
         ['价格', price, 'n2'],
