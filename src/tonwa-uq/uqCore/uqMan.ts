@@ -627,9 +627,9 @@ export class UqMan {
         return ix;
     }
     private fromType(name: string, type: string): Entity {
-        let parts = type.split('|');
-        type = parts[0];
-        let id = Number(parts[1]);
+        let Part = type.split('|');
+        type = Part[0];
+        let id = Number(Part[1]);
         switch (type) {
             default:
                 break;
@@ -954,8 +954,8 @@ export class UqMan {
     protected ActDetail = async (param: ParamActDetail<any, any>) => {
         let ret = await this.apiActDetail(param, EnumResultType.data);
         let val: string = ret[0].ret;
-        let parts = val.split('\n');
-        let items = parts.map(v => v.split('\t'));
+        let Part = val.split('\n');
+        let items = Part.map(v => v.split('\t'));
         ret = {
             main: ids(items[0])[0],
             detail: ids(items[1]),

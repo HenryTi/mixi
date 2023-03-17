@@ -479,8 +479,8 @@ export abstract class Entity {
                 return date;
             /*
             case 'date':
-                let parts = v.split('-');
-                return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+                let Part = v.split('-');
+                return new Date(Number(Part[0]), Number(Part[1]) - 1, Number(Part[2]));
             */
             case 'enum':
             case 'tinyint':

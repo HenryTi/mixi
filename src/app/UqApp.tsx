@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { getAtomValue, setAtomValue } from 'tonwa-com';
 import { AppConfig, UqAppBase, UqAppContext, ViewUqAppBase } from "tonwa-app";
 import { UqConfig, UqQuery } from 'tonwa-uq';
-import { JsTicket, UQs, uqsSchema } from "uqs";
+import { UQs, uqsSchema } from "uqs";
 import uqconfigJson from '../uqconfig.json';
 import { ViewsRoutes } from './views';
 import { MiNet } from './tool';
@@ -84,7 +84,7 @@ export class UqApp extends UqAppBase<UQs> {
     }
 
     private readonly cache = new Map<new (uqApp: UqApp) => any, any>();
-    fromCache<T>(constructor: new (uqApp: UqApp) => T) {
+    partOf<T>(constructor: new (uqApp: UqApp) => T) {
         let ret = this.cache.get(constructor) as T;
         if (ret === undefined) {
             ret = new constructor(this);

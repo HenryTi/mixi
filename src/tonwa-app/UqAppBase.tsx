@@ -251,13 +251,6 @@ export function useModal() {
     }
     return { openModal, closeModal }
 }
-/*
-export function useScrollRestoration() {
-    const uqApp = useUqAppBase();
-    const { pathname } = document.location;
-    uqApp.pageCache.create(pathname);
-}
-*/
 
 export const UqAppContext = React.createContext(undefined);
 export function useUqAppBase() {

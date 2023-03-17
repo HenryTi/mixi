@@ -1,16 +1,12 @@
-//=== UqApp builder created on Thu Mar 09 2023 15:38:28 GMT-0500 (Eastern Standard Time) ===//
+//=== UqApp builder created on Tue Mar 14 2023 16:01:21 GMT-0400 (Eastern Daylight Time) ===//
 import * as BrMi from './BrMi';
-import * as JsTicket from './JsTicket';
 
 export interface UQs {
-	BrMi: BrMi.UqExt;
-	JsTicket: JsTicket.UqExt;
+    BrMi: BrMi.UqExt;
 }
 
 export const uqsSchema = {
-	"bruce/yumi": BrMi.uqSchema,
-	"jksoft/jksoft-mini-jxc-trial": JsTicket.uqSchema,
+    "bruce/yumi": BrMi.uqSchema,
 }
 
 export * as BrMi from './BrMi';
-export * as JsTicket from './JsTicket';

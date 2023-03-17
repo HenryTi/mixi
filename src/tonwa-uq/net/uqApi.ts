@@ -87,9 +87,9 @@ export class UqApi extends ApiBase {
     async getRoles(): Promise<string[]> {
         let ret = await this.get('get-roles',);
         if (!ret) return null;
-        let parts: string[] = (ret as string).split('|');
+        let Part: string[] = (ret as string).split('|');
         let s: string[] = [];
-        for (let p of parts) {
+        for (let p of Part) {
             p = p.trim();
             if (!p) continue;
             s.push(p);

@@ -64,6 +64,7 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
         isPopFirst,
         querying: false,
         items: undefined as any[],
+        allLoaded: false,
     });
     const { current } = refValue;
     pageSize = pageSize ?? 20;
@@ -75,7 +76,8 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
             current.items = null;
             return;
         }
-        let { pageStart, querying, isPopFirst, items } = current;
+        let { pageStart, querying, isPopFirst, items, allLoaded } = current;
+        if (allLoaded === true) return;
         if (isPopFirst === true) {
             let pageCache = uqApp.pageCache.getCache<PageMoreCacheData>();
             if (pageCache && isModal === false) {
@@ -100,19 +102,31 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
                 pageCache.data = undefined;
             }
         }
+        let length: number;
         if (!arrResult) {
             let sz = more === true ? pageMoreSize : pageSize;
+            let szAsk = sz + 1;
             if (typeof query === 'function') {
-                let ret = await query(param, pageStart, sz);
+                let ret = await query(param, pageStart, szAsk);
                 arrResult = ret;
             }
             else {
-                let ret = await query.page(param, pageStart, sz);
+                let ret = await query.page(param, pageStart, szAsk);
                 let { $page } = ret as any;
                 arrResult = $page;
             }
+            length = arrResult.length;
+            if (length < szAsk) {
+                current.allLoaded = true;
+            }
+            else {
+                arrResult.splice(length - 1, 1);
+                length--;
+            }
         }
-        let { length } = arrResult;
+        else {
+            length = arrResult.length;
+        }
         newItems = pageStart === undefined || items === undefined ? arrResult : [...items, ...arrResult];
         setItems(newItems);
         current.items = newItems;
@@ -164,7 +178,7 @@ function PageQueryMoreBase<P, R>(props: PageQueryMoreProps<P, R> & { isPopFirst:
         await callQuery(true);
     }
     ItemView = ItemView ?? function ({ value }: { value: R; }) {
-        return <>{JSON.stringify(value)}</>;
+        return <div className="px-3 py-2">{JSON.stringify(value)}</div>;
     }
     let top: any;
     if (Top) top = <Top items={items} />;

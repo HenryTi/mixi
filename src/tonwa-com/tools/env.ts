@@ -7,9 +7,9 @@ export const env = (function () {
         district = 'CN';
     }
     else {
-        let parts = language.split('-');
-        lang = parts[0];
-        if (parts.length > 1) district = parts[1].toUpperCase();
+        let Part = language.split('-');
+        lang = Part[0];
+        if (Part.length > 1) district = Part[1].toUpperCase();
     }
     let timeZone = -new Date().getTimezoneOffset() / 60;
     const regEx = new RegExp('Android|webOS|iPhone|iPad|' +
