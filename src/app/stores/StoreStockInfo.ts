@@ -224,27 +224,13 @@ export class StoreStockInfo extends StorePage {
 
             let mlen = mvr.length;
 
-            let ratesArr = ret[6] as { day: number, mirate: number, price: number, exright: number }[];
-            let rates: { day: number, mirate: number, price: number }[] = [];
-            let exLast = 1;
-            if (ratesArr.length > 0) {
-                let li = ratesArr[0];
-                exLast = li.exright;
+            if (rawId < 10000000) {
+                this.loadHistoryRates(ret[6]);
             }
-            ratesArr.forEach(v => {
-                let { day, mirate, price, exright } = v;
-                let priceEx = price * exright / exLast;
-
-                rates.unshift({ day: day, mirate: mirate, price: priceEx });
-            });
-            if (this.trackDay === null && this.stock !== undefined && rates.length > 0) {
-                let nItem = { day: this.day, mirate: this.stock.miRate, price: this.stock.price };
-                let lItem = rates[rates.length - 1];
-                if (this.day > lItem.day) {
-                    rates.push(nItem);
-                }
+            else {
+                this.mirates = [];
+                this.loadHistoryWeeks(ret[6]);
             }
-            this.mirates = rates;
 
             this.loadTTMEarning(ret[2]);
             this.LoadDivident(ret[8]);
@@ -258,6 +244,32 @@ export class StoreStockInfo extends StorePage {
             stock,
             day: this.day,
         });
+    }
+
+    protected loadHistoryRates(ratesArr : { day: number, mirate: number, price: number, exright: number }[]) {
+        let rates: { day: number, mirate: number, price: number }[] = [];
+        let exLast = 1;
+        if (ratesArr.length > 0) {
+            let li = ratesArr[0];
+            exLast = li.exright;
+        }
+        ratesArr.forEach(v => {
+            let { day, mirate, price, exright } = v;
+            let priceEx = price * exright / exLast;
+
+            rates.unshift({ day: day, mirate: mirate, price: priceEx });
+        });
+        if (this.trackDay === null && this.stock !== undefined && rates.length > 0) {
+            let nItem = { day: this.day, mirate: this.stock.miRate, price: this.stock.price };
+            let lItem = rates[rates.length - 1];
+            if (this.day > lItem.day) {
+                rates.push(nItem);
+            }
+        }
+        this.mirates = rates;
+    }
+
+    protected loadHistoryWeeks(arr : { day: number, price: number, priceb: number, capital: number} []) {
     }
 
     protected loadTTMEarning(list: { seasonno: number, capital: number, revenue: number, profit: number, netprofit: number, shares: number }[]) {
