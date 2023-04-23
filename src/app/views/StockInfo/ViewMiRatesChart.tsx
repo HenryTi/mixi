@@ -22,7 +22,7 @@ export function ViewMiRatesChart() {
     let pmmax: number = 0;
     for (let i = 0; i < len; ++i) {
         let item = mirates[i];
-        if (item.day === undefined)
+        if (item.day === undefined || item.price === undefined)
             continue;
         labels.push(item.day);
         priceOrg.push(item.price);
