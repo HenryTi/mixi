@@ -281,10 +281,19 @@ export class StoreStockInfo extends StorePage {
             rates.unshift({ day: day, price: priceEx });
         });
         if ((this.trackDay === undefined || this.trackDay === null) && this.stock !== undefined && rates.length > 0) {
-            let nItem = { day: this.day, price: this.stock.price };
+            let nItem = { day: this.day, mirate: this.stock.miRate, price: this.stock.price };
             let lItem = rates[rates.length - 1];
             if (this.day > lItem.day) {
                 rates.push(nItem);
+            }
+
+            let mirate = this.stock.miRate;
+            let len = rates.length;
+            for (let i = 1; i < len; ++i) {
+                let im = i % 10;
+                if (im < 7) {
+                    rates[len - i].mirate = mirate;
+                }
             }
         }
         this.mirates = rates;
