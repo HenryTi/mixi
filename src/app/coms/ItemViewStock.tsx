@@ -59,6 +59,7 @@ interface ViewStockRowProps {
 };
 export function ViewStockRow({ order, stock, onClickName, right }: ViewStockRowProps): JSX.Element {
     let { roe, price, dvRate, miRate, volumn, ttm, inc1, inc2, inc3, inc4, preInc, smoothness } = stock;
+    let pm = miRate !== undefined && miRate !== null && miRate > 0 ? 100 / miRate : undefined;
     let stars = [0, 0, 0, 0];
     for (let i = 2; i <= smoothness; i++) stars[i - 2] = 1;
     let left = <div className="cursor-pointer align-self-center flex-grow-1" onClick={() => onClickName?.(stock)}>
@@ -77,7 +78,7 @@ export function ViewStockRow({ order, stock, onClickName, right }: ViewStockRowP
     </div>;
     let rows: [string, number, 'p0' | 'p1' | 'n1' | 'n2' | 'yi'][] = [
         // ['米息分', Math.log2(miRate), 'n1'],
-        // ['米息率', miRate, 'n1'],
+        ['米息率', miRate, 'n1'],
         ['TTM', ttm, 'n1'],
         ['年息', dvRate / 100, 'p1'],
         ['价格', price, 'n2'],
@@ -96,8 +97,8 @@ export function ViewStockRow({ order, stock, onClickName, right }: ViewStockRowP
         </div>
         <div className="d-flex flex-wrap p-1" onClick={() => onClickName?.(stock)}>
             <div className="px-2 px-sm-3 mb-1 text-end w-min-5c">
-                <span className="small">米息</span><br />
-                {number(miRate, 1)}
+                <span className="small">PM</span><br />
+                {number(pm, 1)}
             </div>
             {rows.map(v => renderValue(v[0], v[1], v[2]))}
         </div>

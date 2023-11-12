@@ -30,7 +30,7 @@ export class StoreStockInfo extends StorePage {
     predictBonusData: { year: number, bonus: number }[];
     ypredict: number[];
 
-    mirates: { day: number, mirate: number, price: number }[];
+    mirates: { day: number, mirate?: number, price: number }[];
     mivalues: { season: number, mivalue: number }[];
 
     _capitalearning: StockCapitalearning[];
@@ -104,7 +104,7 @@ export class StoreStockInfo extends StorePage {
                 yearDataA[year] = { bonus: yb.bonus + divident * shares }
             }
         }
-        if (maxYear > lastYear && this.trackDay === undefined) {
+        if (maxYear > lastYear && (this.trackDay === undefined || this.trackDay === null)) {
             lastYear = maxYear;
         }
 
@@ -174,7 +174,7 @@ export class StoreStockInfo extends StorePage {
         this.day = year * 10000 + month * 100 + dt;
         this.trackDay = getAtomValue(storeApp.trackDay);
         let rets;
-        if (this.trackDay !== undefined) {
+        if (this.trackDay !== undefined && this.trackDay !== null) {
             rets = await Promise.all([
                 miNet.q_stockallinfotrack(rawId, this.trackDay)
             ]);
@@ -225,27 +225,12 @@ export class StoreStockInfo extends StorePage {
 
             let mlen = mvr.length;
 
-            let ratesArr = ret[6] as { day: number, mirate: number, price: number, exright: number }[];
-            let rates: { day: number, mirate: number, price: number }[] = [];
-            let exLast = 1;
-            if (ratesArr.length > 0) {
-                let li = ratesArr[0];
-                exLast = li.exright;
+            if (rawId < 10000000) {
+                this.loadHistoryRates(ret[6]);
             }
-            ratesArr.forEach(v => {
-                let { day, mirate, price, exright } = v;
-                let priceEx = price * exright / exLast;
-
-                rates.unshift({ day: day, mirate: mirate, price: priceEx });
-            });
-            if (this.trackDay === null && this.stock !== undefined && rates.length > 0) {
-                let nItem = { day: this.day, mirate: this.stock.miRate, price: this.stock.price };
-                let lItem = rates[rates.length - 1];
-                if (this.day > lItem.day) {
-                    rates.push(nItem);
-                }
+            else {
+                this.loadHistoryWeeks(ret[6]);
             }
-            this.mirates = rates;
 
             this.loadTTMEarning(ret[2]);
             this.LoadDivident(ret[8]);
@@ -259,6 +244,60 @@ export class StoreStockInfo extends StorePage {
             stock,
             day: this.day,
         });
+    }
+
+    protected loadHistoryRates(ratesArr : { day: number, mirate: number, price: number, exright: number }[]) {
+        let rates: { day: number, mirate: number, price: number }[] = [];
+        let exLast = 1;
+        if (ratesArr.length > 0) {
+            let li = ratesArr[0];
+            exLast = li.exright;
+        }
+        ratesArr.forEach(v => {
+            let { day, mirate, price, exright } = v;
+            let priceEx = price * exright / exLast;
+
+            rates.unshift({ day: day, mirate: mirate, price: priceEx });
+        });
+        if ((this.trackDay === undefined || this.trackDay === null) && this.stock !== undefined && rates.length > 0) {
+            let nItem = { day: this.day, mirate: this.stock.miRate, price: this.stock.price };
+            let lItem = rates[rates.length - 1];
+            if (this.day > lItem.day) {
+                rates.push(nItem);
+            }
+        }
+        this.mirates = rates;
+    }
+
+    protected loadHistoryWeeks(arr : { day: number, price: number, priceb: number, capital: number} []) {
+        this.mirates = [];
+        let rates: { day: number, price: number, mirate?: number }[] = [];
+        if (arr.length > 0) {
+            let li = arr[0];
+        }
+        arr.forEach(v => {
+            let { day, priceb, } = v;
+            let priceEx = priceb;
+
+            rates.unshift({ day: day, price: priceEx });
+        });
+        if ((this.trackDay === undefined || this.trackDay === null) && this.stock !== undefined && rates.length > 0) {
+            let nItem = { day: this.day, mirate: this.stock.miRate, price: this.stock.price };
+            let lItem = rates[rates.length - 1];
+            if (this.day > lItem.day) {
+                rates.push(nItem);
+            }
+
+            let mirate = this.stock.miRate;
+            let len = rates.length;
+            for (let i = 1; i < len; ++i) {
+                let im = i % 10;
+                if (im < 7) {
+                    rates[len - i].mirate = mirate;
+                }
+            }
+        }
+        this.mirates = rates;
     }
 
     protected loadTTMEarning(list: { seasonno: number, capital: number, revenue: number, profit: number, netprofit: number, shares: number }[]) {
@@ -342,7 +381,7 @@ export class StoreStockInfo extends StorePage {
     protected LoadBonusData() {
         if (this._sharesArr === undefined || this._sharesArr.length <= 0) return;
         let maxNo: number;
-        if (this.trackDay === null) {
+        if (this.trackDay === undefined || this.trackDay === null) {
             let dt = new Date();
             maxNo = GFunc.SeasonnoFromYearMonth(dt.getFullYear(), dt.getMonth() + 1) - 2;
         }
