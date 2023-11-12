@@ -11,6 +11,7 @@ import { routeStock } from './StockInfo';
 import { routeSearch } from './Search';
 import { routePrivacy } from 'app/tool';
 import { routeAccount } from 'app/views/accounts';
+import { PageSort } from './PageSort';
 
 export function ViewsRoutes() {
     const homeLayout = <PageTabsLayout tabs={[
@@ -34,6 +35,7 @@ export function ViewsRoutes() {
                 <Route path="/test" element={<Page header="Test">test</Page>} />
                 {routeBlogs}
                 {routeSearch}
+                <Route path="/sort/:group" element={<PageSort />} />
                 <Route path="/login/*" element={<AppLogin />} />
                 <Route path="/register" element={<AppRegister />} />
                 {routePrivacy}

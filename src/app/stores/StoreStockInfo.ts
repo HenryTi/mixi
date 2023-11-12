@@ -7,6 +7,7 @@ import { ErForEarning } from './ErForEarning';
 import { SlrForEarning } from './SlrForEarning';
 import { getAtomValue, setAtomValue } from "tonwa-com";
 import { atom } from "jotai";
+import { UqApp } from "app/UqApp";
 
 export class StoreStockInfo extends StorePage {
     private day: number;
@@ -14,8 +15,8 @@ export class StoreStockInfo extends StorePage {
     readonly id: number;
     stock: Stock & StockValue;
     baseItem = atom(undefined as NStockInfo);
-    constructor(id: number) {
-        super();
+    constructor(uqApp: UqApp, id: number) {
+        super(uqApp);
         this.id = id;
     }
 

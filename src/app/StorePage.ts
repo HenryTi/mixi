@@ -1,9 +1,14 @@
-import { StorePageBase } from "tonwa-app";
 import { UQs } from "uqs";
-import { uqApp, UqApp } from "./UqApp";
+import { UqApp } from "./UqApp";
 
-export class StorePage extends StorePageBase<UqApp, UQs> {
-    constructor() {
-        super(uqApp);
+export class StorePage {
+    readonly uqApp: UqApp;
+    protected readonly uqs: UQs;
+    constructor(uqApp: UqApp) {
+        this.uqApp = uqApp;
+        this.uqs = uqApp.uqs;
+    }
+
+    async init(): Promise<void> {
     }
 }

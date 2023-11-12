@@ -52,6 +52,9 @@ export function ViewFindStock() {
     async function onGroupClick(group: MGroup) {
         navigate(pathGroupStocks(group.id));
     }
+    async function onSortGroup(group: number) {
+        navigate('/sort/' + group);
+    }
     return <div className="bg-light">
         <div className="p-3">
             <SearchBox className="mb-0" onSearch={onSearchFromKey} placeholder="股票代码，名称" />
@@ -68,6 +71,16 @@ export function ViewFindStock() {
                     {caption}
                 </button>;
             })}
+            <button
+                className="btn btn-outline-info m-1"
+                onClick={() => onSortGroup(1)}>
+                1组
+            </button>
+            <button
+                className="btn btn-outline-info m-1"
+                onClick={() => onSortGroup(2)}>
+                2组
+            </button>
         </div>
 
         <div className="mb-3 d-flex flex-column">
