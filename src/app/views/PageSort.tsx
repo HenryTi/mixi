@@ -11,11 +11,17 @@ export const UseQueryOptions = {
 };
 
 const maxCount = 40;
+const groupTop: { [group: number]: string; } = {
+    [1]: '沪股，深股，上海科创，北交所',
+    [2]: '沪股，深股',
+}
+
 export function PageSort() {
-    const { group } = useParams();
+    const { group: groupStr } = useParams();
+    const group = Number(groupStr);
     const uqApp = useUqApp();
     const { data } = useQuery(['sort', group], async () => {
-        let ret = await uqApp.miNet.q_incrate_mirate(Number(group) - 1, 0, 50);
+        let ret = await uqApp.miNet.q_incrate_mirate(group - 1, 0, 50);
         function sortIndex(items: any[]) {
             let { length } = items;
             if (length > maxCount) length = maxCount;
@@ -82,7 +88,7 @@ export function PageSort() {
         // <Piece caption="成交量" value={volumn} fraction={0} unit={<Unit>万</Unit>} />
     }
 
-    return <Page header={group + '组'}>
+    return <Page header={group + '组: ' + groupTop[group]}>
         <ListHeader>增息排行</ListHeader>
         <List items={data[0]} ViewItem={ViewItem} />
         <ListHeader>米息排行</ListHeader>
