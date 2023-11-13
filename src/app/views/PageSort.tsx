@@ -1,8 +1,9 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { Page } from "tonwa-app";
 import { useQuery } from "react-query";
 import { useUqApp } from "app/UqApp";
 import { List } from "tonwa-com";
+import { pathStockInfo } from "./StockInfo";
 
 export const UseQueryOptions = {
     cacheTime: 100,
@@ -61,21 +62,23 @@ export function PageSort() {
         return <small className="ms-1 text-secondary">{children}</small>;
     }
     function ViewItem({ value }: { value: any }) {
-        const { i, name, no, incrate, mirate, price, volumn, marketvalue } = value;
+        const { i, id, name, no, incrate, mirate, price, volumn, marketvalue } = value;
         return <div className="">
             <div className="px-3 d-flex flex-wrap">
                 <div className="pt-2 text-danger small w-2c">{i + 1}</div>
-                <div className="border-end py-2 w-8c">
-                    <div className="text-primary me-3">{name}</div>
-                    <div className="text-info me-3">{no}</div>
-                </div>
+                <Link to={pathStockInfo(id)}>
+                    <div className="border-end py-2 w-8c">
+                        <div className="text-primary me-3">{name}</div>
+                        <div className="text-info me-3">{no}</div>
+                    </div>
+                </Link>
                 <Piece caption="增息率" value={incrate} />
                 <Piece caption="米息率" value={mirate} />
                 <Piece caption="现价" value={price} />
-                <Piece caption="成交量" value={volumn} fraction={0} unit={<Unit>万</Unit>} />
                 <Piece caption="市值" value={marketvalue} fraction={0} unit={<Unit>亿</Unit>} />
             </div>
         </div>;
+        // <Piece caption="成交量" value={volumn} fraction={0} unit={<Unit>万</Unit>} />
     }
 
     return <Page header={group + '组'}>
