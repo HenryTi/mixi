@@ -13,9 +13,10 @@ export const UseQueryOptions = {
 };
 
 const maxCount = 40;
-const groupTop: { [group: number]: string; } = {
-    [1]: '沪股，深股，上海科创，北交所',
-    [2]: '沪股，深股',
+export const groupTop: { [group: number]: string; } = {
+    [1]: '沪深/沪科创/北交所',
+    [2]: '沪深/创业',
+    [3]: '沪深',
 }
 
 export function PageSort() {
