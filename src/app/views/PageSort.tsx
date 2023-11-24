@@ -13,11 +13,12 @@ export const UseQueryOptions = {
 };
 
 const maxCount = 40;
-export const groupTop: { [group: number]: string; } = {
-    [1]: '沪深/沪科创/北交所',
-    [2]: '沪深/创业',
-    [3]: '沪深',
-}
+export const sorts: string[] = [
+    '沪深/沪科创/北交所',
+    '沪深/创业',
+    '沪深',
+    '标普500',
+];
 
 export function PageSort() {
     const { group: groupStr } = useParams();
@@ -139,7 +140,7 @@ export function PageSort() {
         // <Piece caption="成交量" value={volumn} fraction={0} unit={<Unit>万</Unit>} />
     }
 
-    return <Page header={group + '组: ' + groupTop[group]}>
+    return <Page header={group + '组: ' + sorts[group]}>
         <form className="row px-3 py-2 g-3 align-items-center" onSubmit={handleSubmit(onSubmit)}>
             <div className="col-auto">市值</div>
             <div className="col-auto">
