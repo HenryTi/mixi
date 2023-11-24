@@ -140,7 +140,7 @@ export function PageSort() {
         // <Piece caption="成交量" value={volumn} fraction={0} unit={<Unit>万</Unit>} />
     }
 
-    return <Page header={group + '组: ' + sorts[group]}>
+    return <Page header={sorts[group - 1]}>
         <form className="row px-3 py-2 g-3 align-items-center" onSubmit={handleSubmit(onSubmit)}>
             <div className="col-auto">市值</div>
             <div className="col-auto">
