@@ -78,7 +78,7 @@ export function ViewFindStock() {
                 return <button key={index}
                     className="btn btn-outline-primary m-1"
                     onClick={() => onSortGroup(index + 1)}>
-                    {v}
+                    {v.name}
                 </button>
             })}
         </div>

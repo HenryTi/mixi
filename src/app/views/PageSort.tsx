@@ -13,11 +13,15 @@ export const UseQueryOptions = {
 };
 
 const maxCount = 40;
-export const sorts: string[] = [
-    '沪深/沪科创/北交所',
-    '沪深/创业',
-    '沪深',
-    '标普500',
+interface Sort {
+    name: string;
+    aHead?: 'inc' | 'mi';
+}
+export const sorts: Sort[] = [
+    { name: '沪深/沪科创/北交所' },
+    { name: '沪深/创业' },
+    { name: '沪深' },
+    { name: '标普500', aHead: 'mi' },
 ];
 
 export function PageSort() {
@@ -31,8 +35,10 @@ export function PageSort() {
         watch,
         formState: { errors },
     } = useForm();
-    let mrMin: number, mrMax: number;
-    loadDefault();
+    let sort = sorts[group - 1];
+    // let mrMin: number, mrMax: number, mrAhead: '增'|'米';
+    let { min: mrMin, max: mrMax } = sortValues.getSort(group - 1);
+    // loadDefault();
     const loadSort = useCallback(async function (min: number, max: number) {
         setData(undefined);
         let ret = await uqApp.miNet.q_incrate_mirate(group - 1, min, max);
@@ -64,6 +70,7 @@ export function PageSort() {
         if (Number.isNaN(max) === true) mrMax = 1000000;
         else mrMax = max;
     }
+    /*
     function loadDefault() {
         let mr = localStorage.getItem('market-range');
         if (mr !== null) {
@@ -71,6 +78,7 @@ export function PageSort() {
             setMinMax(min, max);
         }
     }
+    */
     async function onSubmit(data: any) {
         let { min, max } = data;
         localStorage.setItem('market-range', JSON.stringify(data));
@@ -140,7 +148,23 @@ export function PageSort() {
         // <Piece caption="成交量" value={volumn} fraction={0} unit={<Unit>万</Unit>} />
     }
 
-    return <Page header={sorts[group - 1]}>
+    let { name: caption, aHead } = sort;
+    let vInc = <>
+        <ListHeader>增息排行</ListHeader>
+        <List items={data[0]} ViewItem={ViewItem} />
+    </>;
+    let vMi = <>
+        <ListHeader>米息排行</ListHeader>
+        <List items={data[1]} ViewItem={ViewItem} />
+    </>;
+    let vContent: any;
+    if (aHead === 'mi') {
+        vContent = <>{vMi}{vInc}</>;
+    }
+    else {
+        vContent = <>{vInc}{vMi}</>;
+    }
+    return <Page header={caption}>
         <form className="row px-3 py-2 g-3 align-items-center" onSubmit={handleSubmit(onSubmit)}>
             <div className="col-auto">市值</div>
             <div className="col-auto">
@@ -154,9 +178,39 @@ export function PageSort() {
                 <button className="btn btn-sm btn-primary" type="submit">提交</button>
             </div>
         </form>
-        <ListHeader>增息排行</ListHeader>
-        <List items={data[0]} ViewItem={ViewItem} />
-        <ListHeader>米息排行</ListHeader>
-        <List items={data[1]} ViewItem={ViewItem} />
+        {vContent}
     </Page>;
 }
+
+const nameSortLocalStorage = 'sort';
+interface SortLocal {
+    // ahead: '增'|'米',
+    min: number,
+    max: number,
+}
+class SortLocalStorage {
+    private readonly sorts: SortLocal[];
+    constructor() {
+        let ret = localStorage.getItem(nameSortLocalStorage);
+        if (ret === null) {
+            this.sorts = [];
+        }
+        else {
+            try {
+                this.sorts = JSON.parse(ret);
+            }
+            catch {
+                this.sorts = [];
+            }
+        }
+    }
+    getSort(sortId: number) {
+        let ret = this.sorts[sortId];
+        return ret ?? {} as SortLocal;
+    }
+    setSort(sortId: number, sort: SortLocal) {
+        this.sorts[sortId] = sort;
+        localStorage.setItem(nameSortLocalStorage, JSON.stringify(this.sorts));
+    }
+}
+const sortValues = new SortLocalStorage();
