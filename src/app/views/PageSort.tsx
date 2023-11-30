@@ -1,7 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Page, PageSpinner } from "tonwa-app";
-import { useQuery } from "react-query";
 import { useUqApp } from "app/UqApp";
 import { List, useEffectOnce } from "tonwa-com";
 import { pathStockInfo } from "./StockInfo";
@@ -38,6 +37,7 @@ export function PageSort() {
     let sort = sorts[group - 1];
     // let mrMin: number, mrMax: number, mrAhead: '增'|'米';
     let { min: mrMin, max: mrMax } = sortValues.getSort(group - 1);
+
     // loadDefault();
     const loadSort = useCallback(async function (min: number, max: number) {
         setData(undefined);
@@ -69,6 +69,7 @@ export function PageSort() {
         else mrMin = min;
         if (Number.isNaN(max) === true) mrMax = 1000000;
         else mrMax = max;
+        sortValues.setSort(group - 1, { min, max });
     }
     /*
     function loadDefault() {
@@ -81,7 +82,6 @@ export function PageSort() {
     */
     async function onSubmit(data: any) {
         let { min, max } = data;
-        localStorage.setItem('market-range', JSON.stringify(data));
         setMinMax(min, max);
         await loadSort(min, max);
     }
@@ -206,7 +206,11 @@ class SortLocalStorage {
     }
     getSort(sortId: number) {
         let ret = this.sorts[sortId];
-        return ret ?? {} as SortLocal;
+        if (!ret) {
+            this.sorts[sortId] = ret = { min: 0, max: 1000000 };
+            localStorage.setItem(nameSortLocalStorage, JSON.stringify(this.sorts));
+        }
+        return ret;
     }
     setSort(sortId: number, sort: SortLocal) {
         this.sorts[sortId] = sort;
