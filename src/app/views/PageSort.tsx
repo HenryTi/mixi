@@ -133,7 +133,7 @@ export function PageSort() {
         const { i, id, name, no, day, incrate, mirate, price, volumn, marketvalue } = value;
         return <Link to={pathStockInfo(id)}>
             <div className="d-flex me-2">
-                <span className="text-danger small mx-1 py-2">{i + 1}</span>
+                <div className="text-danger small me-1 py-2 w-min-1c text-end">{i + 1}</div>
                 <div className="py-2 w-min-4c flex-fill">
                     <div className="text-primary me-3 text-nowrap" style={{ zIndex: -1 }}>
                         {name}
