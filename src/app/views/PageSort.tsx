@@ -110,7 +110,7 @@ export function PageSort() {
             case 'undefined': return null;
         }
         return <div className="py-2 w-min-5c ps-1 text-end">
-            <div className="small text-secondary">{caption}</div>
+            <span className="small text-secondary bg-white ps-1">{caption}</span>
             <div>{content}{unit}</div>
         </div>
 
@@ -135,7 +135,7 @@ export function PageSort() {
             <div className="d-flex me-2">
                 <span className="text-danger small mx-1 py-2">{i + 1}</span>
                 <div className="py-2 w-min-4c flex-fill">
-                    <div className="text-primary me-3">
+                    <div className="text-primary me-3 text-nowrap" style={{ zIndex: -1 }}>
                         {name}
                     </div>
                     <div className="text-info me-3">{no}</div>
