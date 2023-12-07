@@ -109,7 +109,7 @@ export function PageSort() {
                 break;
             case 'undefined': return null;
         }
-        return <div className="py-2 w-min-5c ms-1 text-end">
+        return <div className="py-2 w-min-5c ps-1 text-end">
             <div className="small text-secondary">{caption}</div>
             <div>{content}{unit}</div>
         </div>
