@@ -86,9 +86,12 @@ export function PageSort() {
         setMinMax(min, max);
         await loadSort(min, max);
     }
-    function ListHeader({ children }: { children: React.ReactNode; }) {
-        return <div className="pt-2 pb-1 px-3 small border-bottom tonwa-bg-gray-2">
-            {children}
+    function ListHeader({ children, right }: { children: React.ReactNode; right?: JSX.Element; }) {
+        return <div className="d-flex ps-3 pe-2 align-items-center  small border-bottom tonwa-bg-gray-2 ">
+            <div className="pt-2 pb-1 flex-fill">
+                {children}
+            </div>
+            {right}
         </div>;
     }
     const sample = {
@@ -106,8 +109,8 @@ export function PageSort() {
                 break;
             case 'undefined': return null;
         }
-        return <div className="py-2 w-6c me-3 text-end">
-            <div className="small">{caption}</div>
+        return <div className="py-2 w-min-5c me-1 text-end">
+            <div className="small text-secondary">{caption}</div>
             <div>{content}{unit}</div>
         </div>
 
@@ -119,8 +122,7 @@ export function PageSort() {
         let month = Math.floor(m);
         let d = Math.floor(day - month * 100);
         month = month - year * 100;
-        return <div className="py-2 w-6c ms-3 me-3">
-            <div className="small text-secondary">日期</div>
+        return <div className="py-2">
             <div className="text-secondary">{year}-{month}-{d}</div>
         </div>
     }
@@ -131,14 +133,14 @@ export function PageSort() {
         const { i, id, name, no, day, incrate, mirate, price, volumn, marketvalue } = value;
         return <Link to={pathStockInfo(id)}>
             <div className="">
-                <div className="px-3 d-flex flex-wrap">
-                    <div className="pt-2 text-danger small w-2c">{i + 1}</div>
-
-                    <div className="border-end py-2 w-8c">
-                        <div className="text-primary me-3">{name}</div>
+                <div className="d-flex">
+                    <span className="text-danger small mx-1 py-2">{i + 1}</span>
+                    <div className="py-2 w-min-4c flex-fill">
+                        <div className="text-primary me-3">
+                            {name}
+                        </div>
                         <div className="text-info me-3">{no}</div>
                     </div>
-                    <Day day={day} />
                     <Piece caption="增息率" value={incrate} />
                     <Piece caption="米息率" value={mirate} />
                     <Piece caption="现价" value={price} />
@@ -150,13 +152,19 @@ export function PageSort() {
     }
 
     let { name: caption, aHead } = sort;
+    let data0 = data[0];
+    let data1 = data[1];
+    let right: any;
+    if (data0.length > 0) {
+        right = <Day day={data0[0].day} />;
+    }
     let vInc = <>
-        <ListHeader>增息排行</ListHeader>
-        <List items={data[0]} ViewItem={ViewItem} />
+        <ListHeader right={right}>增息排行</ListHeader>
+        <List items={data0} ViewItem={ViewItem} />
     </>;
     let vMi = <>
-        <ListHeader>米息排行</ListHeader>
-        <List items={data[1]} ViewItem={ViewItem} />
+        <ListHeader right={right}>米息排行</ListHeader>
+        <List items={data1} ViewItem={ViewItem} />
     </>;
     let vContent: any;
     if (aHead === 'mi') {
