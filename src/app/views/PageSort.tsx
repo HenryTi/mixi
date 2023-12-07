@@ -109,7 +109,7 @@ export function PageSort() {
                 break;
             case 'undefined': return null;
         }
-        return <div className="py-2 w-min-5c me-1 text-end">
+        return <div className="py-2 w-min-5c ms-1 text-end">
             <div className="small text-secondary">{caption}</div>
             <div>{content}{unit}</div>
         </div>
@@ -132,20 +132,18 @@ export function PageSort() {
     function ViewItem({ value }: { value: any }) {
         const { i, id, name, no, day, incrate, mirate, price, volumn, marketvalue } = value;
         return <Link to={pathStockInfo(id)}>
-            <div className="">
-                <div className="d-flex">
-                    <span className="text-danger small mx-1 py-2">{i + 1}</span>
-                    <div className="py-2 w-min-4c flex-fill">
-                        <div className="text-primary me-3">
-                            {name}
-                        </div>
-                        <div className="text-info me-3">{no}</div>
+            <div className="d-flex me-2">
+                <span className="text-danger small mx-1 py-2">{i + 1}</span>
+                <div className="py-2 w-min-4c flex-fill">
+                    <div className="text-primary me-3">
+                        {name}
                     </div>
-                    <Piece caption="增息率" value={incrate} />
-                    <Piece caption="米息率" value={mirate} />
-                    <Piece caption="现价" value={price} />
-                    <Piece caption="市值" value={marketvalue} fraction={0} unit={<Unit>亿</Unit>} />
+                    <div className="text-info me-3">{no}</div>
                 </div>
+                <Piece caption="增息率" value={incrate} />
+                <Piece caption="米息率" value={mirate} />
+                <Piece caption="现价" value={price} />
+                <Piece caption="市值" value={marketvalue} fraction={0} unit={<Unit>亿</Unit>} />
             </div>
         </Link>;
         // <Piece caption="成交量" value={volumn} fraction={0} unit={<Unit>万</Unit>} />
