@@ -172,16 +172,16 @@ export function PageSort() {
         vContent = <>{vInc}{vMi}</>;
     }
     return <Page header={caption}>
-        <form className="row px-3 py-2 g-3 align-items-center" onSubmit={handleSubmit(onSubmit)}>
-            <div className="col-auto">市值</div>
+        <form className="row px-3 py-2 gx-0 align-items-center gap-0" onSubmit={handleSubmit(onSubmit)}>
+            <div className="col-auto small me-2">市值</div>
             <div className="col-auto">
-                <input className="form-control w-8c" type="number" {...register("min", { value: mrMin, min: 0, maxLength: 6, valueAsNumber: true })} />
+                <input className="form-control w-4c text-end" type="number" {...register("min", { value: mrMin, min: 0, maxLength: 6, valueAsNumber: true })} />
             </div>
-            <div className="col-auto"> - </div>
+            <div className="col-auto mx-1">-</div>
             <div className="col-auto">
-                <input className="form-control w-8c" type="number" {...register("max", { value: mrMax, min: 0, maxLength: 6, valueAsNumber: true })} />
+                <input className="form-control w-6c text-end" type="number" {...register("max", { value: mrMax, min: 0, maxLength: 6, valueAsNumber: true })} />
             </div>
-            <div className="col-auto">
+            <div className="col-auto ms-2">
                 <button className="btn btn-sm btn-primary" type="submit">提交</button>
             </div>
         </form>
