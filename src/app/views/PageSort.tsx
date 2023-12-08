@@ -122,9 +122,7 @@ export function PageSort() {
         let month = Math.floor(m);
         let d = Math.floor(day - month * 100);
         month = month - year * 100;
-        return <div className="py-2">
-            <div className="text-secondary">{year}-{month}-{d}</div>
-        </div>
+        return <div className="text-secondary">{year}-{month}-{d}</div>;
     }
     function Unit({ children }: { children: React.ReactNode; }) {
         return <small className="ms-1 text-secondary">{children}</small>;
