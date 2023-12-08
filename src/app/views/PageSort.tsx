@@ -87,8 +87,8 @@ export function PageSort() {
         await loadSort(min, max);
     }
     function ListHeader({ children, right }: { children: React.ReactNode; right?: JSX.Element; }) {
-        return <div className="d-flex ps-3 pe-2 align-items-center  small border-bottom tonwa-bg-gray-2 ">
-            <div className="pt-2 pb-1 flex-fill">
+        return <div className="d-flex ps-3 pe-2 pt-2 pb-1 align-items-center small border-bottom tonwa-bg-gray-2 ">
+            <div className="flex-fill">
                 {children}
             </div>
             {right}
