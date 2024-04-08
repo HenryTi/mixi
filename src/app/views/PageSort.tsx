@@ -21,6 +21,7 @@ export const sorts: Sort[] = [
     { name: '沪深/创业' },
     { name: '沪深' },
     { name: '标普500', aHead: 'mi' },
+    { name: '美股', aHead: 'mi' },
     { name: '沪深300' },
     { name: '中证500' },
 ];
