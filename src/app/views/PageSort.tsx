@@ -16,6 +16,7 @@ interface Sort {
     name: string;
     aHead?: 'inc' | 'mi';
 }
+
 export const sorts: Sort[] = [
     { name: '沪深/沪科创/北交所' },
     { name: '沪深/创业' },
@@ -28,7 +29,7 @@ export const sorts: Sort[] = [
 
 export function PageSort() {
     const { group: groupStr } = useParams();
-    const group = Number(groupStr);
+    let group = Number(groupStr);
     const uqApp = useUqApp();
     const [data, setData] = useState<any[][]>(undefined);
     const {
@@ -37,6 +38,15 @@ export function PageSort() {
         watch,
         formState: { errors },
     } = useForm();
+    let proc: string;
+    if (group > 100) {
+        group -= 100;
+        proc = `q_incrate_mirate_s2`;
+    }
+    else {
+        proc = `q_incrate_mirate`;
+    }
+
     let sort = sorts[group - 1];
     // let mrMin: number, mrMax: number, mrAhead: '增'|'米';
     let { min: mrMin, max: mrMax } = sortValues.getSort(group - 1);
@@ -44,7 +54,7 @@ export function PageSort() {
     // loadDefault();
     const loadSort = useCallback(async function (min: number, max: number) {
         setData(undefined);
-        let ret = await uqApp.miNet.q_incrate_mirate(group - 1, min, max);
+        let ret = await uqApp.miNet.q_incrate_mirate(proc, group - 1, min, max);
         function sortIndex(items: any[]) {
             let { length } = items;
             if (length > maxCount) length = maxCount;

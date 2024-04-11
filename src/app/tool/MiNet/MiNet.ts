@@ -114,7 +114,7 @@ export class MiNet {
         return await this.miApi.call(`t_mirateavg$query`, [day]);
     }
 
-    async q_incrate_mirate(type: number, marketmin: number, marketmax: number) {
-        return await this.miApi.call(`q_incrate_mirate`, [type, marketmin, marketmax])
+    async q_incrate_mirate(proc: string, type: number, marketmin: number, marketmax: number) {
+        return await this.miApi.call(proc, [type, marketmin, marketmax])
     }
 }

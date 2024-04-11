@@ -82,6 +82,15 @@ export function ViewFindStock() {
                 </button>
             })}
         </div>
+        <div className="py-2 px-3 mb-2 d-flex flex-wrap bg-white border-top border-bottom">
+            {sorts.map((v, index) => {
+                return <button key={index}
+                    className="btn btn-outline-primary m-1"
+                    onClick={() => onSortGroup(100 + index + 1)}>
+                    /{v.name}
+                </button>
+            })}
+        </div>
 
         <div className="mb-3 d-flex flex-column">
             {renderMyAll()}
