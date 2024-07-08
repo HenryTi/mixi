@@ -11,7 +11,7 @@ import { appEnv } from './appEnv';
 
 const appConfig: AppConfig = {
     version: '0.1.0',
-    center: 'https://tv.jkchemical.com',
+    center: 'https://note.jjol.cn',
     noUnit: true,
     oem: undefined,
 };
