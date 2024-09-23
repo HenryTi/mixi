@@ -10,7 +10,7 @@ import { StoreApp } from './stores';
 import { appEnv } from './appEnv';
 
 const appConfig: AppConfig = {
-    version: '0.1.0',
+    version: '0.1.1',
     center: 'https://note.jjol.cn',
     noUnit: true,
     oem: undefined,
