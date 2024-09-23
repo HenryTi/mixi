@@ -39,7 +39,11 @@ export function PageSort() {
         formState: { errors },
     } = useForm();
     let proc: string;
-    if (group > 100) {
+    if (group > 200) {
+        group -= 200;
+        proc = `q_grossrate_spx`;
+    }
+    else if (group > 100) {
         group -= 100;
         proc = `q_incrate_mirate_s2`;
     }

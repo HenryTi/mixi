@@ -73,24 +73,39 @@ export function ViewFindStock() {
                 </button>;
             })}
         </div>
-        <div className="py-2 px-3 mb-2 d-flex flex-wrap bg-white border-top border-bottom">
-            {sorts.map((v, index) => {
-                return <button key={index}
-                    className="btn btn-outline-primary m-1"
-                    onClick={() => onSortGroup(index + 1)}>
-                    {v.name}
-                </button>
+        {
+            [
+                { profix: '米息价值', group: 0 },
+                { profix: '米息小盘优选', group: 100 },
+                { profix: '毛息小盘', group: 200 },
+            ].map(v => {
+                const { profix, group } = v;
+                let vContent: any;
+                switch (group) {
+                    default:
+                        vContent = sorts.map((v, index) => {
+                            return <button key={index}
+                                className="btn btn-outline-primary m-1"
+                                onClick={() => onSortGroup(group + index + 1)}>
+                                {v.name}
+                            </button>
+                        });
+                        break;
+                    case 200:
+                        vContent = <button
+                            className="btn btn-outline-primary m-1"
+                            onClick={() => onSortGroup(group + 1)}>
+                            标普500
+                        </button>
+                        break;
+                }
+                return <div className="py-2 px-3 mb-2  bg-white border-top border-bottom">
+                    <div className="small text-body-tertiary mb-2">{profix}</div>
+                    <div key={group} className="d-flex flex-wrap">
+                        {vContent}
+                    </div>
+                </div>;
             })}
-        </div>
-        <div className="py-2 px-3 mb-2 d-flex flex-wrap bg-white border-top border-bottom">
-            {sorts.map((v, index) => {
-                return <button key={index}
-                    className="btn btn-outline-primary m-1"
-                    onClick={() => onSortGroup(100 + index + 1)}>
-                    /{v.name}
-                </button>
-            })}
-        </div>
 
         <div className="mb-3 d-flex flex-column">
             {renderMyAll()}
@@ -112,6 +127,17 @@ export function ViewFindStock() {
             {renderMyBlock()}
         </div>
     </div>;
+    /*
+    <div className="py-2 px-3 mb-2 d-flex flex-wrap bg-white border-top border-bottom">
+        {sorts.map((v, index) => {
+            return <button key={index}
+                className="btn btn-outline-primary m-1"
+                onClick={() => onSortGroup(100 + index + 1)}>
+                /{v.name}
+            </button>
+        })}
+    </div>
+    */
 }
 
 export function PageStocksMyAll() {
