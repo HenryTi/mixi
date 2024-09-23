@@ -7,7 +7,7 @@ import { pathSearch } from "../Search";
 import { pathGroupStocks, pathMyAll, pathMyBlocks } from "./routeFind";
 import { ViewGroups } from "./ViewGroups";
 import { ViewStockList } from "./ViewStockList";
-import { sorts } from "../PageSort";
+import { sortGroups, sorts } from "../PageSort";
 
 const searchButtons: [string, string[]][] = [
     ['A股', ['sh', 'sz', 'bj']],
@@ -74,6 +74,22 @@ export function ViewFindStock() {
             })}
         </div>
         {
+            sortGroups.map(v => {
+                const { caption, group, sorts } = v;
+                return <div className="py-2 px-3 mb-2  bg-white border-top border-bottom">
+                    <div className="small text-body-tertiary mb-2">{caption}</div>
+                    <div key={group} className="d-flex flex-wrap">
+                        {sorts.map((v, index) => {
+                            return <button key={index}
+                                className="btn btn-outline-primary m-1"
+                                onClick={() => onSortGroup(group * 100 + index + 1)}>
+                                {v.name}
+                            </button>
+                        })}
+                    </div>
+                </div>;
+            })
+            /*
             [
                 { profix: '米息价值', group: 0 },
                 { profix: '米息小盘优选', group: 100 },
@@ -105,7 +121,9 @@ export function ViewFindStock() {
                         {vContent}
                     </div>
                 </div>;
-            })}
+            })
+            */
+        }
 
         <div className="mb-3 d-flex flex-column">
             {renderMyAll()}

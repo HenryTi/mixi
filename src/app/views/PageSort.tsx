@@ -27,6 +27,34 @@ export const sorts: Sort[] = [
     { name: '中证500' },
 ];
 
+interface SortGroup {
+    group: number;
+    caption: string;
+    proc: string;
+    sorts: Sort[];
+}
+
+export const sortGroups: SortGroup[] = [
+    {
+        group: 0,
+        caption: '米息价值',
+        proc: 'q_incrate_mirate',
+        sorts,
+    },
+    {
+        group: 1,
+        caption: '米息小盘优选',
+        proc: 'q_incrate_mirate_s2',
+        sorts,
+    },
+    {
+        group: 2,
+        caption: '毛息小盘',
+        proc: 'q_grossrate_spx',
+        sorts: [{ name: '标普500', aHead: 'mi' },]
+    },
+];
+
 export function PageSort() {
     const { group: groupStr } = useParams();
     let group = Number(groupStr);
