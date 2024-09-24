@@ -53,7 +53,7 @@ export function ViewFindStock() {
     async function onGroupClick(group: MGroup) {
         navigate(pathGroupStocks(group.id));
     }
-    async function onSortGroup(group: number) {
+    async function onSortGroup(group: string) {
         navigate('/sort/' + group);
     }
     return <div className="bg-light">
@@ -74,15 +74,15 @@ export function ViewFindStock() {
             })}
         </div>
         {
-            sortGroups.map(v => {
-                const { caption, group, sorts } = v;
+            sortGroups.map((v, groupIndex) => {
+                const { caption, sorts } = v;
                 return <div className="py-2 px-3 mb-2  bg-white border-top border-bottom">
                     <div className="small text-body-tertiary mb-2">{caption}</div>
-                    <div key={group} className="d-flex flex-wrap">
+                    <div key={groupIndex} className="d-flex flex-wrap">
                         {sorts.map((v, index) => {
                             return <button key={index}
                                 className="btn btn-outline-primary m-1"
-                                onClick={() => onSortGroup(group * 100 + index + 1)}>
+                                onClick={() => onSortGroup(`${groupIndex}-${index}`)}>
                                 {v.name}
                             </button>
                         })}

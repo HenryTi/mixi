@@ -28,7 +28,6 @@ export const sorts: Sort[] = [
 ];
 
 interface SortGroup {
-    group: number;
     caption: string;
     proc: string;
     sorts: Sort[];
@@ -36,19 +35,16 @@ interface SortGroup {
 
 export const sortGroups: SortGroup[] = [
     {
-        group: 0,
         caption: '米息价值',
         proc: 'q_incrate_mirate',
         sorts,
     },
     {
-        group: 1,
         caption: '米息小盘优选',
         proc: 'q_incrate_mirate_s2',
         sorts,
     },
     {
-        group: 2,
         caption: '毛息小盘',
         proc: 'q_grossrate_spx',
         sorts: [{ name: '标普500', aHead: 'mi' },]
@@ -57,7 +53,6 @@ export const sortGroups: SortGroup[] = [
 
 export function PageSort() {
     const { group: groupStr } = useParams();
-    let group = Number(groupStr);
     const uqApp = useUqApp();
     const [data, setData] = useState<any[][]>(undefined);
     const {
@@ -66,6 +61,14 @@ export function PageSort() {
         watch,
         formState: { errors },
     } = useForm();
+
+    const [groupIndex, sortGroup, sort] = parseGroupStr(groupStr);
+    if (groupIndex === undefined) {
+        return <Page header="error">
+            {groupStr}
+        </Page>;
+    }
+    /*
     let proc: string;
     if (group > 200) {
         group -= 200;
@@ -80,13 +83,15 @@ export function PageSort() {
     }
 
     let sort = sorts[group - 1];
+    */
+
     // let mrMin: number, mrMax: number, mrAhead: '增'|'米';
-    let { min: mrMin, max: mrMax } = sortValues.getSort(group - 1);
+    let { min: mrMin, max: mrMax } = sortValues.getSort(groupIndex);
 
     // loadDefault();
     const loadSort = useCallback(async function (min: number, max: number) {
         setData(undefined);
-        let ret = await uqApp.miNet.q_incrate_mirate(proc, group - 1, min, max);
+        let ret = await uqApp.miNet.q_incrate_mirate(sortGroup.proc, groupIndex, min, max);
         function sortIndex(items: any[]) {
             let { length } = items;
             if (length > maxCount) length = maxCount;
@@ -114,7 +119,7 @@ export function PageSort() {
         else mrMin = min;
         if (Number.isNaN(max) === true) mrMax = 1000000;
         else mrMax = max;
-        sortValues.setSort(group - 1, { min, max });
+        sortValues.setSort(groupIndex, { min, max });
     }
     /*
     function loadDefault() {
@@ -230,6 +235,25 @@ export function PageSort() {
         {vContent}
     </Page>;
 }
+
+function parseGroupStr(groupStr: string): [number?, SortGroup?, Sort?] {
+    let groupIndex: number, sortIndex: number;
+    let ret: [number?, SortGroup?, Sort?] = [];
+    if (groupStr === undefined) return ret;
+    let parts = groupStr.split('-');
+    if (parts.length !== 2) return ret;
+    groupIndex = Number(parts[0]);
+    sortIndex = Number(parts[1]);
+    if (Number.isNaN(groupIndex) === true
+        || Number.isNaN(sortIndex) === true
+        || groupIndex < 0 || groupIndex >= sortGroups.length
+    ) return ret;
+    let sortGroup = sortGroups[groupIndex];
+    let sort = sortGroup.sorts[sortIndex];
+    if (sort === undefined) return ret;
+    return [groupIndex, sortGroup, sort]
+}
+
 
 const nameSortLocalStorage = 'sort';
 interface SortLocal {
