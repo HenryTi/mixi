@@ -218,7 +218,7 @@ export function PageSort() {
     else {
         vContent = <>{vInc}{vMi}</>;
     }
-    return <Page header={caption}>
+    return <Page header={`${sortGroup.caption}-${caption}`}>
         <form className="row px-3 py-2 gx-0 align-items-center gap-0" onSubmit={handleSubmit(onSubmit)}>
             <div className="col-auto small me-2">市值</div>
             <div className="col-auto">
