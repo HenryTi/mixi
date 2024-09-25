@@ -251,7 +251,7 @@ function parseGroupStr(groupStr: string): [number?, SortGroup?, Sort?] {
     let sortGroup = sortGroups[groupIndex];
     let sort = sortGroup.sorts[sortIndex];
     if (sort === undefined) return ret;
-    return [groupIndex, sortGroup, sort]
+    return [groupIndex * 100 + sortIndex, sortGroup, sort];
 }
 
 
