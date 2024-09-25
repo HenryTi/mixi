@@ -62,8 +62,8 @@ export function PageSort() {
         formState: { errors },
     } = useForm();
 
-    const [groupIndex, sortGroup, sort] = parseGroupStr(groupStr);
-    if (groupIndex === undefined) {
+    const [sortI, sortGroup, sort] = parseGroupStr(groupStr);
+    if (sortI === undefined) {
         return <Page header="error">
             {groupStr}
         </Page>;
@@ -86,12 +86,12 @@ export function PageSort() {
     */
 
     // let mrMin: number, mrMax: number, mrAhead: '增'|'米';
-    let { min: mrMin, max: mrMax } = sortValues.getSort(groupIndex);
+    let { min: mrMin, max: mrMax } = sortValues.getSort(sortI);
 
     // loadDefault();
     const loadSort = useCallback(async function (min: number, max: number) {
         setData(undefined);
-        let ret = await uqApp.miNet.q_incrate_mirate(sortGroup.proc, groupIndex, min, max);
+        let ret = await uqApp.miNet.q_incrate_mirate(sortGroup.proc, sortI, min, max);
         function sortIndex(items: any[]) {
             let { length } = items;
             if (length > maxCount) length = maxCount;
@@ -119,7 +119,7 @@ export function PageSort() {
         else mrMin = min;
         if (Number.isNaN(max) === true) mrMax = 1000000;
         else mrMax = max;
-        sortValues.setSort(groupIndex, { min, max });
+        sortValues.setSort(sortI, { min, max });
     }
     /*
     function loadDefault() {
@@ -251,7 +251,7 @@ function parseGroupStr(groupStr: string): [number?, SortGroup?, Sort?] {
     let sortGroup = sortGroups[groupIndex];
     let sort = sortGroup.sorts[sortIndex];
     if (sort === undefined) return ret;
-    return [groupIndex * 100 + sortIndex, sortGroup, sort];
+    return [sortIndex, sortGroup, sort];
 }
 
 
